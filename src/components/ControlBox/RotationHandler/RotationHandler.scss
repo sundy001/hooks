@@ -1,0 +1,59 @@
+.rotation-handler {
+  box-shadow: 0 0 5px 1px rgba(14, 19, 24, 0.15),
+    0 0 0 1px rgba(14, 19, 24, 0.15);
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  background: #fff;
+  border-radius: 10px;
+
+  -webkit-user-drag: none;
+  user-select: none;
+  pointer-events: auto;
+
+  &.top {
+    top: -10px;
+  }
+
+  &.bottom {
+    bottom: -30px;
+  }
+
+  &.left {
+    left: -10px;
+  }
+
+  &.right {
+    right: -10px;
+  }
+
+  &.top,
+  &.bottom {
+    left: calc(50% - 10px);
+  }
+
+  &.left,
+  &.right {
+    top: calc(50% - 10px);
+  }
+
+  &.top-right {
+    right: -5px;
+    top: -5px;
+  }
+
+  &.top-left {
+    left: -5px;
+    top: -5px;
+  }
+
+  &.bottom-left {
+    left: -5px;
+    bottom: -5px;
+  }
+
+  &.bottom-right {
+    bottom: -5px;
+    right: -5px;
+  }
+}

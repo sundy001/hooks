@@ -1,0 +1,77 @@
+.resizable-handler {
+  box-shadow: 0 0 5px 1px rgba(14, 19, 24, 0.15),
+    0 0 0 1px rgba(14, 19, 24, 0.15);
+  position: absolute;
+  background: #fff;
+  border-radius: 5px;
+
+  -webkit-user-drag: none;
+  user-select: none;
+  pointer-events: auto;
+
+  &.top,
+  &.bottom {
+    width: 16px;
+    height: 5px;
+  }
+
+  &.left,
+  &.right {
+    width: 5px;
+    height: 16px;
+  }
+
+  &.top {
+    top: -3px;
+  }
+
+  &.bottom {
+    bottom: -3px;
+  }
+
+  &.left {
+    left: -3px;
+  }
+
+  &.right {
+    right: -3px;
+  }
+
+  &.top,
+  &.bottom {
+    left: calc(50% - 8px);
+  }
+
+  &.left,
+  &.right {
+    top: calc(50% - 8px);
+  }
+
+  &.top-left,
+  &.top-right,
+  &.bottom-left,
+  &.bottom-right {
+    width: 10px;
+    height: 10px;
+  }
+
+  &.top-right {
+    right: -5px;
+    top: -5px;
+  }
+
+  &.top-left {
+    left: -5px;
+    top: -5px;
+  }
+
+  &.bottom-left {
+    left: -5px;
+    bottom: -5px;
+  }
+
+  &.bottom-right {
+    bottom: -5px;
+    right: -5px;
+  }
+}
