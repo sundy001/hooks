@@ -2,6 +2,7 @@ import { useRef } from "react";
 import { useDragAndDrop } from "./useDragAndDrop";
 import { verticesOfRect } from "../math/frame";
 import { verticesOfElement, createSelection } from "../element";
+import Victor from "victor";
 
 const normal = (v1, v2) => {
   const v = v2
@@ -17,6 +18,29 @@ const normal = (v1, v2) => {
   return v;
 };
 
+const projectionOfPolygron = (vertices, axis) => {
+  let min = axis.dot(vertices[0]);
+  let max = min;
+  vertices.forEach(vertex => {
+    // NOTE: the axis must be normalized to get accurate projections
+    const p = axis.dot(vertex);
+    if (p < min) {
+      min = p;
+    } else if (p > max) {
+      max = p;
+    }
+  });
+
+  return {
+    min,
+    max
+  };
+};
+
+const isOverlap = (p1, p2) => p2.max >= p1.min && p1.max >= p2.min;
+
+const selectionBoxAxes = [new Victor(1, 0), new Victor(0, 1)];
+
 export const useSelectionBox = (
   elements,
   { shouldSelect, onDrag, onSelectEnd } = {}
@@ -26,21 +50,23 @@ export const useSelectionBox = (
     selectedElements: []
   });
 
+  // info include element, vertices
   const getElementInfo = () => {
     const elementVertices = elements.map(element => {
       const vertices = verticesOfElement(element);
 
-      const normals =
+      const axes =
         element.angle === 0
           ? []
-          : vertices.map((_, i) => {
-              return normal(vertices[i], vertices[i === 3 ? 0 : i + 1]);
-            });
+          : [
+              normal(vertices[0], vertices[1]),
+              normal(vertices[1], vertices[2])
+            ];
 
       return {
         element,
         vertices,
-        normals
+        axes
       };
     });
 
@@ -60,6 +86,7 @@ export const useSelectionBox = (
       let { elementInfo, selectedElements } = stateRef.current;
       if (elementInfo === null) {
         elementInfo = stateRef.current.elementInfo = getElementInfo();
+        // console.log(elementInfo);
       }
 
       const { vertices: selectionVertices, size } = verticesOfRect(
@@ -69,17 +96,35 @@ export const useSelectionBox = (
 
       selectedElements.length = 0;
       elementInfo.forEach(info => {
-        const { element, vertices } = info;
-        // if (element.angle === 0) {
-        //   if (
-        //     selectionVertices[3].x < vertices[1].x &&
-        //     selectionVertices[1].x > vertices[3].x &&
-        //     selectionVertices[3].y < vertices[1].y &&
-        //     selectionVertices[1].y > vertices[3].y
-        //   ) {
+        const { element, vertices, axes } = info;
+        if (element.angle === 0) {
+          if (
+            selectionVertices[3].x < vertices[1].x &&
+            selectionVertices[1].x > vertices[3].x &&
+            selectionVertices[3].y < vertices[1].y &&
+            selectionVertices[1].y > vertices[3].y
+          ) {
             selectedElements.push(createSelection(element));
-        //   }
-        // }
+          }
+        } else {
+          let isSelected = selectionBoxAxes.every(axis => {
+            const p1 = projectionOfPolygron(selectionVertices, axis);
+            const p2 = projectionOfPolygron(vertices, axis);
+            return isOverlap(p1, p2);
+          });
+
+          if (isSelected) {
+            isSelected = axes.every(axis => {
+              const p1 = projectionOfPolygron(selectionVertices, axis);
+              const p2 = projectionOfPolygron(vertices, axis);
+              return isOverlap(p1, p2);
+            });
+          }
+
+          if (isSelected) {
+            selectedElements.push(createSelection(element));
+          }
+        }
       });
 
       if (onDrag) {
