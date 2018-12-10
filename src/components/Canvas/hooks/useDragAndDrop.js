@@ -3,16 +3,29 @@ import { useDragAndDrop } from "../../../hook/useDragAndDrop";
 import { updateControlBox, updateElement } from "../CanvasAction";
 
 export default (dispatch, elementStore, selections, controlBoxFrame) => {
-  const beginningFrameRef = useRef(null);
+  const stateRef = useRef({
+    previousPoint: null,
+    beginningFrame: null
+  });
 
   const [dragMouseDown, dragMouseMove, dragMouseUp] = useDragAndDrop({
     onMouseDown({ original }) {
       original.stopPropagation();
+
+      stateRef.current.previousPoint = { x: original.pageX, y: original.pageY };
     },
     onDragStart() {
-      beginningFrameRef.current = { ...controlBoxFrame };
+      stateRef.current.beginningFrame = { ...controlBoxFrame };
     },
-    onDrag({ dx, dy }) {
+    onDrag({ original }) {
+      const { previousPoint, beginningFrame } = stateRef.current;
+
+      const { pageX, pageY } = original;
+      const dx = pageX - previousPoint.x;
+      const dy = pageY - previousPoint.y;
+      previousPoint.x = pageX;
+      previousPoint.y = pageY;
+
       // move elements
       selections.forEach(({ id }) => {
         const frame = elementStore.byId[id].frame;
@@ -26,13 +39,16 @@ export default (dispatch, elementStore, selections, controlBoxFrame) => {
       });
 
       // move control box
-      const beginningFrame = beginningFrameRef.current;
+
       beginningFrame.x += dx;
       beginningFrame.y += dy;
       dispatch(updateControlBox({ frame: { ...beginningFrame } }));
     },
+    onMouseUp() {
+      stateRef.current.previousPoint = null;
+    },
     onDragEnd() {
-      beginningFrameRef.current = null;
+      stateRef.current.beginningFrame = null;
     }
   });
 

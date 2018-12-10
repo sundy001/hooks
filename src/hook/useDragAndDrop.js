@@ -22,10 +22,7 @@ export const useDragAndDrop = ({
     target: null,
     isMouseDown: false,
     isMouseMove: false,
-    shouldDragChecked: null,
-    previousPoint: null,
-    beginningX: null,
-    beginningY: null
+    shouldDragChecked: null
   });
 
   const callCallbackIfExist = (callback, event) => {
@@ -33,27 +30,10 @@ export const useDragAndDrop = ({
       return;
     }
 
-    let { previousPoint } = stateRef.current;
-    const { target, beginningX, beginningY } = stateRef.current;
-    const { pageX: x, pageY: y } = event;
-
-    if (previousPoint === null) {
-      previousPoint = stateRef.current.previousPoint = { x, y };
-    }
-    const dx = x - previousPoint.x;
-    const dy = y - previousPoint.y;
-
     callback({
-      beginningX,
-      beginningY,
-      dx,
-      dy,
-      target,
+      target: stateRef.current.target,
       original: event
     });
-
-    previousPoint.x = x;
-    previousPoint.y = y;
   };
 
   const dragEndCleanUp = () => {
@@ -62,9 +42,6 @@ export const useDragAndDrop = ({
     state.isMouseDown = false;
     state.isMouseMove = false;
     state.shouldDragChecked = null;
-    state.previousPoint = null;
-    state.beginningX = null;
-    state.beginningY = null;
   };
 
   // useMemo to ensure handleMouseDown always return the same callback
@@ -79,8 +56,6 @@ export const useDragAndDrop = ({
       const state = stateRef.current;
       state.isMouseDown = true;
       state.target = event.target;
-      state.beginningX = event.pageX;
-      state.beginningY = event.pageY;
 
       callCallbackIfExist(callbackRef.current.onMouseDown, event);
     },

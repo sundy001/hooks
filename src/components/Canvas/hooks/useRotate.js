@@ -25,8 +25,7 @@ export default (
       original.stopPropagation();
     },
     onRotateStart() {
-      const state = stateRef.current;
-      state.beginningControlBoxAngle = controlBoxAngle;
+      stateRef.current.beginningControlBoxAngle = controlBoxAngle;
       saveValue();
     },
     onRotate({ angle }) {

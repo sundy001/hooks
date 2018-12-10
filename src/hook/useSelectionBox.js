@@ -31,6 +31,8 @@ export const useSelectionBox = (
   { shouldSelect, onDrag, onSelectEnd } = {}
 ) => {
   const stateRef = useRef({
+    beginningX: null,
+    beginningY: null,
     elementInfo: null,
     selectedElements: []
   });
@@ -66,11 +68,22 @@ export const useSelectionBox = (
     shouldDrag(event) {
       return shouldSelect ? shouldSelect(event) : true;
     },
+    onMouseDown({ original }) {
+      const state = stateRef.current;
+      state.beginningX = original.pageX;
+      state.beginningY = original.pageY;
+    },
     onDragStart() {
       stateRef.current.elementInfo = getElementInfo();
     },
-    onDrag({ beginningX, beginningY, original: { pageX, pageY } }) {
-      const { elementInfo, selectedElements } = stateRef.current;
+    onDrag({ original }) {
+      const { pageX, pageY } = original;
+      const {
+        beginningX,
+        beginningY,
+        elementInfo,
+        selectedElements
+      } = stateRef.current;
       const { vertices: selectionVertices, size } = verticesOfRect(
         { x: beginningX, y: beginningY },
         { x: pageX, y: pageY }
@@ -122,7 +135,11 @@ export const useSelectionBox = (
         onDrag({ frame, selectedElements: [...selectedElements] });
       }
     },
-
+    onMouseUp(event) {
+      const state = stateRef.current;
+      state.beginningX = event.original.pageX;
+      state.beginningY = event.original.pageY;
+    },
     onDragEnd() {
       const { selectedElements } = stateRef.current;
       if (onSelectEnd) {
