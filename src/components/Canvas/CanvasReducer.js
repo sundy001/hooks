@@ -8,6 +8,7 @@ import {
 import { updateEntity } from "../../updateEntity";
 import { sizeOfRectVertices } from "../../math/frame";
 import Victor from "victor";
+import { verticesOfElement } from "../../element";
 
 export const elements = (state, action) => {
   switch (action.type) {
@@ -53,13 +54,13 @@ export const selections = (state, action) => {
 };
 
 // TODO: extract them later
-const minMaxVerticesOfSelections = selections => {
+const minMaxVerticesOfSelections = elements => {
   let minX = Number.MAX_VALUE;
   let minY = Number.MAX_VALUE;
   let maxX = Number.MIN_VALUE;
   let maxY = Number.MIN_VALUE;
-  selections.forEach(({ vertices }) => {
-    vertices.forEach(({ x, y }) => {
+  elements.forEach(element => {
+    verticesOfElement(element).forEach(({ x, y }) => {
       if (x < minX) {
         minX = x;
       }
@@ -91,7 +92,7 @@ export const selectionBoxUpdatedBySelection = (
       }
 
       if (selections.length === 1) {
-        const { frame, angle } = elementStore.byId[selections[0].id];
+        const { frame, angle } = elementStore.byId[selections[0]];
 
         return {
           frame: { ...frame },
@@ -99,7 +100,9 @@ export const selectionBoxUpdatedBySelection = (
         };
       }
 
-      const { min, max } = minMaxVerticesOfSelections(selections);
+      const { min, max } = minMaxVerticesOfSelections(
+        selections.map(id => elementStore.byId[id])
+      );
       const { width, height } = sizeOfRectVertices(min, max);
 
       return { frame: { x: min.x, y: min.y, width, height }, angle: 0 };

@@ -12,7 +12,7 @@ export const useSelectionBeginningValue = (
     const beginningValue = {};
 
     if (selections.length > 1) {
-      selections.forEach(({ id }) => {
+      selections.forEach(id => {
         const { frame, angle } = elementStore.byId[id];
 
         beginningValue[id] = {
@@ -26,7 +26,7 @@ export const useSelectionBeginningValue = (
         };
       });
     } else {
-      const id = selections[0].id;
+      const id = selections[0];
       const { frame } = elementStore.byId[id];
       beginningValue[id] = {
         width: frame.width,

@@ -35,7 +35,6 @@ const Canvas = () => {
 
   const { selectMouseDown, selectMouseMove, selectMouseUp } = useSelect(
     dispatch,
-    state.elements,
     selections
   );
 

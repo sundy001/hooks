@@ -52,7 +52,7 @@ export default (
           const hRatio = frame.width / beginningWidth;
           const vRatio = frame.height / beginningHeight;
 
-          selections.forEach(({ id }) => {
+          selections.forEach(id => {
             const newWidth = beginningValue[id].width * hRatio;
             const newHeight = beginningValue[id].height * vRatio;
 

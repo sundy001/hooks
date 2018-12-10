@@ -3,7 +3,7 @@ import { updateSelectionBox, setSelections } from "../CanvasAction";
 
 export default (dispatch, elements) =>
   useSelectionBox(elements, {
-    onDrag({ selectedElements, frame }) {
+    onDrag({ frame }) {
       dispatch(updateSelectionBox(frame));
     },
     onSelectEnd(selectedElements) {

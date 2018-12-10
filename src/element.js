@@ -9,8 +9,3 @@ export const verticesOfElement = ({ frame, angle }) =>
       angle
     )
   );
-
-export const createSelection = element => ({
-  id: element.id,
-  vertices: verticesOfElement(element)
-});

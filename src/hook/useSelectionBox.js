@@ -1,11 +1,7 @@
 import { useRef } from "react";
 import { useDragAndDrop } from "./useDragAndDrop";
 import { verticesOfRect } from "../math/frame";
-import { createSelection } from "../element";
-import {
-  overlapCache,
-  overlapedElementsByCache
-} from "../math/overlapDetection";
+import { overlapCache, overlapedIdsByCache } from "../math/overlapDetection";
 
 export const useSelectionBox = (
   elements,
@@ -42,10 +38,10 @@ export const useSelectionBox = (
         { x: pageX, y: pageY }
       );
 
-      const selectedElements = overlapedElementsByCache(
+      const selectedElements = overlapedIdsByCache(
         selectionVertices,
         elementInfo
-      ).map(createSelection);
+      );
       stateRef.current.selectedElements = selectedElements;
 
       if (onDrag) {

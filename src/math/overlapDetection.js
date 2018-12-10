@@ -20,19 +20,20 @@ export const overlapCache = elements =>
           ];
 
     return {
-      element,
+      id: element.id,
+      angle: element.angle,
       vertices,
       axes
     };
   });
 
-export const overlapedElementsByCache = (comparedVertices, overlapCache) => {
-  const overlapElements = [];
+export const overlapedIdsByCache = (comparedVertices, overlapCache) => {
+  const overlapedIds = [];
 
   overlapCache.forEach(row => {
     let isOverlap;
-    const { element, vertices, axes } = row;
-    if (element.angle === 0) {
+    const { id, vertices, angle, axes } = row;
+    if (angle === 0) {
       isOverlap = isOverlapByAABB(comparedVertices, vertices);
     } else {
       // Separating Axis Theorem is used to detect rotated rectangles
@@ -54,14 +55,13 @@ export const overlapedElementsByCache = (comparedVertices, overlapCache) => {
     }
 
     if (isOverlap) {
-      overlapElements.push(element);
+      overlapedIds.push(id);
     }
   });
 
-  return overlapElements;
+  return overlapedIds;
 };
 
-// TODO: move to the right place
 const projectionOfPolygron = (vertices, axis) => {
   let min = axis.dot(vertices[0]);
   let max = min;

@@ -33,7 +33,7 @@ export default (
       const { beginningControlBoxAngle } = stateRef.current;
 
       // rotate elements
-      selections.forEach(({ id }) => {
+      selections.forEach(id => {
         const { frame } = elementStore.byId[id];
         const { x: newX, y: newY } = rotationTransform(
           beginningValue[id].offset,

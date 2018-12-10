@@ -27,7 +27,7 @@ export default (dispatch, elementStore, selections, controlBoxFrame) => {
       previousPoint.y = pageY;
 
       // move elements
-      selections.forEach(({ id }) => {
+      selections.forEach(id => {
         const frame = elementStore.byId[id].frame;
         const newFrame = {
           ...frame,

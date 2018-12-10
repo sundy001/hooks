@@ -1,15 +1,9 @@
 import { useRef } from "react";
 import { useDragAndDrop } from "../../../hook/useDragAndDrop";
 import { setSelections } from "../CanvasAction";
-import { createSelection } from "../../../element";
 
-export default (dispatch, elementStore, selections) => {
+export default (dispatch, selections) => {
   const draggedRef = useRef(null);
-
-  const selectElement = id => {
-    const selection = createSelection(elementStore.byId[id]);
-    dispatch(setSelections([selection]));
-  };
 
   const [selectMouseDown, selectMouseMove, selectMouseUp] = useDragAndDrop({
     onMouseDown({ original }) {
@@ -17,8 +11,12 @@ export default (dispatch, elementStore, selections) => {
 
       draggedRef.current = false;
 
-      if (selections.length < 2) {
-        selectElement(original.target.dataset.id);
+      // check the element is not if it has been selected
+      const element = selections.find(
+        id => id === parseInt(original.target.dataset.id)
+      );
+      if (element === undefined) {
+        dispatch(setSelections([original.target.dataset.id]));
       }
     },
     onDragStart() {
@@ -27,7 +25,7 @@ export default (dispatch, elementStore, selections) => {
     onMouseUp({ original }) {
       const element = original.target.closest(".element");
       if (selections.length > 1 && !draggedRef.current && element !== null) {
-        selectElement(element.dataset.id);
+        dispatch(setSelections([element.dataset.id]));
       }
 
       draggedRef.current = null;
