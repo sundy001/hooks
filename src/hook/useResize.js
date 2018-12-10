@@ -19,30 +19,31 @@ export const useResize = (
   { onMouseDown, onResize, onResizeEnd } = {}
 ) => {
   const stateRef = useRef({
-    beginingWidth: null,
-    beginingHeight: null
+    beginningWidth: null,
+    beginningHeight: null
   });
 
   const callCallbackIfExist = (callback, event, frame) => {
-    const { beginingWidth, beginingHeight } = stateRef.current;
+    const { beginningWidth, beginningHeight } = stateRef.current;
 
     callback({
       ...event,
       frame,
-      beginingWidth,
-      beginingHeight
+      beginningWidth,
+      beginningHeight
     });
   };
 
   return useDragAndDrop({
     onMouseDown(event) {
+      // TODO: check position and keepAsepectRatio compatability
       if (onMouseDown) {
         callCallbackIfExist(onMouseDown, event);
       }
 
       const state = stateRef.current;
-      state.beginingWidth = frame.width;
-      state.beginingHeight = frame.height;
+      state.beginningWidth = frame.width;
+      state.beginningHeight = frame.height;
     },
     onDrag(event) {
       const { pageX, pageY } = event.original;
@@ -74,8 +75,8 @@ export const useResize = (
 
       let newWidth;
       if (keepAsepectRatio) {
-        const { beginingWidth, beginingHeight } = stateRef.current;
-        newWidth = (newHeight * beginingWidth) / beginingHeight;
+        const { beginningWidth, beginningHeight } = stateRef.current;
+        newWidth = (newHeight * beginningWidth) / beginningHeight;
       } else {
         newWidth =
           horizontal === null
@@ -102,8 +103,8 @@ export const useResize = (
       }
 
       const state = stateRef.current;
-      state.beginingWidth = null;
-      state.beginingHeight = null;
+      state.beginningWidth = null;
+      state.beginningHeight = null;
     }
   });
 };

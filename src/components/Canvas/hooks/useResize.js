@@ -1,6 +1,6 @@
 import Victor from "victor";
 import { useResize } from "../../../hook/useResize";
-import { useSelectionBeginingValue } from "../../../hook/useSelectionBeginingValue";
+import { useSelectionBeginningValue } from "../../../hook/useSelectionBeginningValue";
 import { RECT_VERTICES } from "../../../math/rect";
 import { updateControlBox, updateElement } from "../CanvasAction";
 import { rotationTransform } from "../../../math/affineTransformation";
@@ -12,7 +12,7 @@ export default (
   controlBoxFrame,
   controlBoxAngle
 ) => {
-  const { getBeginingValue, clearBeginingValue } = useSelectionBeginingValue(
+  const { getValue, clearValue } = useSelectionBeginningValue(
     elementStore,
     selections,
     controlBoxFrame
@@ -44,20 +44,20 @@ export default (
         onMouseDown({ original }) {
           original.stopPropagation();
         },
-        onResize({ frame, beginingWidth, beginingHeight }) {
-          const beginingValue = getBeginingValue();
-          const hRatio = frame.width / beginingWidth;
-          const vRatio = frame.height / beginingHeight;
+        onResize({ frame, beginningWidth, beginningHeight }) {
+          const beginningValue = getValue();
+          const hRatio = frame.width / beginningWidth;
+          const vRatio = frame.height / beginningHeight;
 
           selections.forEach(({ id }) => {
-            const newWidth = beginingValue[id].width * hRatio;
-            const newHeight = beginingValue[id].height * vRatio;
+            const newWidth = beginningValue[id].width * hRatio;
+            const newHeight = beginningValue[id].height * vRatio;
 
-            const { x: offsetX, y: offsetY } = beginingValue[id].offset;
+            const { x: offsetX, y: offsetY } = beginningValue[id].offset;
             const { x: newX, y: newY } = rotationTransform(
               new Victor(offsetX * hRatio, offsetY * vRatio),
               { width: newWidth, height: newHeight },
-              beginingValue[id].angle,
+              beginningValue[id].angle,
               frame,
               0
             );
@@ -77,7 +77,7 @@ export default (
           dispatch(updateControlBox({ frame }));
         },
         onResizeEnd() {
-          clearBeginingValue();
+          clearValue();
         }
       }
     );

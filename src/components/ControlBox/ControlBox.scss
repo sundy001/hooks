@@ -4,12 +4,12 @@
   top: 0;
   outline: 1px solid gray;
   z-index: 1000;
-  
-  -webkit-user-drag: none;
-  user-select: none;
+
   pointer-events: none;
 
-  &.dragging, &.resizing, &.rotating {
+  &.dragging,
+  &.resizing,
+  &.rotating {
     opacity: 0;
   }
 }

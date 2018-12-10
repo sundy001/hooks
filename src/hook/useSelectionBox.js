@@ -4,6 +4,7 @@ import { verticesOfRect } from "../math/frame";
 import { normalizeNormal, HORIZONTAL, VERTICAL } from "../math/vector";
 import { verticesOfElement, createSelection } from "../element";
 
+// TODO: move to the right place
 const projectionOfPolygron = (vertices, axis) => {
   let min = axis.dot(vertices[0]);
   let max = min;
@@ -66,14 +67,14 @@ export const useSelectionBox = (
       return shouldSelect ? shouldSelect(event) : true;
     },
 
-    onDrag({ beginingX, beginingY, original: { pageX, pageY } }) {
+    onDrag({ beginningX, beginningY, original: { pageX, pageY } }) {
       let { elementInfo, selectedElements } = stateRef.current;
       if (elementInfo === null) {
         elementInfo = stateRef.current.elementInfo = getElementInfo();
       }
 
       const { vertices: selectionVertices, size } = verticesOfRect(
-        { x: beginingX, y: beginingY },
+        { x: beginningX, y: beginningY },
         { x: pageX, y: pageY }
       );
 

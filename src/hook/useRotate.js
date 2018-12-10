@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useDragAndDrop } from "./useDragAndDrop";
 import { angleOfThreePoints } from "../math/angle";
 
@@ -7,8 +6,6 @@ export const useRotate = (
   angle,
   { onMouseDown, onRotate, onRotateEnd } = {}
 ) => {
-  const [beginAngle, setBeginAngle] = useState(null);
-
   const [rotateMouseDown, rotateMouseMove, rotateMouseUp] = useDragAndDrop({
     onMouseDown(event) {
       if (onMouseDown) {
@@ -16,24 +13,20 @@ export const useRotate = (
       }
     },
     onDrag(event) {
-      const {
-        beginingX,
-        beginingY,
-        original: { pageX, pageY }
-      } = event;
       if (!onRotate) {
         return;
       }
-
-      if (beginAngle === null) {
-        setBeginAngle(angle);
-      }
+      const {
+        beginningX,
+        beginningY,
+        original: { pageX, pageY }
+      } = event;
 
       const newAngle =
-        (beginAngle !== null ? beginAngle : angle) -
-        angleOfThreePoints(
-          beginingX,
-          beginingY,
+        // beginningAngle -
+        -angleOfThreePoints(
+          beginningX,
+          beginningY,
           x + width / 2,
           y + height / 2,
           pageX,
@@ -49,8 +42,6 @@ export const useRotate = (
       if (onRotateEnd) {
         onRotateEnd(event);
       }
-
-      setBeginAngle(null);
     }
   });
 

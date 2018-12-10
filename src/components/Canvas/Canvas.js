@@ -1,5 +1,5 @@
 import "./Canvas.scss";
-import React, { useMemo, useRef, useReducer } from "react";
+import React, { useMemo, useReducer } from "react";
 import ControlBox from "../ControlBox";
 import SelectionBox from "../SelectionBox";
 import { createElements } from "./createElements";
@@ -12,21 +12,9 @@ import useResize from "./hooks/useResize";
 import useSelectionBox from "./hooks/useSelectionBox";
 import useDeselect from "./hooks/useDeselect";
 import useSelect from "./hooks/useSelect";
-import { SET_SELECRIONS } from "./CanvasAction";
 
 const Canvas = () => {
-  const rotateReselectRef = useRef();
-  // borrow concept from middleware
-  // state and action can be processs before/after the root reducer is called
-  const reducer = (state, action) => {
-    if (action.type === SET_SELECRIONS) {
-      rotateReselectRef.current();
-    }
-    const nextState = rootReducer(state, action);
-
-    return nextState;
-  };
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(rootReducer, initialState);
 
   // selectors
   const elements = useAllEntities(state.elements);
@@ -51,19 +39,13 @@ const Canvas = () => {
     selections
   );
 
-  const {
-    rotateMouseDown,
-    rotateMouseMove,
-    rotateMouseUp,
-    rotateReselect
-  } = useRotate(
+  const { rotateMouseDown, rotateMouseMove, rotateMouseUp } = useRotate(
     dispatch,
     state.elements,
     selections,
     controlBoxFrame,
     controlBoxAngle
   );
-  rotateReselectRef.current = rotateReselect;
 
   const { resizeMouseDown, resizeMouseMove, resizeMouseUp } = useResize(
     dispatch,

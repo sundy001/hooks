@@ -3,15 +3,15 @@ import { useDragAndDrop } from "../../../hook/useDragAndDrop";
 import { updateControlBox, updateElement } from "../CanvasAction";
 
 export default (dispatch, elementStore, selections, controlBoxFrame) => {
-  const beginingFrameRef = useRef(null);
+  const beginningFrameRef = useRef(null);
 
   const [dragMouseDown, dragMouseMove, dragMouseUp] = useDragAndDrop({
     onMouseDown({ original }) {
       original.stopPropagation();
     },
     onDrag({ dx, dy }) {
-      if (beginingFrameRef.current === null) {
-        beginingFrameRef.current = { ...controlBoxFrame };
+      if (beginningFrameRef.current === null) {
+        beginningFrameRef.current = { ...controlBoxFrame };
       }
 
       // move elements
@@ -27,13 +27,13 @@ export default (dispatch, elementStore, selections, controlBoxFrame) => {
       });
 
       // move control box
-      const beginingFrame = beginingFrameRef.current;
-      beginingFrame.x += dx;
-      beginingFrame.y += dy;
-      dispatch(updateControlBox({ frame: { ...beginingFrame } }));
+      const beginningFrame = beginningFrameRef.current;
+      beginningFrame.x += dx;
+      beginningFrame.y += dy;
+      dispatch(updateControlBox({ frame: { ...beginningFrame } }));
     },
     onDragEnd() {
-      beginingFrameRef.current = null;
+      beginningFrameRef.current = null;
     }
   });
 

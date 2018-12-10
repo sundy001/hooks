@@ -1,6 +1,6 @@
-import { useMemo } from "react";
+import { useRef } from "react";
 import { useRotate } from "../../../hook/useRotate";
-import { useSelectionBeginingValue } from "../../../hook/useSelectionBeginingValue";
+import { useSelectionBeginningValue } from "../../../hook/useSelectionBeginningValue";
 import { updateControlBox, updateElement } from "../CanvasAction";
 import { rotationTransform } from "../../../math/affineTransformation";
 
@@ -11,7 +11,10 @@ export default (
   controlBoxFrame,
   controlBoxAngle
 ) => {
-  const { getBeginingValue, clearBeginingValue } = useSelectionBeginingValue(
+  const stateRef = useRef({
+    beginningControlBoxAngle: null
+  });
+  const { getValue, clearValue, updateOffset } = useSelectionBeginningValue(
     elementStore,
     selections,
     controlBoxFrame
@@ -20,41 +23,48 @@ export default (
   const rotateHandler = useRotate(controlBoxFrame, controlBoxAngle, {
     onMouseDown({ original }) {
       original.stopPropagation();
+
+      const state = stateRef.current;
+      state.beginningControlBoxAngle = controlBoxAngle;
     },
     onRotate({ angle: newAngle }) {
-      const beginingValue = getBeginingValue();
+      const beginningValue = getValue();
 
       // rotate elements
       selections.forEach(({ id }) => {
         const { frame } = elementStore.byId[id];
         const { x: newX, y: newY } = rotationTransform(
-          beginingValue[id].offset,
+          beginningValue[id].offset,
           frame,
-          beginingValue[id].angle,
+          beginningValue[id].angle,
           controlBoxFrame,
           newAngle
         );
 
         dispatch(
           updateElement(id, {
-            angle: newAngle + beginingValue[id].angle,
+            angle: newAngle + beginningValue[id].angle,
             frame: { ...frame, x: newX, y: newY }
           })
         );
       });
 
       // rotate control box
-      dispatch(updateControlBox({ angle: newAngle }));
+      const { beginningControlBoxAngle } = stateRef.current;
+      dispatch(
+        updateControlBox({ angle: beginningControlBoxAngle + newAngle })
+      );
+    },
+    onRotateEnd() {
+      clearValue();
+
+      const state = stateRef.current;
+      state.beginningControlBoxAngle = null;
     }
   });
 
   return {
     ...rotateHandler,
-    rotateReselect: useMemo(
-      () => () => {
-        clearBeginingValue();
-      },
-      []
-    )
+    rotateResize: updateOffset
   };
 };

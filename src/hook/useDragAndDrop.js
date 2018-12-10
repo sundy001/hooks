@@ -19,8 +19,8 @@ export const useDragAndDrop = ({
     isMouseDown: false,
     shouldDragChecked: null,
     previousPoint: null,
-    beginingX: null,
-    beginingY: null
+    beginningX: null,
+    beginningY: null
   });
 
   const callCallbackIfExist = (callback, event) => {
@@ -29,7 +29,7 @@ export const useDragAndDrop = ({
     }
 
     let { previousPoint } = stateRef.current;
-    const { target, beginingX, beginingY } = stateRef.current;
+    const { target, beginningX, beginningY } = stateRef.current;
     const { pageX: x, pageY: y } = event;
 
     if (previousPoint === null) {
@@ -39,8 +39,8 @@ export const useDragAndDrop = ({
     const dy = y - previousPoint.y;
 
     callback({
-      beginingX,
-      beginingY,
+      beginningX,
+      beginningY,
       dx,
       dy,
       target,
@@ -57,8 +57,8 @@ export const useDragAndDrop = ({
     state.isMouseDown = false;
     state.shouldDragChecked = null;
     state.previousPoint = null;
-    state.beginingX = null;
-    state.beginingY = null;
+    state.beginningX = null;
+    state.beginningY = null;
   };
 
   // useMemo to ensure handleMouseDown always return the same callback
@@ -67,7 +67,9 @@ export const useDragAndDrop = ({
       if (event.button !== 0) {
         return;
       }
-      
+
+      event.preventDefault();
+
       const state = stateRef.current;
       state.isMouseDown = true;
       state.target = event.target;
@@ -91,7 +93,7 @@ export const useDragAndDrop = ({
   const handleMouseMove = useMemo(
     () => event => {
       const state = stateRef.current;
-      const { shouldDragChecked, isMouseDown, beginingX, beginingY } = state;
+      const { shouldDragChecked, isMouseDown, beginningX, beginningY } = state;
       const { shouldDrag, onDrag } = callbackRef.current;
 
       if (!isMouseDown) return;
@@ -104,11 +106,11 @@ export const useDragAndDrop = ({
         }
       }
 
-      if (beginingX === null) {
-        state.beginingX = event.pageX;
+      if (beginningX === null) {
+        state.beginningX = event.pageX;
       }
-      if (beginingY === null) {
-        state.beginingY = event.pageY;
+      if (beginningY === null) {
+        state.beginningY = event.pageY;
       }
 
       callCallbackIfExist(onDrag, event);
