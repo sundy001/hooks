@@ -12,7 +12,7 @@ export default (
   controlBoxFrame,
   controlBoxAngle
 ) => {
-  const { getValue, clearValue } = useSelectionBeginningValue(
+  const { saveValue, getValue, clearValue } = useSelectionBeginningValue(
     elementStore,
     selections,
     controlBoxFrame
@@ -43,6 +43,9 @@ export default (
       {
         onMouseDown({ original }) {
           original.stopPropagation();
+        },
+        onResizeStart() {
+          saveValue();
         },
         onResize({ frame, beginningWidth, beginningHeight }) {
           const beginningValue = getValue();
@@ -76,7 +79,7 @@ export default (
 
           dispatch(updateControlBox({ frame }));
         },
-        onResizeEnd() {
+        onMouseUp() {
           clearValue();
         }
       }

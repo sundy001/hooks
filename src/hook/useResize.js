@@ -16,7 +16,7 @@ export const useResize = (
   frame,
   angle,
   keepAsepectRatio,
-  { onMouseDown, onResize, onResizeEnd } = {}
+  { onMouseDown, onResizeStart, onResize, onResizeEnd } = {}
 ) => {
   const stateRef = useRef({
     beginningWidth: null,
@@ -40,10 +40,15 @@ export const useResize = (
       if (onMouseDown) {
         callCallbackIfExist(onMouseDown, event);
       }
-
+    },
+    onDragStart(event) {
       const state = stateRef.current;
       state.beginningWidth = frame.width;
       state.beginningHeight = frame.height;
+
+      if (onResizeStart) {
+        callCallbackIfExist(onResizeStart, event);
+      }
     },
     onDrag(event) {
       const { pageX, pageY } = event.original;

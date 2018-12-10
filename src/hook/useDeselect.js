@@ -12,12 +12,10 @@ export const useDeselect = (shouldDeselect, { onDeselect } = {}) => {
     onMouseDown(event) {
       shouldDeselectRef.current = shouldDeselect(event);
     },
-
-    onDrag() {
+    onDragStart() {
       shouldDeselectRef.current = false;
     },
-
-    onDragEnd() {
+    onMouseUp() {
       if (shouldDeselectRef.current) {
         onDeselect();
       }

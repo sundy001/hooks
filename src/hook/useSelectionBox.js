@@ -66,13 +66,11 @@ export const useSelectionBox = (
     shouldDrag(event) {
       return shouldSelect ? shouldSelect(event) : true;
     },
-
+    onDragStart() {
+      stateRef.current.elementInfo = getElementInfo();
+    },
     onDrag({ beginningX, beginningY, original: { pageX, pageY } }) {
-      let { elementInfo, selectedElements } = stateRef.current;
-      if (elementInfo === null) {
-        elementInfo = stateRef.current.elementInfo = getElementInfo();
-      }
-
+      const { elementInfo, selectedElements } = stateRef.current;
       const { vertices: selectionVertices, size } = verticesOfRect(
         { x: beginningX, y: beginningY },
         { x: pageX, y: pageY }

@@ -3,13 +3,17 @@ import { angleOfThreePoints } from "../math/angle";
 
 export const useRotate = (
   { x, y, width, height },
-  angle,
-  { onMouseDown, onRotate, onRotateEnd } = {}
+  { onMouseDown, onRotateStart, onRotate, onRotateEnd } = {}
 ) => {
   const [rotateMouseDown, rotateMouseMove, rotateMouseUp] = useDragAndDrop({
     onMouseDown(event) {
       if (onMouseDown) {
         onMouseDown(event);
+      }
+    },
+    onDragStart(event) {
+      if (onRotateStart) {
+        onRotateStart(event);
       }
     },
     onDrag(event) {

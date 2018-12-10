@@ -1,15 +1,19 @@
 import { useMemo, useRef } from "react";
 
 export const useDragAndDrop = ({
-  shouldDrag,
   onMouseDown,
+  onMouseUp,
+  shouldDrag,
+  onDragStart,
   onDrag,
   onDragEnd
 } = {}) => {
   const callbackRef = useRef();
   callbackRef.current = {
     onMouseDown,
+    onMouseUp,
     shouldDrag,
+    onDragStart,
     onDrag,
     onDragEnd
   };
@@ -17,6 +21,7 @@ export const useDragAndDrop = ({
   const stateRef = useRef({
     target: null,
     isMouseDown: false,
+    isMouseMove: false,
     shouldDragChecked: null,
     previousPoint: null,
     beginningX: null,
@@ -55,6 +60,7 @@ export const useDragAndDrop = ({
     const state = stateRef.current;
     state.target = null;
     state.isMouseDown = false;
+    state.isMouseMove = false;
     state.shouldDragChecked = null;
     state.previousPoint = null;
     state.beginningX = null;
@@ -73,6 +79,8 @@ export const useDragAndDrop = ({
       const state = stateRef.current;
       state.isMouseDown = true;
       state.target = event.target;
+      state.beginningX = event.pageX;
+      state.beginningY = event.pageY;
 
       callCallbackIfExist(callbackRef.current.onMouseDown, event);
     },
@@ -81,9 +89,10 @@ export const useDragAndDrop = ({
 
   const handleMouseUp = useMemo(
     () => event => {
-      if (!stateRef.current.isMouseDown) return;
-
-      callCallbackIfExist(callbackRef.current.onDragEnd, event);
+      callCallbackIfExist(callbackRef.current.onMouseUp, event);
+      if (stateRef.current.isMouseMove) {
+        callCallbackIfExist(callbackRef.current.onDragEnd, event);
+      }
 
       dragEndCleanUp();
     },
@@ -93,10 +102,15 @@ export const useDragAndDrop = ({
   const handleMouseMove = useMemo(
     () => event => {
       const state = stateRef.current;
-      const { shouldDragChecked, isMouseDown, beginningX, beginningY } = state;
+      const { shouldDragChecked, isMouseDown } = state;
       const { shouldDrag, onDrag } = callbackRef.current;
 
       if (!isMouseDown) return;
+      if (!state.isMouseMove) {
+        callCallbackIfExist(callbackRef.current.onDragStart, event);
+      }
+
+      state.isMouseMove = true;
 
       if (shouldDrag && !shouldDragChecked) {
         state.shouldDragChecked = true;
@@ -104,13 +118,6 @@ export const useDragAndDrop = ({
           dragEndCleanUp();
           return;
         }
-      }
-
-      if (beginningX === null) {
-        state.beginningX = event.pageX;
-      }
-      if (beginningY === null) {
-        state.beginningY = event.pageY;
       }
 
       callCallbackIfExist(onDrag, event);

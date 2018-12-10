@@ -9,11 +9,10 @@ export default (dispatch, elementStore, selections, controlBoxFrame) => {
     onMouseDown({ original }) {
       original.stopPropagation();
     },
+    onDragStart() {
+      beginningFrameRef.current = { ...controlBoxFrame };
+    },
     onDrag({ dx, dy }) {
-      if (beginningFrameRef.current === null) {
-        beginningFrameRef.current = { ...controlBoxFrame };
-      }
-
       // move elements
       selections.forEach(({ id }) => {
         const frame = elementStore.byId[id].frame;

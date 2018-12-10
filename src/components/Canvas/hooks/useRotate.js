@@ -14,21 +14,24 @@ export default (
   const stateRef = useRef({
     beginningControlBoxAngle: null
   });
-  const { getValue, clearValue, updateOffset } = useSelectionBeginningValue(
+  const { saveValue, getValue, clearValue } = useSelectionBeginningValue(
     elementStore,
     selections,
     controlBoxFrame
   );
 
-  const rotateHandler = useRotate(controlBoxFrame, controlBoxAngle, {
+  return useRotate(controlBoxFrame, {
     onMouseDown({ original }) {
       original.stopPropagation();
-
+    },
+    onRotateStart() {
       const state = stateRef.current;
       state.beginningControlBoxAngle = controlBoxAngle;
+      saveValue();
     },
-    onRotate({ angle: newAngle }) {
+    onRotate({ angle }) {
       const beginningValue = getValue();
+      const { beginningControlBoxAngle } = stateRef.current;
 
       // rotate elements
       selections.forEach(({ id }) => {
@@ -38,22 +41,24 @@ export default (
           frame,
           beginningValue[id].angle,
           controlBoxFrame,
-          newAngle
+          angle
         );
+
+        const beginningAngle =
+          selections.length === 1
+            ? beginningControlBoxAngle
+            : beginningValue[id].angle;
 
         dispatch(
           updateElement(id, {
-            angle: newAngle + beginningValue[id].angle,
+            angle: beginningAngle + angle,
             frame: { ...frame, x: newX, y: newY }
           })
         );
       });
 
       // rotate control box
-      const { beginningControlBoxAngle } = stateRef.current;
-      dispatch(
-        updateControlBox({ angle: beginningControlBoxAngle + newAngle })
-      );
+      dispatch(updateControlBox({ angle: beginningControlBoxAngle + angle }));
     },
     onRotateEnd() {
       clearValue();
@@ -62,9 +67,4 @@ export default (
       state.beginningControlBoxAngle = null;
     }
   });
-
-  return {
-    ...rotateHandler,
-    rotateResize: updateOffset
-  };
 };

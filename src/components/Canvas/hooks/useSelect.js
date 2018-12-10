@@ -6,10 +6,8 @@ import { createSelection } from "../../../element";
 export default (dispatch, elementStore, selections) => {
   const draggedRef = useRef(null);
 
-  const selectElement = targetElement => {
-    const id = targetElement.closest(".element").dataset.id;
-    const element = elementStore.byId[id];
-    const selection = createSelection(element);
+  const selectElement = id => {
+    const selection = createSelection(elementStore.byId[id]);
     dispatch(setSelections([selection]));
   };
 
@@ -20,16 +18,18 @@ export default (dispatch, elementStore, selections) => {
       draggedRef.current = false;
 
       if (selections.length < 2) {
-        selectElement(original.target);
+        selectElement(original.target.dataset.id);
       }
     },
-    onDrag() {
+    onDragStart() {
       draggedRef.current = true;
     },
-    onDragEnd({ target }) {
-      if (selections.length > 1 && !draggedRef.current) {
-        selectElement(target);
+    onMouseUp({ original }) {
+      const element = original.target.closest(".element");
+      if (selections.length > 1 && !draggedRef.current && element !== null) {
+        selectElement(element.dataset.id);
       }
+
       draggedRef.current = null;
     }
   });

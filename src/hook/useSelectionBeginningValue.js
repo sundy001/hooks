@@ -8,7 +8,7 @@ export const useSelectionBeginningValue = (
 ) => {
   const beginningValueRef = useRef(null);
 
-  const saveBeginningValue = () => {
+  const saveValue = () => {
     const beginningValue = {};
 
     if (selections.length > 1) {
@@ -36,35 +36,16 @@ export const useSelectionBeginningValue = (
       };
     }
 
-    return beginningValue;
+    beginningValueRef.current = beginningValue;
   };
 
   const getValue = () => {
-    if (beginningValueRef.current === null) {
-      beginningValueRef.current = saveBeginningValue();
-    }
-
     return beginningValueRef.current;
-  };
-
-  const updateOffset = () => {
-    if (
-      beginningValueRef.current === null ||
-      Object.keys(beginningValueRef.current).length === 1
-    ) {
-      return;
-    }
-    selections.forEach(({ id }) => {
-      const { frame } = elementStore.byId[id];
-      const beginningValue = beginningValueRef.current;
-      beginningValue[id].offset.x = frame.x - controlBoxFrame.x;
-      beginningValue[id].offset.y = frame.y - controlBoxFrame.y;
-    });
   };
 
   const clearValue = () => {
     beginningValueRef.current = null;
   };
 
-  return { getValue, clearValue, updateOffset };
+  return { saveValue, getValue, clearValue };
 };
