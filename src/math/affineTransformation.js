@@ -1,5 +1,4 @@
 import Victor from "victor";
-import { vertexOfOriginRect } from "./rect";
 
 // transform the given vertex to actual cordination system
 // ref: https://gamedev.stackexchange.com/questions/16719/what-is-the-correct-order-to-multiply-scale-rotation-and-translation-matrices-f
@@ -37,13 +36,13 @@ export const rotationTransform = (
   );
 
   // rotate element at origin
-  const rotatedOrigin = vertexOfOriginRect(7, width, height)
+  const rotatedOrigin = new Victor(0, 0)
     .subtract(elementHalfSize)
     .rotate(elementAngle + controlBoxAngle)
     .add(elementHalfSize);
 
   return (
-    vertexOfOriginRect(7, width, height)
+    new Victor(0, 0)
       // rotate element by element angle at origin
       .subtract(elementHalfSize)
       .rotate(elementAngle)

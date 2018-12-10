@@ -12,9 +12,15 @@ export default {
         name: "Test",
         frame: { x: 430, y: 230, width: 20, height: 90 },
         angle: 150
+      },
+      2: {
+        id: 2,
+        name: "Test",
+        frame: { x: 130, y: 130, width: 20, height: 90 },
+        angle: 0
       }
     },
-    allIds: [0, 1]
+    allIds: [0, 1, 2]
   },
   selections: [],
   controlBox: {

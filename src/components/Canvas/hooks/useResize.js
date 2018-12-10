@@ -1,6 +1,6 @@
 import Victor from "victor";
 import { useResize } from "../../../hook/useResize";
-import { useSelectionBeginningValue } from "../../../hook/useSelectionBeginningValue";
+import { useSelectionBeginningValue } from "./useSelectionBeginningValue";
 import { RECT_VERTICES } from "../../../math/rect";
 import { updateControlBox, updateElement } from "../CanvasAction";
 import { rotationTransform } from "../../../math/affineTransformation";
@@ -79,7 +79,7 @@ export default (
 
           dispatch(updateControlBox({ frame }));
         },
-        onMouseUp() {
+        onResizeEnd() {
           clearValue();
         }
       }

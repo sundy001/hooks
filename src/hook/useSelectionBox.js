@@ -1,30 +1,11 @@
 import { useRef } from "react";
 import { useDragAndDrop } from "./useDragAndDrop";
 import { verticesOfRect } from "../math/frame";
-import { normalizeNormal, HORIZONTAL, VERTICAL } from "../math/vector";
-import { verticesOfElement, createSelection } from "../element";
-
-// TODO: move to the right place
-const projectionOfPolygron = (vertices, axis) => {
-  let min = axis.dot(vertices[0]);
-  let max = min;
-  vertices.forEach(vertex => {
-    // NOTE: the axis must be normalized to get accurate projections
-    const p = axis.dot(vertex);
-    if (p < min) {
-      min = p;
-    } else if (p > max) {
-      max = p;
-    }
-  });
-
-  return {
-    min,
-    max
-  };
-};
-
-const isOverlap = (p1, p2) => p2.max >= p1.min && p1.max >= p2.min;
+import { createSelection } from "../element";
+import {
+  overlapCache,
+  overlapedElementsByCache
+} from "../math/overlapDetection";
 
 export const useSelectionBox = (
   elements,
@@ -34,31 +15,8 @@ export const useSelectionBox = (
     beginningX: null,
     beginningY: null,
     elementInfo: null,
-    selectedElements: []
+    selectedElements: null
   });
-
-  // info include element, vertices
-  const getElementInfo = () => {
-    const elementVertices = elements.map(element => {
-      const vertices = verticesOfElement(element);
-
-      const axes =
-        element.angle === 0
-          ? []
-          : [
-              normalizeNormal(vertices[0], vertices[1]),
-              normalizeNormal(vertices[1], vertices[2])
-            ];
-
-      return {
-        element,
-        vertices,
-        axes
-      };
-    });
-
-    return elementVertices;
-  };
 
   const [
     selectBoxMouseDown,
@@ -74,55 +32,21 @@ export const useSelectionBox = (
       state.beginningY = original.pageY;
     },
     onDragStart() {
-      stateRef.current.elementInfo = getElementInfo();
+      stateRef.current.elementInfo = overlapCache(elements);
     },
     onDrag({ original }) {
       const { pageX, pageY } = original;
-      const {
-        beginningX,
-        beginningY,
-        elementInfo,
-        selectedElements
-      } = stateRef.current;
+      const { beginningX, beginningY, elementInfo } = stateRef.current;
       const { vertices: selectionVertices, size } = verticesOfRect(
         { x: beginningX, y: beginningY },
         { x: pageX, y: pageY }
       );
 
-      selectedElements.length = 0;
-      elementInfo.forEach(info => {
-        const { element, vertices, axes } = info;
-
-        let isSelected;
-        if (element.angle === 0) {
-          isSelected =
-            selectionVertices[3].x < vertices[1].x &&
-            selectionVertices[1].x > vertices[3].x &&
-            selectionVertices[3].y < vertices[1].y &&
-            selectionVertices[1].y > vertices[3].y;
-        } else {
-          // Separating Axis Theorem is used to detect rotated rectangles
-          // ref: http://www.dyn4j.org/2010/01/sat/#sat-top
-          // ref: https://gamedevelopment.tutsplus.com/tutorials/collision-detection-using-the-separating-axis-theorem--gamedev-169
-          isSelected = [HORIZONTAL, VERTICAL].every(axis => {
-            const p1 = projectionOfPolygron(selectionVertices, axis);
-            const p2 = projectionOfPolygron(vertices, axis);
-            return isOverlap(p1, p2);
-          });
-
-          if (isSelected) {
-            isSelected = axes.every(axis => {
-              const p1 = projectionOfPolygron(selectionVertices, axis);
-              const p2 = projectionOfPolygron(vertices, axis);
-              return isOverlap(p1, p2);
-            });
-          }
-        }
-
-        if (isSelected) {
-          selectedElements.push(createSelection(element));
-        }
-      });
+      const selectedElements = overlapedElementsByCache(
+        selectionVertices,
+        elementInfo
+      ).map(createSelection);
+      stateRef.current.selectedElements = selectedElements;
 
       if (onDrag) {
         const frame = {
@@ -132,7 +56,7 @@ export const useSelectionBox = (
           height: size.height
         };
 
-        onDrag({ frame, selectedElements: [...selectedElements] });
+        onDrag({ frame, selectedElements });
       }
     },
     onMouseUp(event) {
@@ -141,12 +65,11 @@ export const useSelectionBox = (
       state.beginningY = event.original.pageY;
     },
     onDragEnd() {
-      const { selectedElements } = stateRef.current;
       if (onSelectEnd) {
-        onSelectEnd([...selectedElements]);
+        onSelectEnd([...stateRef.current.selectedElements]);
       }
 
-      selectedElements.length = 0;
+      stateRef.current.selectedElements = null;
       stateRef.current.elementInfo = null;
     }
   });
