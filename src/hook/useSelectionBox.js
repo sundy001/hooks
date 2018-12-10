@@ -1,22 +1,8 @@
 import { useRef } from "react";
 import { useDragAndDrop } from "./useDragAndDrop";
 import { verticesOfRect } from "../math/frame";
+import { normalizeNormal, HORIZONTAL, VERTICAL } from "../math/vector";
 import { verticesOfElement, createSelection } from "../element";
-import Victor from "victor";
-
-const normal = (v1, v2) => {
-  const v = v2
-    .clone()
-    .subtract(v1)
-    .normalize();
-
-  // Change this vector to be perpendicular
-  const x = v.x;
-  v.x = v.y;
-  v.y = -x;
-
-  return v;
-};
 
 const projectionOfPolygron = (vertices, axis) => {
   let min = axis.dot(vertices[0]);
@@ -39,8 +25,6 @@ const projectionOfPolygron = (vertices, axis) => {
 
 const isOverlap = (p1, p2) => p2.max >= p1.min && p1.max >= p2.min;
 
-const selectionBoxAxes = [new Victor(1, 0), new Victor(0, 1)];
-
 export const useSelectionBox = (
   elements,
   { shouldSelect, onDrag, onSelectEnd } = {}
@@ -59,8 +43,8 @@ export const useSelectionBox = (
         element.angle === 0
           ? []
           : [
-              normal(vertices[0], vertices[1]),
-              normal(vertices[1], vertices[2])
+              normalizeNormal(vertices[0], vertices[1]),
+              normalizeNormal(vertices[1], vertices[2])
             ];
 
       return {
@@ -86,7 +70,6 @@ export const useSelectionBox = (
       let { elementInfo, selectedElements } = stateRef.current;
       if (elementInfo === null) {
         elementInfo = stateRef.current.elementInfo = getElementInfo();
-        // console.log(elementInfo);
       }
 
       const { vertices: selectionVertices, size } = verticesOfRect(
@@ -97,17 +80,19 @@ export const useSelectionBox = (
       selectedElements.length = 0;
       elementInfo.forEach(info => {
         const { element, vertices, axes } = info;
+
+        let isSelected;
         if (element.angle === 0) {
-          if (
+          isSelected =
             selectionVertices[3].x < vertices[1].x &&
             selectionVertices[1].x > vertices[3].x &&
             selectionVertices[3].y < vertices[1].y &&
-            selectionVertices[1].y > vertices[3].y
-          ) {
-            selectedElements.push(createSelection(element));
-          }
+            selectionVertices[1].y > vertices[3].y;
         } else {
-          let isSelected = selectionBoxAxes.every(axis => {
+          // Separating Axis Theorem is used to detect rotated rectangles
+          // ref: http://www.dyn4j.org/2010/01/sat/#sat-top
+          // ref: https://gamedevelopment.tutsplus.com/tutorials/collision-detection-using-the-separating-axis-theorem--gamedev-169
+          isSelected = [HORIZONTAL, VERTICAL].every(axis => {
             const p1 = projectionOfPolygron(selectionVertices, axis);
             const p2 = projectionOfPolygron(vertices, axis);
             return isOverlap(p1, p2);
@@ -120,10 +105,10 @@ export const useSelectionBox = (
               return isOverlap(p1, p2);
             });
           }
+        }
 
-          if (isSelected) {
-            selectedElements.push(createSelection(element));
-          }
+        if (isSelected) {
+          selectedElements.push(createSelection(element));
         }
       });
 

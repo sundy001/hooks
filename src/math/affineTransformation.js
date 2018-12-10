@@ -1,7 +1,8 @@
 import Victor from "victor";
 import { vertexOfOriginRect } from "./rect";
 
-// reference: https://gamedev.stackexchange.com/questions/16719/what-is-the-correct-order-to-multiply-scale-rotation-and-translation-matrices-f
+// transform the given vertex to actual cordination system
+// ref: https://gamedev.stackexchange.com/questions/16719/what-is-the-correct-order-to-multiply-scale-rotation-and-translation-matrices-f
 export const transform = (vertex, { x, y, width, height }, angle) => {
   const translate = new Victor(x, y);
   if (angle === 0) {

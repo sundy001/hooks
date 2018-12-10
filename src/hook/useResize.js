@@ -1,20 +1,21 @@
+import Victor from "victor";
 import { useRef } from "react";
 import { useDragAndDrop } from "./useDragAndDrop";
-import Victor from "victor";
 import {
   RECT_VERTICES,
-  indexesOfOppositeEdge,
   indexOfOppositeVertex,
   vertexOfOriginRect,
-  resolvePosition
+  resolvePosition,
+  indexesOfEdge
 } from "../math/rect";
-import { minDistanceFromVertexToLine } from "../vector";
+import { minDistanceFromVertexToLine } from "../math/vector";
 import { transform, frameDisplament } from "../math/affineTransformation";
 
 export const useResize = (
   position,
   frame,
   angle,
+  keepAsepectRatio,
   { onMouseDown, onResize, onResizeEnd } = {}
 ) => {
   const stateRef = useRef({
@@ -44,36 +45,43 @@ export const useResize = (
       state.beginingHeight = frame.height;
     },
     onDrag(event) {
-      const {
-        original: { pageX, pageY }
-      } = event;
+      const { pageX, pageY } = event.original;
       const { vertical, horizontal } = resolvePosition(position);
-      const { beginingWidth, beginingHeight } = stateRef.current;
-      const beginingWHRatio = beginingWidth / beginingHeight;
 
-      let newHeight =
+      let virtualPosition;
+      if (keepAsepectRatio) {
+        virtualPosition = mousePositionKeepAspectRatio(
+          position,
+          frame,
+          angle,
+          pageX,
+          pageY
+        );
+      } else {
+        virtualPosition = { x: pageX, y: pageY };
+      }
+
+      const newHeight =
         vertical === null
           ? frame.height
-          : axisDistance(vertical, frame, angle, pageX, pageY);
+          : axisDistance(
+              vertical,
+              frame,
+              angle,
+              virtualPosition.x,
+              virtualPosition.y
+            );
 
-
-      let newWidth =
-        horizontal === null
-          ? frame.width
-          : axisDistance(horizontal, frame, angle, pageX, pageY);
-
-      // TODO keep ratio and resize 
-      // const newWHRatio = newWidth / newHeight;
-      // const diff = newWHRatio - beginingWHRatio;
-      // console.log(diff);
-      // if (diff > 0) {
-      //   console.log("a");
-      //   newWidth = newHeight * beginingWHRatio;
-      // } else if (diff < 0) {
-      //   console.log({width: newWidth, height: newHeight, newHeight: newWidth / beginingWHRatio});
-      //   newWidth = Math.min(newHeight, newWidth) * beginingWHRatio;
-      //   newHeight = newWidth / beginingWHRatio;
-      // }
+      let newWidth;
+      if (keepAsepectRatio) {
+        const { beginingWidth, beginingHeight } = stateRef.current;
+        newWidth = (newHeight * beginingWidth) / beginingHeight;
+      } else {
+        newWidth =
+          horizontal === null
+            ? frame.width
+            : axisDistance(horizontal, frame, angle, pageX, pageY);
+      }
 
       const { x: newX, y: newY } = newXY(
         position,
@@ -100,14 +108,32 @@ export const useResize = (
   });
 };
 
-const axisDistance = (token, frame, angle, mX, mY) => {
-  const index = RECT_VERTICES.indexOf(token);
-
-  const edgeVertices = indexesOfOppositeEdge(index).map(i =>
+const mousePositionKeepAspectRatio = (position, frame, angle, mX, mY) => {
+  const index = RECT_VERTICES.indexOf(position);
+  const oppositeIndex = indexOfOppositeVertex(index);
+  const [vertex, oppositeVertex] = [index, oppositeIndex].map(i =>
     transform(vertexOfOriginRect(i, frame.width, frame.height), frame, angle)
   );
 
-  console.log(edgeVertices[0], edgeVertices[1])
+  const axis = vertex
+    .clone()
+    .subtract(oppositeVertex)
+    .normalize();
+
+  const distance = axis.dot(new Victor(mX, mY)) - axis.dot(oppositeVertex);
+
+  return axis
+    .clone()
+    .multiply(new Victor(distance, distance))
+    .add(oppositeVertex);
+};
+
+const axisDistance = (token, frame, angle, mX, mY) => {
+  const index = RECT_VERTICES.indexOf(token);
+  const oppositeIndex = indexOfOppositeVertex(index);
+  const edgeVertices = indexesOfEdge(oppositeIndex).map(i =>
+    transform(vertexOfOriginRect(i, frame.width, frame.height), frame, angle)
+  );
 
   return minDistanceFromVertexToLine(
     edgeVertices[0],

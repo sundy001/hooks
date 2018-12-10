@@ -38,9 +38,9 @@ export const resolvePosition = vertex => {
   };
 };
 
-export const indexesOfOppositeEdge = index => [
-  (index + 3 + RECT_VERTICES.length) % RECT_VERTICES.length,
-  (index + 5 + RECT_VERTICES.length) % RECT_VERTICES.length
+export const indexesOfEdge = index => [
+  (index + 1 + RECT_VERTICES.length) % RECT_VERTICES.length,
+  (index - 1 + RECT_VERTICES.length) % RECT_VERTICES.length
 ];
 
 export const indexOfOppositeVertex = index =>

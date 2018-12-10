@@ -39,6 +39,7 @@ export default (
       position,
       controlBoxFrame,
       controlBoxAngle,
+      selections.length > 1,
       {
         onMouseDown({ original }) {
           original.stopPropagation();
