@@ -1,6 +1,5 @@
-import { normalizeNormal } from "../math/vector";
 import { verticesOfElement } from "../element";
-import { HORIZONTAL, VERTICAL } from "../math/vector";
+import { HORIZONTAL, VERTICAL, normalizeNormal } from "./vector";
 
 export const isOverlapByAABB = (vertices1, vertices2) =>
   vertices1[3].x < vertices2[1].x &&

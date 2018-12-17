@@ -2,8 +2,7 @@ import { useRef } from "react";
 import Victor from "victor";
 
 export const useSelectionBeginningValue = (
-  elementStore,
-  selections,
+  selectedElements,
   controlBoxFrame
 ) => {
   const beginningValueRef = useRef(null);
@@ -11,10 +10,8 @@ export const useSelectionBeginningValue = (
   const saveValue = () => {
     const beginningValue = {};
 
-    if (selections.length > 1) {
-      selections.forEach(id => {
-        const { frame, angle } = elementStore.byId[id];
-
+    if (selectedElements.length > 1) {
+      selectedElements.forEach(({ id, frame, angle }) => {
         beginningValue[id] = {
           width: frame.width,
           height: frame.height,
@@ -26,8 +23,7 @@ export const useSelectionBeginningValue = (
         };
       });
     } else {
-      const id = selections[0];
-      const { frame } = elementStore.byId[id];
+      const { id, frame } = selectedElements[0];
       beginningValue[id] = {
         width: frame.width,
         height: frame.height,

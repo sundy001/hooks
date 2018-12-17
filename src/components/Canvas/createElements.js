@@ -1,11 +1,18 @@
 import Test from "../../Test";
+import Image from "../Elements/Image";
 import React from "react";
 
-export const createElements = (elementStore, dragMouseDown) => {
-  return elementStore.allIds.map(id => {
-    const { name, ...props } = elementStore.byId[id];
-    // const Component = lazy(() => import(`./${name}`));
+const ELEMENTS = {
+  Test,
+  Image
+};
 
-    return <Test {...props} onMouseDown={dragMouseDown} id={id} key={id} />;
+export const createElements = (elements, dragMouseDown) => {
+  return elements.map(({ id, name, ...props }) => {
+    // const Component = lazy(() => import(`./${name}`));
+    const ElementName = ELEMENTS[name];
+    return (
+      <ElementName {...props} onMouseDown={dragMouseDown} id={id} key={id} />
+    );
   });
 };

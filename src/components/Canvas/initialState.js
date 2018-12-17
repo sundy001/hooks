@@ -9,9 +9,11 @@ export default {
       },
       1: {
         id: 1,
-        name: "Test",
-        frame: { x: 430, y: 230, width: 20, height: 90 },
-        angle: 150
+        name: "Image",
+        frame: { x: 430, y: 230, width: 200, height: 200 },
+        angle: 0,
+        imageUrl:
+          "https://laurenconrad.com/wp-content/uploads/2014/01/zesjtikiwIb1rG2gAICdt_6FYmyh9-M-VcFAoEwa_I4.jpg"
       },
       2: {
         id: 2,

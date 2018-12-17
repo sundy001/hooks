@@ -70,12 +70,14 @@ export const useResize = (
       const newHeight =
         vertical === null
           ? frame.height
-          : axisDistance(
-              vertical,
-              frame,
-              angle,
-              virtualPosition.x,
-              virtualPosition.y
+          : Math.trunc(
+              axisDistance(
+                vertical,
+                frame,
+                angle,
+                virtualPosition.x,
+                virtualPosition.y
+              )
             );
 
       let newWidth;
@@ -86,7 +88,7 @@ export const useResize = (
         newWidth =
           horizontal === null
             ? frame.width
-            : axisDistance(horizontal, frame, angle, pageX, pageY);
+            : Math.trunc(axisDistance(horizontal, frame, angle, pageX, pageY));
       }
 
       const { x: newX, y: newY } = newXY(

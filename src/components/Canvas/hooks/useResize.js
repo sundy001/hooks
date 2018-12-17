@@ -1,4 +1,5 @@
 import Victor from "victor";
+import { useRef } from "react";
 import { useResize } from "../../../hook/useResize";
 import { useSelectionBeginningValue } from "./useSelectionBeginningValue";
 import { RECT_VERTICES } from "../../../math/rect";
@@ -7,14 +8,13 @@ import { rotationTransform } from "../../../math/affineTransformation";
 
 export default (
   dispatch,
-  elementStore,
-  selections,
+  selectedElements,
   controlBoxFrame,
   controlBoxAngle
 ) => {
+  const resizePositionRef = useRef(null);
   const { saveValue, getValue, clearValue } = useSelectionBeginningValue(
-    elementStore,
-    selections,
+    selectedElements,
     controlBoxFrame
   );
 
@@ -39,12 +39,13 @@ export default (
       position,
       controlBoxFrame,
       controlBoxAngle,
-      selections.length > 1,
+      selectedElements.length > 1,
       {
         onMouseDown({ original }) {
           original.stopPropagation();
         },
         onResizeStart() {
+          resizePositionRef.current = position;
           saveValue();
         },
         onResize({ frame, beginningWidth, beginningHeight }) {
@@ -52,7 +53,7 @@ export default (
           const hRatio = frame.width / beginningWidth;
           const vRatio = frame.height / beginningHeight;
 
-          selections.forEach(id => {
+          selectedElements.forEach(({ id }) => {
             const newWidth = beginningValue[id].width * hRatio;
             const newHeight = beginningValue[id].height * vRatio;
 
@@ -80,6 +81,7 @@ export default (
           dispatch(updateControlBox({ frame }));
         },
         onResizeEnd() {
+          resizePositionRef.current = null;
           clearValue();
         }
       }
@@ -90,5 +92,10 @@ export default (
     resizeUpHandlers.push(theResizeUp);
   });
 
-  return { resizeMouseDown, resizeMouseMove, resizeMouseUp };
+  return {
+    resizeMouseDown,
+    resizeMouseMove,
+    resizeMouseUp,
+    resizePosition: resizePositionRef.current
+  };
 };

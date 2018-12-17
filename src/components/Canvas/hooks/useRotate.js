@@ -6,8 +6,7 @@ import { rotationTransform } from "../../../math/affineTransformation";
 
 export default (
   dispatch,
-  elementStore,
-  selections,
+  selectedElements,
   controlBoxFrame,
   controlBoxAngle
 ) => {
@@ -15,8 +14,7 @@ export default (
     beginningControlBoxAngle: null
   });
   const { saveValue, getValue, clearValue } = useSelectionBeginningValue(
-    elementStore,
-    selections,
+    selectedElements,
     controlBoxFrame
   );
 
@@ -33,8 +31,7 @@ export default (
       const { beginningControlBoxAngle } = stateRef.current;
 
       // rotate elements
-      selections.forEach(id => {
-        const { frame } = elementStore.byId[id];
+      selectedElements.forEach(({ id, frame }) => {
         const { x: newX, y: newY } = rotationTransform(
           beginningValue[id].offset,
           frame,
@@ -44,7 +41,7 @@ export default (
         );
 
         const beginningAngle =
-          selections.length === 1
+          selectedElements.length === 1
             ? beginningControlBoxAngle
             : beginningValue[id].angle;
 

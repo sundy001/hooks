@@ -12,11 +12,14 @@ export default (dispatch, selections) => {
       draggedRef.current = false;
 
       // check the element is not if it has been selected
-      const element = selections.find(
-        id => id === parseInt(original.target.dataset.id)
-      );
-      if (element === undefined) {
-        dispatch(setSelections([original.target.dataset.id]));
+      const elementHTMLElement = original.target.closest(".element");
+      if (elementHTMLElement !== null) {
+        const element = selections.find(
+          id => id === parseInt(elementHTMLElement.dataset.id)
+        );
+        if (element === undefined) {
+          dispatch(setSelections([elementHTMLElement.dataset.id]));
+        }
       }
     },
     onDragStart() {

@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { useDragAndDrop } from "../../../hook/useDragAndDrop";
 import { updateControlBox, updateElement } from "../CanvasAction";
 
-export default (dispatch, elementStore, selections, controlBoxFrame) => {
+export default (dispatch, selectedElements, controlBoxFrame) => {
   const stateRef = useRef({
     previousPoint: null,
     beginningFrame: null
@@ -27,15 +27,16 @@ export default (dispatch, elementStore, selections, controlBoxFrame) => {
       previousPoint.y = pageY;
 
       // move elements
-      selections.forEach(id => {
-        const frame = elementStore.byId[id].frame;
-        const newFrame = {
-          ...frame,
-          x: frame.x + dx,
-          y: frame.y + dy
-        };
-
-        dispatch(updateElement(id, { frame: newFrame }));
+      selectedElements.forEach(({ id, frame }) => {
+        dispatch(
+          updateElement(id, {
+            frame: {
+              ...frame,
+              x: frame.x + dx,
+              y: frame.y + dy
+            }
+          })
+        );
       });
 
       // move control box
