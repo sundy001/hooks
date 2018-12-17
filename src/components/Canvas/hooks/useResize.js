@@ -5,6 +5,7 @@ import { useSelectionBeginningValue } from "./useSelectionBeginningValue";
 import { RECT_VERTICES } from "../../../math/rect";
 import { updateControlBox, updateElement } from "../CanvasAction";
 import { rotationTransform } from "../../../math/affineTransformation";
+import { emit } from "../../../eventBus";
 
 export default (
   dispatch,
@@ -47,6 +48,10 @@ export default (
         onResizeStart() {
           resizePositionRef.current = position;
           saveValue();
+
+          selectedElements.forEach(({ id }) => {
+            emit("resizeStart", { id, position });
+          });
         },
         onResize({ frame, beginningWidth, beginningHeight }) {
           const beginningValue = getValue();
@@ -66,23 +71,32 @@ export default (
               0
             );
 
+            const newFrame = {
+              x: newX,
+              y: newY,
+              width: newWidth,
+              height: newHeight
+            };
+
             dispatch(
               updateElement(id, {
-                frame: {
-                  x: newX,
-                  y: newY,
-                  width: newWidth,
-                  height: newHeight
-                }
+                frame: newFrame
               })
             );
+
+            emit("resize", { id, position, frame: newFrame });
           });
 
           dispatch(updateControlBox({ frame }));
         },
         onResizeEnd() {
+          const position = resizePositionRef.current;
           resizePositionRef.current = null;
           clearValue();
+
+          selectedElements.forEach(({ id }) => {
+            emit("resizeEnd", { id, position });
+          });
         }
       }
     );
@@ -95,7 +109,6 @@ export default (
   return {
     resizeMouseDown,
     resizeMouseMove,
-    resizeMouseUp,
-    resizePosition: resizePositionRef.current
+    resizeMouseUp
   };
 };

@@ -46,12 +46,12 @@ const Canvas = () => {
     controlBoxAngle
   );
 
-  const {
-    resizeMouseDown,
-    resizeMouseMove,
-    resizeMouseUp,
-    resizePosition
-  } = useResize(dispatch, selectedElements, controlBoxFrame, controlBoxAngle);
+  const { resizeMouseDown, resizeMouseMove, resizeMouseUp } = useResize(
+    dispatch,
+    selectedElements,
+    controlBoxFrame,
+    controlBoxAngle
+  );
 
   const {
     selectBoxMouseDown,
@@ -68,11 +68,7 @@ const Canvas = () => {
     dragMouseDown(event);
     selectMouseDown(event);
   }, []);
-  const children = createElements(
-    elements,
-    onChildrenMouseDown,
-    resizePosition
-  );
+  const children = createElements(elements, onChildrenMouseDown);
 
   // control box
   children.push(

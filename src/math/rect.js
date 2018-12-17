@@ -1,14 +1,23 @@
 import Victor from "victor";
 
+export const TOP = "top";
+export const TOP_RIGHT = "top-right";
+export const RIGHT = "right";
+export const BOTTOM_RIGHT = "bottom-right";
+export const BOTTOM = "bottom";
+export const BOTTOM_LEFT = "bottom-left";
+export const LEFT = "left";
+export const TOP_LEFT = "top-left";
+
 export const RECT_VERTICES = [
-  "top",
-  "top-right",
-  "right",
-  "bottom-right",
-  "bottom",
-  "bottom-left",
-  "left",
-  "top-left"
+  TOP,
+  TOP_RIGHT,
+  RIGHT,
+  BOTTOM_RIGHT,
+  BOTTOM,
+  BOTTOM_LEFT,
+  LEFT,
+  TOP_LEFT
 ];
 
 export const ALL_INDEXES = [0, 1, 2, 3, 4, 5, 6, 7];
