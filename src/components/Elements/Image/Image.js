@@ -28,13 +28,32 @@ const Image = ({ id, imageUrl, dispatch, ...props }) => {
   useElementListener("resize", id, ({ position, frame }) => {
     const { beginningFrame, beginningImageFrame } = stateRef.current;
     const { vertical, horizontal } = resolvePosition(position);
-    const newFrame = { ...imageFrame };
+    let newFrame;
 
-    if (horizontal === LEFT) {
-      newFrame.x = beginningImageFrame.x + frame.width - beginningFrame.width;
-    }
-    if (vertical === TOP) {
-      newFrame.y = beginningImageFrame.y + frame.height - beginningFrame.height;
+    // TODO: move to resize start
+    const widthRatio = beginningFrame.width / beginningImageFrame.width;
+    const heightRatio = beginningFrame.height / beginningImageFrame.height;
+
+    if (horizontal !== null && vertical !== null) {
+      newFrame = {
+        width:
+          beginningImageFrame.width +
+          (frame.width - beginningFrame.width) / widthRatio,
+        height:
+          beginningImageFrame.height +
+          (frame.height - beginningFrame.height) / heightRatio,
+        x: beginningImageFrame.x * (frame.width / beginningFrame.width),
+        y: beginningImageFrame.y * (frame.height / beginningFrame.height)
+      };
+    } else {
+      newFrame = { ...imageFrame };
+      if (horizontal === LEFT) {
+        newFrame.x = beginningImageFrame.x + frame.width - beginningFrame.width;
+      }
+      if (vertical === TOP) {
+        newFrame.y =
+          beginningImageFrame.y + frame.height - beginningFrame.height;
+      }
     }
 
     setImageFrame(newFrame);

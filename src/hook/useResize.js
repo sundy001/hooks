@@ -15,7 +15,7 @@ export const useResize = (
   position,
   frame,
   angle,
-  keepAsepectRatio,
+  shouldKeepAsepectRatio,
   { onMouseDown, onResizeStart, onResize, onResizeEnd } = {}
 ) => {
   const stateRef = useRef({
@@ -53,6 +53,8 @@ export const useResize = (
     onDrag(event) {
       const { pageX, pageY } = event.original;
       const { vertical, horizontal } = resolvePosition(position);
+      const keepAsepectRatio =
+        vertical !== null && horizontal !== null && shouldKeepAsepectRatio;
 
       let virtualPosition;
       if (keepAsepectRatio) {
