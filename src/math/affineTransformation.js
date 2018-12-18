@@ -60,7 +60,7 @@ export const rotationTransform = (
   );
 };
 
-export const frameDisplament = (vertex, width, height, angle, target) => {
+export const frameDisplacement = (vertex, width, height, angle, target) => {
   const half = new Victor(width / 2, height / 2);
 
   // rotate element at origin

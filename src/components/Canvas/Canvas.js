@@ -68,7 +68,7 @@ const Canvas = () => {
     dragMouseDown(event);
     selectMouseDown(event);
   }, []);
-  const children = createElements(elements, onChildrenMouseDown);
+  const children = createElements(elements, onChildrenMouseDown, dispatch);
 
   // control box
   children.push(

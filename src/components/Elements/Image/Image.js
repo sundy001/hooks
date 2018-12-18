@@ -1,13 +1,12 @@
-import { useElement } from "../../../hook/useElement";
 import React, { memo, useRef } from "react";
-import style from "./Image.module.css";
-import cx from "classnames";
 import { useState } from "react";
 import { resolvePosition, TOP, LEFT } from "../../../math/rect";
 import { useElementListener } from "../hooks/useEventListener";
+import { DisplayImage } from "./DisplayImage";
+import ImageCropper from "../../ImageCropper";
 
-const Image = ({ id, imageUrl, dispatch, ...props }) => {
-  const elementProps = useElement(props);
+const Image = props => {
+  const { id } = props;
   const stateRef = useRef({
     beginningFrame: null,
     beginningImageFrame: null
@@ -18,6 +17,7 @@ const Image = ({ id, imageUrl, dispatch, ...props }) => {
     x: 0,
     y: 0
   });
+  const [isCropping, setIsCropping] = useState(false);
 
   useElementListener("resizeStart", id, () => {
     const state = stateRef.current;
@@ -64,28 +64,21 @@ const Image = ({ id, imageUrl, dispatch, ...props }) => {
   });
 
   useElementListener("doubleClick", id, () => {
-    console.log("double click", imageFrame, props.frame);
+    setIsCropping(true);
   });
 
-  return (
-    <div
-      data-id={id}
-      className={cx("element", style.component)}
-      {...elementProps}
-    >
-      <img
-        className={style.image}
-        style={{
-          width: `${imageFrame.width}px`,
-          height: `${imageFrame.height}px`,
-          transform: `translate(${imageFrame.x}px, ${
-            imageFrame.y
-          }px) rotate(0deg)`
-        }}
-        src={imageUrl}
+  if (isCropping) {
+    // if (isCropping) {
+    return (
+      <ImageCropper
+        imageFrame={imageFrame}
+        setIsCropping={setIsCropping}
+        {...props}
       />
-    </div>
-  );
+    );
+  } else {
+    return <DisplayImage imageFrame={imageFrame} {...props} />;
+  }
 };
 
 export default memo(Image);

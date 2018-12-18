@@ -9,7 +9,7 @@ import {
   indexesOfEdge
 } from "../math/rect";
 import { minDistanceFromVertexToLine } from "../math/vector";
-import { transform, frameDisplament } from "../math/affineTransformation";
+import { transform, frameDisplacement } from "../math/affineTransformation";
 
 export const useResize = (
   position,
@@ -161,7 +161,7 @@ const newXY = (position, frame, angle, hDistance, vDistance) => {
     angle
   );
 
-  return frameDisplament(
+  return frameDisplacement(
     vertexOfOriginRect(oppositeIndex, hDistance, vDistance), //  raw vertex
     hDistance,
     vDistance,

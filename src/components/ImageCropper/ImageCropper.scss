@@ -1,0 +1,22 @@
+.image-croppoer__masked {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(14, 19, 24, 0.2);
+  pointer-events: auto;
+}
+
+.image-container {
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow: hidden;
+}
+
+.image-container__image {
+  position: absolute;
+  top: 0;
+  left: 0;
+}

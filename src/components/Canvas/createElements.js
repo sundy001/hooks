@@ -7,12 +7,18 @@ const ELEMENTS = {
   Image
 };
 
-export const createElements = (elements, dragMouseDown) => {
+export const createElements = (elements, dragMouseDown, dispatch) => {
   return elements.map(({ id, name, ...props }) => {
     // const Component = lazy(() => import(`./${name}`));
     const ElementName = ELEMENTS[name];
     return (
-      <ElementName {...props} onMouseDown={dragMouseDown} id={id} key={id} />
+      <ElementName
+        key={id}
+        id={id}
+        {...props}
+        onMouseDown={dragMouseDown}
+        dispatch={dispatch}
+      />
     );
   });
 };
