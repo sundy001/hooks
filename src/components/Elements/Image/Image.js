@@ -63,6 +63,10 @@ const Image = ({ id, imageUrl, dispatch, ...props }) => {
     stateRef.current.beginningFrame = null;
   });
 
+  useElementListener("doubleClick", id, () => {
+    console.log("double click", imageFrame, props.frame);
+  });
+
   return (
     <div
       data-id={id}
