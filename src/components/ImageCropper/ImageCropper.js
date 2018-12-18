@@ -12,7 +12,8 @@ const ImageCropper = ({
   dispatch,
   frame: initialFrame,
   angle,
-  setIsCropping
+  setIsCropping,
+  onFinish
 }) => {
   const [imageFrame, setImageFrame] = useState(initalImageFrame);
   const [frame, setFrame] = useState(initialFrame);
@@ -60,7 +61,6 @@ const ImageCropper = ({
       const dy = pageY - previousPoint.y;
       previousPoint.x = pageX;
       previousPoint.y = pageY;
-      console.log("onDrag");
 
       setImageFrame({
         ...imageFrame,
@@ -85,6 +85,7 @@ const ImageCropper = ({
         className="image-croppoer__masked"
         onClick={() => {
           console.log("-----------");
+          onFinish(imageFrame);
           setIsCropping(false);
         }}
       />

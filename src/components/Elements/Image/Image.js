@@ -71,6 +71,9 @@ const Image = props => {
     // if (isCropping) {
     return (
       <ImageCropper
+        onFinish={newImageFrame => {
+          setImageFrame(newImageFrame);
+        }}
         imageFrame={imageFrame}
         setIsCropping={setIsCropping}
         {...props}
