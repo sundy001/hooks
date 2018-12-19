@@ -1,9 +1,12 @@
 import React, { memo, useEffect, useRef, useState } from "react";
 import Victor from "victor";
 import "./ImageCropper.scss";
-import { updateControlBox } from "../Canvas/CanvasAction";
+import { hideControlBox, showControlBox } from "../Canvas/CanvasAction";
 import { transform, frameDisplacement } from "../../math/affineTransformation";
-import { useDragAndDrop } from "../../hook/useDragAndDrop";
+import useDragAndDrop from "./hooks/useDragAndDrop";
+import useResize from "./hooks/useResize";
+import useInnerCrop from "./hooks/useInnerCrop";
+import ControlBox from "../ControlBox";
 
 const ImageCropper = ({
   id,
@@ -17,74 +20,80 @@ const ImageCropper = ({
 }) => {
   const [imageFrame, setImageFrame] = useState(initalImageFrame);
   const [frame, setFrame] = useState(initialFrame);
+  const [outerBoxPosition, setOuterPosition] = useState(() => {
+    const { x, y, width, height } = imageFrame;
+    const offset = new Victor(x, y);
+    offset.rotate(angle);
+
+    const targetVertex = transform(new Victor(0, 0), frame, angle);
+    targetVertex.add(offset);
+
+    return frameDisplacement(
+      new Victor(0, 0), //  raw vertex
+      width,
+      height,
+      angle,
+      targetVertex // target vertex
+    );
+  });
+
+  const outerBoxFrame = {
+    ...imageFrame,
+    x: outerBoxPosition.x,
+    y: outerBoxPosition.y
+  };
 
   useEffect(() => {
-    dispatch(updateControlBox({ frame: { x: 0, y: 0, width: 0, height: 0 } }));
+    dispatch(hideControlBox());
+
+    return () => {
+      dispatch(showControlBox());
+    };
   }, []);
 
-  const offset = new Victor(imageFrame.x, imageFrame.y);
-  offset.rotate(angle);
-
-  const targetVertex = transform(new Victor(0, 0), frame, angle);
-  targetVertex.add(offset);
-
-  const external = frameDisplacement(
-    new Victor(0, 0), //  raw vertex
-    imageFrame.width,
-    imageFrame.height,
-    angle,
-    targetVertex // target vertex
+  // TODO: should unify the code with useDragAndDrop in canvas
+  const { dragMouseDown, dragMouseMove, dragMouseUp } = useDragAndDrop(
+    setImageFrame,
+    setOuterPosition,
+    imageFrame,
+    outerBoxPosition,
+    angle
   );
 
-  const stateRef = useRef({
-    previousPoint: null
-  });
+  const { resizeMouseDown, resizeMouseMove, resizeMouseUp } = useResize(
+    setOuterPosition,
+    setImageFrame,
+    outerBoxFrame,
+    frame,
+    angle
+  );
 
-  // TODO: should unify the code with useDragAndDrop in canvas
-  const [handleMouseDown, handleMouseMove, handleMouseUp] = useDragAndDrop({
-    onMouseDown({ original }) {
-      // TOOD: may be can removed later, after stop canvas event handler
-      // copy from canvas useDragAndDrop
-      original.stopPropagation();
-
-      stateRef.current.previousPoint = { x: original.pageX, y: original.pageY };
-    },
-    onDragStart() {
-      console.log("onDragStart");
-    },
-    onDrag({ original }) {
-      // copy from canvas useDragAndDrop
-      const { previousPoint } = stateRef.current;
-
-      const { pageX, pageY } = original;
-      const dx = pageX - previousPoint.x;
-      const dy = pageY - previousPoint.y;
-      previousPoint.x = pageX;
-      previousPoint.y = pageY;
-
-      setImageFrame({
-        ...imageFrame,
-        x: imageFrame.x + dx,
-        y: imageFrame.y + dy
-      });
-    },
-    onDragEnd() {
-      console.log("onDragEnd");
-    }
-  });
-
-  // console.log(external);
+  const { cropMouseDown, cropMouseMove, cropMouseUp } = useInnerCrop(
+    setFrame,
+    setImageFrame,
+    frame,
+    imageFrame,
+    angle
+  );
 
   return (
     <div
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
+      onMouseDown={dragMouseDown}
+      onMouseMove={event => {
+        dragMouseMove(event);
+        resizeMouseMove(event);
+        cropMouseMove(event);
+      }}
+      onMouseUp={event => {
+        dragMouseUp(event);
+        resizeMouseUp(event);
+        cropMouseUp(event);
+      }}
     >
       <div
         className="image-croppoer__masked"
-        onClick={() => {
-          console.log("-----------");
+        onMouseDown={event => {
+          event.stopPropagation();
           onFinish(imageFrame);
           setIsCropping(false);
         }}
@@ -114,11 +123,27 @@ const ImageCropper = ({
           opacity: 0.5,
           width: `${imageFrame.width}px`,
           height: `${imageFrame.height}px`,
-          transform: `translate(${external.x}px, ${
-            external.y
+          transform: `translate(${outerBoxPosition.x}px, ${
+            outerBoxPosition.y
           }px) rotate(${angle}rad)`
         }}
         src={imageUrl}
+      />
+      <ControlBox
+        show={true}
+        frame={frame}
+        angle={angle}
+        resizeHandlerPosition="corner"
+        controls={["resize"]}
+        resizeMouseDown={cropMouseDown}
+      />
+      <ControlBox
+        show={true}
+        frame={outerBoxFrame}
+        angle={angle}
+        resizeHandlerPosition="corner"
+        controls={["resize"]}
+        resizeMouseDown={resizeMouseDown}
       />
     </div>
   );

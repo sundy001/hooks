@@ -10,6 +10,7 @@ export default (dispatch, selections) => {
     clickPosition: null,
     consecutiveClickCount: 0,
     doubleClickTimer: null,
+    mouseDowned: true,
     dragged: null
   });
 
@@ -38,6 +39,7 @@ export default (dispatch, selections) => {
 
       const state = stateRef.current;
       state.dragged = false;
+      state.mouseDowned = true;
 
       const elementHTMLElement = original.target.closest(".element");
       if (elementHTMLElement !== null) {
@@ -55,24 +57,30 @@ export default (dispatch, selections) => {
     onMouseUp({ original }) {
       const { target, pageX, pageY } = original;
       const state = stateRef.current;
+      const {
+        clickPosition,
+        mouseDowned,
+        dragged,
+        consecutiveClickCount
+      } = state;
 
       const element = target.closest(".element");
+      const isClickPositionDifferent =
+        clickPosition !== null &&
+        (clickPosition.x !== pageX || clickPosition.y !== pageY);
 
-      if (
-        state.clickPosition !== null &&
-        (state.clickPosition.x !== pageX || state.clickPosition.y !== pageY)
-      ) {
+      if (isClickPositionDifferent || !mouseDowned) {
         clearDoubleClickData();
       }
 
-      if (!state.dragged && element !== null) {
+      if (!dragged && mouseDowned && element !== null) {
         if (selections.length > 1) {
           dispatch(setSelections([element.dataset.id]));
         }
 
         state.consecutiveClickCount++;
 
-        if (state.consecutiveClickCount === 1) {
+        if (consecutiveClickCount === 1) {
           state.clickPosition = { x: pageX, y: pageY };
         }
 
@@ -85,6 +93,7 @@ export default (dispatch, selections) => {
       }
 
       state.dragged = null;
+      state.mouseDowned = false;
     }
   });
 

@@ -17,40 +17,46 @@ const POSITION_VERTEX_INDEX_MAP = {
 };
 
 const ControlBox = ({
+  show,
   frame: { x, y, width, height },
   angle,
+  controls, // (rotation|resize)[]
   resizeHandlerPosition, // all, edge, corner
   rotateMouseDown,
   resizeMouseDown
 }) => {
-  if (width === 0 || height === 0) {
+  if (!show || width === 0 || height === 0) {
     return null;
   }
 
   const children = [];
 
   // resize
-  POSITION_VERTEX_INDEX_MAP[resizeHandlerPosition].forEach(index => {
-    const position = RECT_VERTICES[index];
-    children.push(
-      <ResizeHandler
-        key={`resize-${position}`}
-        position={position}
-        onMouseDown={resizeMouseDown[position]}
-      />
-    );
-  });
+  if (controls.indexOf("resize") !== -1) {
+    POSITION_VERTEX_INDEX_MAP[resizeHandlerPosition].forEach(index => {
+      const position = RECT_VERTICES[index];
+      children.push(
+        <ResizeHandler
+          key={`resize-${position}`}
+          position={position}
+          onMouseDown={resizeMouseDown[position]}
+        />
+      );
+    });
+  }
 
   // rotation
-  children.push(
-    <RotationHandler
-      key="rotate-bottom"
-      position="bottom"
-      onMouseDown={event => {
-        rotateMouseDown(event);
-      }}
-    />
-  );
+  if (controls.indexOf("rotation") !== -1) {
+    children.push(
+      <RotationHandler
+        key="rotate-bottom"
+        position="bottom"
+        onMouseDown={event => {
+          rotateMouseDown(event);
+        }}
+      />
+    );
+  }
 
   return (
     <div
@@ -70,7 +76,8 @@ const ControlBox = ({
 };
 
 ControlBox.defaultProps = {
-  resizeHandlerPosition: "all"
+  resizeHandlerPosition: "all",
+  controls: ["rotation", "resize"]
 };
 
 export default memo(ControlBox);

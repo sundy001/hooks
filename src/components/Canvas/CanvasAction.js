@@ -1,6 +1,8 @@
 export const UPDATE_ELEMENT = "UPDATE_ELEMENT";
 export const SET_SELECRIONS = "SET_SELECRIONS";
 export const UPDATE_CONTROL_BOX = "UPDATE_CONTROL_BOX";
+export const SHOW_CONTROL_BOX = "SHOW_CONTROL_BOX";
+export const HIDE_CONTROL_BOX = "HIDE_CONTROL_BOX";
 export const UPDATE_SELECTION_BOX = "UPDATE_SELECTION_FRAME";
 
 export const updateElement = (id, props) => ({
@@ -22,6 +24,14 @@ export const clearSelection = () => ({
 export const updateControlBox = props => ({
   type: UPDATE_CONTROL_BOX,
   ...props
+});
+
+export const showControlBox = () => ({
+  type: SHOW_CONTROL_BOX
+});
+
+export const hideControlBox = () => ({
+  type: HIDE_CONTROL_BOX
 });
 
 export const updateSelectionBox = frame => ({

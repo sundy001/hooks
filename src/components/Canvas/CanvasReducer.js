@@ -1,6 +1,8 @@
 import { combineReducers } from "../../combinReducer";
 import {
   UPDATE_CONTROL_BOX,
+  SHOW_CONTROL_BOX,
+  HIDE_CONTROL_BOX,
   UPDATE_ELEMENT,
   UPDATE_SELECTION_BOX,
   SET_SELECRIONS
@@ -24,11 +26,20 @@ export const elements = (state, action) => {
 export const controlBox = (state, action) => {
   switch (action.type) {
     case UPDATE_CONTROL_BOX:
-      const { type: _, ...props } = action;
-
       return {
         ...state,
-        ...props
+        angle: action.angle !== undefined ? action.angle : state.angle,
+        frame: action.frame !== undefined ? action.frame : state.frame
+      };
+    case SHOW_CONTROL_BOX:
+      return {
+        ...state,
+        show: true
+      };
+    case HIDE_CONTROL_BOX:
+      return {
+        ...state,
+        show: false
       };
     default:
       return state;
@@ -88,13 +99,14 @@ export const selectionBoxUpdatedBySelection = (
   switch (action.type) {
     case SET_SELECRIONS:
       if (selections.length === 0) {
-        return { frame: { x: 0, y: 0, width: 0, height: 0 }, angle: 0 };
+        return { ...state, show: false };
       }
 
       if (selections.length === 1) {
         const { frame, angle } = elementStore.byId[selections[0]];
 
         return {
+          show: true,
           frame: { ...frame },
           angle
         };
@@ -105,7 +117,11 @@ export const selectionBoxUpdatedBySelection = (
       );
       const { width, height } = sizeOfRectVertices(min, max);
 
-      return { frame: { x: min.x, y: min.y, width, height }, angle: 0 };
+      return {
+        show: true,
+        frame: { x: min.x, y: min.y, width, height },
+        angle: 0
+      };
     default:
       return state;
   }

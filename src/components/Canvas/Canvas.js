@@ -20,7 +20,11 @@ const Canvas = () => {
   // selectors
   const elements = selectAllElements(state);
   const selectedElements = selectSelectedElements(state);
-  const { frame: controlBoxFrame, angle: controlBoxAngle } = state.controlBox;
+  const {
+    frame: controlBoxFrame,
+    angle: controlBoxAngle,
+    show: showControlBox
+  } = state.controlBox;
   const { selectionBox: selectionBoxFrame, selections } = state;
   const selectedIdStr = selections.reduce(
     (prevId, { id }) => prevId + "-" + id,
@@ -74,6 +78,7 @@ const Canvas = () => {
   children.push(
     <ControlBox
       key={`control-frame${selectedIdStr}`}
+      show={showControlBox}
       frame={controlBoxFrame}
       angle={controlBoxAngle}
       // TODO: when the logic become complicated, move it to selector

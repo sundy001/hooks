@@ -26,6 +26,7 @@ export default {
   },
   selections: [],
   controlBox: {
+    show: true,
     angle: 0,
     frame: {
       x: 0,

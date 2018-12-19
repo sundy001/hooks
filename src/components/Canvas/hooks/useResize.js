@@ -13,7 +13,6 @@ export default (
   controlBoxFrame,
   controlBoxAngle
 ) => {
-  const resizePositionRef = useRef(null);
   const { saveValue, getValue, clearValue } = useSelectionBeginningValue(
     selectedElements,
     controlBoxFrame
@@ -22,18 +21,6 @@ export default (
   const resizeMouseDown = {};
   const resizeMoveHandlers = [];
   const resizeUpHandlers = [];
-
-  const resizeMouseMove = event => {
-    resizeMoveHandlers.forEach(handler => {
-      handler(event);
-    });
-  };
-
-  const resizeMouseUp = event => {
-    resizeUpHandlers.forEach(handler => {
-      handler(event);
-    });
-  };
 
   RECT_VERTICES.forEach(position => {
     const [theResizeDown, theResizeMove, theResizeUp] = useResize(
@@ -47,7 +34,6 @@ export default (
           original.stopPropagation();
         },
         onResizeStart() {
-          resizePositionRef.current = position;
           saveValue();
 
           selectedElements.forEach(({ id }) => {
@@ -91,8 +77,6 @@ export default (
           dispatch(updateControlBox({ frame }));
         },
         onResizeEnd() {
-          const position = resizePositionRef.current;
-          resizePositionRef.current = null;
           clearValue();
 
           selectedElements.forEach(({ id }) => {
@@ -106,6 +90,18 @@ export default (
     resizeMoveHandlers.push(theResizeMove);
     resizeUpHandlers.push(theResizeUp);
   });
+
+  const resizeMouseMove = event => {
+    resizeMoveHandlers.forEach(handler => {
+      handler(event);
+    });
+  };
+
+  const resizeMouseUp = event => {
+    resizeUpHandlers.forEach(handler => {
+      handler(event);
+    });
+  };
 
   return {
     resizeMouseDown,
