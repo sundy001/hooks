@@ -1,6 +1,6 @@
 import Victor from "victor";
 import { useRef } from "react";
-import { useResize } from "../../../hook/useResize";
+import { useResize } from "../../../hooks/useResize";
 import { useSelectionBeginningValue } from "./useSelectionBeginningValue";
 import { RECT_VERTICES } from "../../../math/rect";
 import { updateControlBox, updateElement } from "../CanvasAction";

@@ -1,16 +1,16 @@
 import Victor from "victor";
-import { useResize } from "../../../hook/useResize";
+import { useResize } from "../../../hooks/useResize";
 import { RECT_VERTICES, CORNER_INDEXES } from "../../../math/rect";
 import { transform } from "../../../math/affineTransformation";
 
-export default (
+export const useOuterResize = (
   setOuterPosition,
   setImageFrame,
   outerBoxFrame,
   frame,
   angle
 ) => {
-  const resizeMouseDown = {};
+  const outerResizeMouseDown = {};
   const resizeMoveHandlers = [];
   const resizeUpHandlers = [];
 
@@ -37,22 +37,22 @@ export default (
       }
     );
 
-    resizeMouseDown[position] = theResizeDown;
+    outerResizeMouseDown[position] = theResizeDown;
     resizeMoveHandlers.push(theResizeMove);
     resizeUpHandlers.push(theResizeUp);
   });
 
-  const resizeMouseMove = event => {
+  const outerResizeMouseMove = event => {
     resizeMoveHandlers.forEach(handler => {
       handler(event);
     });
   };
 
-  const resizeMouseUp = event => {
+  const outerResizeMouseUp = event => {
     resizeUpHandlers.forEach(handler => {
       handler(event);
     });
   };
 
-  return { resizeMouseDown, resizeMouseMove, resizeMouseUp };
+  return { outerResizeMouseDown, outerResizeMouseMove, outerResizeMouseUp };
 };

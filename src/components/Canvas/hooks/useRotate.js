@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { useRotate } from "../../../hook/useRotate";
+import { useRotate } from "../../../hooks/useRotate";
 import { useSelectionBeginningValue } from "./useSelectionBeginningValue";
 import { updateControlBox, updateElement } from "../CanvasAction";
 import { rotationTransform } from "../../../math/affineTransformation";

@@ -22,8 +22,8 @@ const ControlBox = ({
   angle,
   controls, // (rotation|resize)[]
   resizeHandlerPosition, // all, edge, corner
-  rotateMouseDown,
-  resizeMouseDown
+  onRotateMouseDown,
+  onResizeMouseDown
 }) => {
   if (!show || width === 0 || height === 0) {
     return null;
@@ -39,7 +39,7 @@ const ControlBox = ({
         <ResizeHandler
           key={`resize-${position}`}
           position={position}
-          onMouseDown={resizeMouseDown[position]}
+          onMouseDown={onResizeMouseDown[position]}
         />
       );
     });
@@ -52,7 +52,7 @@ const ControlBox = ({
         key="rotate-bottom"
         position="bottom"
         onMouseDown={event => {
-          rotateMouseDown(event);
+          onRotateMouseDown(event);
         }}
       />
     );

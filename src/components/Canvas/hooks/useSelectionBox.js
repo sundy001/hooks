@@ -1,4 +1,4 @@
-import { useSelectionBox } from "../../../hook/useSelectionBox";
+import { useSelectionBox } from "../../../hooks/useSelectionBox";
 import { updateSelectionBox, setSelections } from "../CanvasAction";
 
 export default (dispatch, elements) =>

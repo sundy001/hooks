@@ -1,4 +1,4 @@
-import { useDeselect } from "../../../hook/useDeselect";
+import { useDeselect } from "../../../hooks/useDeselect";
 import { clearSelection } from "../CanvasAction";
 
 export default dispatch => {

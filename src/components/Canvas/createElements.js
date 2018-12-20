@@ -1,5 +1,5 @@
 import Test from "../../Test";
-import Image from "../Elements/Image";
+import Image from "../elements/Image";
 import React from "react";
 
 const ELEMENTS = {

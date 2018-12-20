@@ -4,8 +4,8 @@ import ControlBox from "../ControlBox";
 import SelectionBox from "../SelectionBox";
 import { createElements } from "./createElements";
 import initialState from "./initialState";
-import { selectAllElements } from "../../selector/selectAllElements";
-import { selectSelectedElements } from "../../selector/selectSelectedElements";
+import { selectAllElements } from "../../selectors/selectAllElements";
+import { selectSelectedElements } from "../../selectors/selectSelectedElements";
 import rootReducer from "./CanvasReducer";
 import useDragAndDrop from "./hooks/useDragAndDrop";
 import useRotate from "./hooks/useRotate";
@@ -83,8 +83,8 @@ const Canvas = () => {
       angle={controlBoxAngle}
       // TODO: when the logic become complicated, move it to selector
       resizeHandlerPosition={selections.length > 1 ? "corner" : "all"}
-      rotateMouseDown={rotateMouseDown}
-      resizeMouseDown={resizeMouseDown}
+      onRotateMouseDown={rotateMouseDown}
+      onResizeMouseDown={resizeMouseDown}
     />
   );
 

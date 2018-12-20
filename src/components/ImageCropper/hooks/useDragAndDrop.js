@@ -1,8 +1,8 @@
 import Victor from "victor";
 import { useRef } from "react";
-import { useDragAndDrop } from "../../../hook/useDragAndDrop";
+import { useDragAndDrop as useDrag } from "../../../hooks/useDragAndDrop";
 
-export default (
+export const useDragAndDrop = (
   setImageFrame,
   setOuterPosition,
   imageFrame,
@@ -13,7 +13,7 @@ export default (
     previousPoint: null
   });
 
-  const [dragMouseDown, dragMouseMove, dragMouseUp] = useDragAndDrop({
+  const [dragMouseDown, dragMouseMove, dragMouseUp] = useDrag({
     onMouseDown({ original }) {
       // TOOD: may be can removed later, after stop canvas event handler
       // copy from canvas useDragAndDrop

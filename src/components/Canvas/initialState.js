@@ -13,7 +13,8 @@ export default {
         frame: { x: 430, y: 230, width: 200, height: 200 },
         angle: 0,
         imageUrl:
-          "https://laurenconrad.com/wp-content/uploads/2014/01/zesjtikiwIb1rG2gAICdt_6FYmyh9-M-VcFAoEwa_I4.jpg"
+          "https://laurenconrad.com/wp-content/uploads/2014/01/zesjtikiwIb1rG2gAICdt_6FYmyh9-M-VcFAoEwa_I4.jpg",
+        imageFrame: { x: 0, y: 0, width: 640, height: 640 }
       },
       2: {
         id: 2,

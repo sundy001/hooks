@@ -4559,7 +4559,7 @@ istanbul-lib-coverage@^1.2.0, istanbul-lib-coverage@^1.2.1:
 
 istanbul-lib-hook@^1.2.2:
   version "1.2.2"
-  resolved "https://registry.yarnpkg.com/istanbul-lib-hook/-/istanbul-lib-hook-1.2.2.tgz#bc6bf07f12a641fbf1c85391d0daa8f0aea6bf86"
+  resolved "https://registry.yarnpkg.com/istanbul-lib-hooks/-/istanbul-lib-hook-1.2.2.tgz#bc6bf07f12a641fbf1c85391d0daa8f0aea6bf86"
   dependencies:
     append-transform "^0.4.0"
 

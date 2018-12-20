@@ -1,10 +1,17 @@
 import Victor from "victor";
-import { useResize } from "../../../hook/useResize";
+import { useResize } from "../../../hooks/useResize";
 import { RECT_VERTICES, CORNER_INDEXES } from "../../../math/rect";
 import { transform } from "../../../math/affineTransformation";
 
-export default (setFrame, setImageFrame, frame, imageFrame, angle) => {
-  const cropMouseDown = {};
+export const useInnerResize = (
+  setFrame,
+  setImageFrame,
+  frame,
+  imageFrame,
+  outerBoxPosition,
+  angle
+) => {
+  const innerResizeMouseDown = {};
   const resizeMoveHandlers = [];
   const resizeUpHandlers = [];
 
@@ -21,29 +28,40 @@ export default (setFrame, setImageFrame, frame, imageFrame, angle) => {
         onResize({ frame: newFrame }) {
           setFrame(newFrame);
 
+          const outerTopLeft = transform(
+            new Victor(0, 0),
+            {
+              ...imageFrame,
+              ...outerBoxPosition
+            },
+            angle
+          );
+          const frameTopLeft = transform(new Victor(0, 0), newFrame, angle);
+
           setImageFrame({
-            ...imageFrame
+            ...imageFrame,
+            ...outerTopLeft.subtract(frameTopLeft).rotate(-angle)
           });
         }
       }
     );
 
-    cropMouseDown[position] = theResizeDown;
+    innerResizeMouseDown[position] = theResizeDown;
     resizeMoveHandlers.push(theResizeMove);
     resizeUpHandlers.push(theResizeUp);
   });
 
-  const cropMouseMove = event => {
+  const innerResizeMouseMove = event => {
     resizeMoveHandlers.forEach(handler => {
       handler(event);
     });
   };
 
-  const cropMouseUp = event => {
+  const innerResizeMouseUp = event => {
     resizeUpHandlers.forEach(handler => {
       handler(event);
     });
   };
 
-  return { cropMouseDown, cropMouseMove, cropMouseUp };
+  return { innerResizeMouseDown, innerResizeMouseMove, innerResizeMouseUp };
 };

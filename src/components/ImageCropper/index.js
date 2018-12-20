@@ -1,1 +1,1 @@
-export { default } from "./ImageCropper";
+export { default } from "./ImageCropperContainer";
