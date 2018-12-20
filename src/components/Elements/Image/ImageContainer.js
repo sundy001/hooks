@@ -3,7 +3,12 @@ import { Image } from "./Image";
 import { useResize } from "./hooks/useResize";
 import { useElementListener } from "../hooks/useEventListener";
 import { ImageCropper } from "../../ImageCropper";
-import { updateControlBox, updateElement } from "../../Canvas/CanvasAction";
+import {
+  updateControlBox,
+  updateElement,
+  hideControlBox,
+  showControlBox
+} from "../../Canvas/CanvasAction";
 
 export const ImageContainer = memo(props => {
   const { id, dispatch, imageFrame: initialImageFrame } = props;
@@ -18,14 +23,24 @@ export const ImageContainer = memo(props => {
     setImageFrame(newImageFrame);
     dispatch(updateControlBox({ frame: newFrame }));
     dispatch(updateElement(id, { frame: newFrame }));
+    setIsCropping(false);
+  });
+
+  const onCropperMount = useCallback(() => {
+    dispatch(hideControlBox());
+  });
+
+  const onCropperUnmount = useCallback(() => {
+    dispatch(showControlBox());
   });
 
   if (isCropping) {
     return (
       <ImageCropper
-        onFinish={onFinish}
-        setIsCropping={setIsCropping}
         {...props}
+        onFinish={onFinish}
+        onMount={onCropperMount}
+        onUnmount={onCropperUnmount}
         imageFrame={imageFrame}
       />
     );

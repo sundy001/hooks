@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
-import Canvas from "./components/Canvas";
+import { Canvas } from "./components/Canvas";
 import * as serviceWorker from "./serviceWorker";
 // import { init } from "./debugCanvas";
 

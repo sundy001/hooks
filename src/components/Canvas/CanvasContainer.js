@@ -4,8 +4,8 @@ import { ControlBox } from "../ControlBox";
 import { SelectionBox } from "../SelectionBox";
 import { createElements } from "./createElements";
 import { initialState } from "./initialState";
-import { selectAllElements } from "../../selectors/selectAllElements";
-import { selectSelectedElements } from "../../selectors/selectSelectedElements";
+import { selectAllElements } from "./selectors/selectAllElements";
+import { selectSelectedElements } from "./selectors/selectSelectedElements";
 import { reducer } from "./CanvasReducer";
 import { useDragAndDrop } from "./hooks/useDragAndDrop";
 import { useRotate } from "./hooks/useRotate";
@@ -14,7 +14,7 @@ import { useSelectionBox } from "./hooks/useSelectionBox";
 import { useDeselect } from "./hooks/useDeselect";
 import { useSelect } from "./hooks/useSelect";
 
-const Canvas = () => {
+export const CanvasContainer = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   // selectors
@@ -126,5 +126,3 @@ const Canvas = () => {
     </div>
   );
 };
-
-export default Canvas;

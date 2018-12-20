@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useCallback, useState } from "react";
-import { hideControlBox, showControlBox } from "../Canvas/CanvasAction";
+
 import { useDragAndDrop } from "./hooks/useDragAndDrop";
 import { useOuterResize } from "./hooks/useOuterResize";
 import { useInnerResize } from "./hooks/useInnerResize";
@@ -10,10 +10,10 @@ export const ImageCropperContainer = memo(
   ({
     imageUrl,
     imageFrame: initalImageFrame,
-    dispatch,
     frame: initialFrame,
     angle,
-    setIsCropping,
+    onMount,
+    onUnmount,
     onFinish
   }) => {
     const [imageFrame, setImageFrame] = useState(initalImageFrame);
@@ -29,10 +29,9 @@ export const ImageCropperContainer = memo(
     };
 
     useEffect(() => {
-      dispatch(hideControlBox());
-
+      onMount();
       return () => {
-        dispatch(showControlBox());
+        onUnmount();
       };
     }, []);
 
@@ -90,7 +89,6 @@ export const ImageCropperContainer = memo(
         onMaskMouseDown={useCallback(event => {
           event.stopPropagation();
           onFinish(imageFrame, frame);
-          setIsCropping(false);
         })}
         onInnerResizeMouseDown={innerResizeMouseDown}
         onOuterResizeMouseDown={outerResizeMouseDown}
