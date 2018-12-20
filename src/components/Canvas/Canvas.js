@@ -1,21 +1,21 @@
 import "./Canvas.scss";
 import React, { useCallback, useReducer } from "react";
-import ControlBox from "../ControlBox";
-import SelectionBox from "../SelectionBox";
+import { ControlBox } from "../ControlBox";
+import { SelectionBox } from "../SelectionBox";
 import { createElements } from "./createElements";
-import initialState from "./initialState";
+import { initialState } from "./initialState";
 import { selectAllElements } from "../../selectors/selectAllElements";
 import { selectSelectedElements } from "../../selectors/selectSelectedElements";
-import rootReducer from "./CanvasReducer";
-import useDragAndDrop from "./hooks/useDragAndDrop";
-import useRotate from "./hooks/useRotate";
-import useResize from "./hooks/useResize";
-import useSelectionBox from "./hooks/useSelectionBox";
-import useDeselect from "./hooks/useDeselect";
-import useSelect from "./hooks/useSelect";
+import { reducer } from "./CanvasReducer";
+import { useDragAndDrop } from "./hooks/useDragAndDrop";
+import { useRotate } from "./hooks/useRotate";
+import { useResize } from "./hooks/useResize";
+import { useSelectionBox } from "./hooks/useSelectionBox";
+import { useDeselect } from "./hooks/useDeselect";
+import { useSelect } from "./hooks/useSelect";
 
 const Canvas = () => {
-  const [state, dispatch] = useReducer(rootReducer, initialState);
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   // selectors
   const elements = selectAllElements(state);
@@ -98,32 +98,29 @@ const Canvas = () => {
   );
 
   // canvas
-  const onCanvasMouseDown = useCallback(event => {
-    selectBoxMouseDown(event);
-    deselectMouseDown(event);
-  }, []);
-  const onCanvasMouseMove = useCallback(event => {
-    dragMouseMove(event);
-    selectMouseMove(event);
-    rotateMouseMove(event);
-    resizeMouseMove(event);
-    selectBoxMouseMove(event);
-    deselectMouseMove(event);
-  }, []);
-  const onCanvasMouseUp = useCallback(event => {
-    dragMouseUp(event);
-    selectMouseUp(event);
-    rotateMouseUp(event);
-    resizeMouseUp(event);
-    selectBoxMouseUp(event);
-    deselectMouseUp(event);
-  }, []);
   return (
     <div
       className="canvas"
-      onMouseDown={onCanvasMouseDown}
-      onMouseMove={onCanvasMouseMove}
-      onMouseUp={onCanvasMouseUp}
+      onMouseDown={useCallback(event => {
+        selectBoxMouseDown(event);
+        deselectMouseDown(event);
+      }, [])}
+      onMouseMove={useCallback(event => {
+        dragMouseMove(event);
+        selectMouseMove(event);
+        rotateMouseMove(event);
+        resizeMouseMove(event);
+        selectBoxMouseMove(event);
+        deselectMouseMove(event);
+      }, [])}
+      onMouseUp={useCallback(event => {
+        dragMouseUp(event);
+        selectMouseUp(event);
+        rotateMouseUp(event);
+        resizeMouseUp(event);
+        selectBoxMouseUp(event);
+        deselectMouseUp(event);
+      }, [])}
     >
       {children}
     </div>

@@ -1,1 +1,1 @@
-export { default } from "./ImageCropperContainer";
+export { ImageCropperContainer as ImageCropper } from "./ImageCropperContainer";

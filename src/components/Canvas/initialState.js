@@ -1,4 +1,4 @@
-export default {
+export const initialState = {
   elements: {
     byId: {
       0: {

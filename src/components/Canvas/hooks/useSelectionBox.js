@@ -1,8 +1,8 @@
-import { useSelectionBox } from "../../../hooks/useSelectionBox";
+import { useSelectionBox as useRawSelectionBox } from "../../../hooks/useSelectionBox";
 import { updateSelectionBox, setSelections } from "../CanvasAction";
 
-export default (dispatch, elements) =>
-  useSelectionBox(elements, {
+export const useSelectionBox = (dispatch, elements) =>
+  useRawSelectionBox(elements, {
     onDrag({ frame }) {
       dispatch(updateSelectionBox(frame));
     },

@@ -151,7 +151,7 @@ const combinedReducer = combineReducers({
   selectionBox
 });
 
-export default (state, action) => {
+export const reducer = (state, action) => {
   const intermediateState = combinedReducer(state, action);
   return crossSliceReducer(intermediateState, action);
 };

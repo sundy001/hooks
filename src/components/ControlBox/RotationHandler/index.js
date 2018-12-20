@@ -1,1 +1,1 @@
-export { default } from "./RotationHandler";
+export { RotationHandler } from "./RotationHandler";

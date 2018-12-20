@@ -1,1 +1,1 @@
-export { default } from "./ControlBox";
+export { ControlBox } from "./ControlBox";

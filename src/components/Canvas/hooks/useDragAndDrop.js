@@ -1,14 +1,14 @@
 import { useRef } from "react";
-import { useDragAndDrop } from "../../../hooks/useDragAndDrop";
+import { useDragAndDrop as useDrag } from "../../../hooks/useDragAndDrop";
 import { updateControlBox, updateElement } from "../CanvasAction";
 
-export default (dispatch, selectedElements, controlBoxFrame) => {
+export const useDragAndDrop = (dispatch, selectedElements, controlBoxFrame) => {
   const stateRef = useRef({
     previousPoint: null,
     beginningFrame: null
   });
 
-  const [dragMouseDown, dragMouseMove, dragMouseUp] = useDragAndDrop({
+  const [dragMouseDown, dragMouseMove, dragMouseUp] = useDrag({
     onMouseDown({ original }) {
       original.stopPropagation();
 

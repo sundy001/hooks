@@ -1,11 +1,11 @@
 import { useRef } from "react";
-import { useDragAndDrop } from "../../../hooks/useDragAndDrop";
+import { useDragAndDrop as useDrag } from "../../../hooks/useDragAndDrop";
 import { setSelections } from "../CanvasAction";
 import { emit } from "../../../eventBus";
 
 const DOUBLE_CLICK_INTERVAL = 500;
 
-export default (dispatch, selections) => {
+export const useSelect = (dispatch, selections) => {
   const stateRef = useRef({
     clickPosition: null,
     consecutiveClickCount: 0,
@@ -33,7 +33,7 @@ export default (dispatch, selections) => {
     }, DOUBLE_CLICK_INTERVAL);
   };
 
-  const [selectMouseDown, selectMouseMove, selectMouseUp] = useDragAndDrop({
+  const [selectMouseDown, selectMouseMove, selectMouseUp] = useDrag({
     onMouseDown({ original }) {
       original.stopPropagation();
 

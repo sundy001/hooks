@@ -1,15 +1,7 @@
-import React, { memo, forwardRef } from "react";
+import React, { memo } from "react";
 import "./ResizeHandler.scss";
-import classNames from "classnames";
+import cx from "classnames";
 
-const ResizeHandler = forwardRef(({ position, ...props }, ref) => {
-  return (
-    <div
-      {...props}
-      ref={ref}
-      className={classNames("resizable-handler", position)}
-    />
-  );
-});
-
-export default memo(ResizeHandler);
+export const ResizeHandler = memo(({ position, ...props }) => (
+  <div {...props} className={cx("resizable-handler", position)} />
+));

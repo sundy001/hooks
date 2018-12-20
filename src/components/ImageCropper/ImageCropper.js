@@ -1,5 +1,5 @@
 import React from "react";
-import ControlBox from "../ControlBox";
+import { ControlBox } from "../ControlBox";
 import "./ImageCropper.scss";
 
 export const ImageCropper = ({

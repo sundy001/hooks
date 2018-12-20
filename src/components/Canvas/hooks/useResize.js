@@ -1,13 +1,12 @@
 import Victor from "victor";
-import { useRef } from "react";
-import { useResize } from "../../../hooks/useResize";
+import { useResize as useRawResize } from "../../../hooks/useResize";
 import { useSelectionBeginningValue } from "./useSelectionBeginningValue";
 import { RECT_VERTICES } from "../../../math/rect";
 import { updateControlBox, updateElement } from "../CanvasAction";
 import { rotationTransform } from "../../../math/affineTransformation";
 import { emit } from "../../../eventBus";
 
-export default (
+export const useResize = (
   dispatch,
   selectedElements,
   controlBoxFrame,
@@ -23,7 +22,7 @@ export default (
   const resizeUpHandlers = [];
 
   RECT_VERTICES.forEach(position => {
-    const [theResizeDown, theResizeMove, theResizeUp] = useResize(
+    const [theResizeDown, theResizeMove, theResizeUp] = useRawResize(
       position,
       controlBoxFrame,
       controlBoxAngle,

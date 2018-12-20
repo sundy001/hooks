@@ -1,16 +1,12 @@
-import React from "react";
-import { useElement } from "../../../hooks/useElement";
-import style from "./Image.module.css";
+import React, { memo } from "react";
 import cx from "classnames";
+import { useElement } from "../../../hooks/useElement";
+import { component, image } from "./Image.module.css";
 
-export const Image = ({ id, imageUrl, imageFrame, ...props }) => (
-  <div
-    data-id={id}
-    className={cx("element", style.component)}
-    {...useElement(props)}
-  >
+export const Image = memo(({ id, imageUrl, imageFrame, ...props }) => (
+  <div data-id={id} className={cx("element", component)} {...useElement(props)}>
     <img
-      className={style.image}
+      className={image}
       style={{
         width: `${imageFrame.width}px`,
         height: `${imageFrame.height}px`,
@@ -19,4 +15,4 @@ export const Image = ({ id, imageUrl, imageFrame, ...props }) => (
       src={imageUrl}
     />
   </div>
-);
+));

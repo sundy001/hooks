@@ -1,10 +1,10 @@
 import { useRef } from "react";
-import { useRotate } from "../../../hooks/useRotate";
+import { useRotate as useRawRotate } from "../../../hooks/useRotate";
 import { useSelectionBeginningValue } from "./useSelectionBeginningValue";
 import { updateControlBox, updateElement } from "../CanvasAction";
 import { rotationTransform } from "../../../math/affineTransformation";
 
-export default (
+export const useRotate = (
   dispatch,
   selectedElements,
   controlBoxFrame,
@@ -18,7 +18,7 @@ export default (
     controlBoxFrame
   );
 
-  return useRotate(controlBoxFrame, {
+  return useRawRotate(controlBoxFrame, {
     onMouseDown({ original }) {
       original.stopPropagation();
     },
