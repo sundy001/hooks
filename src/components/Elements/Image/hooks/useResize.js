@@ -7,18 +7,25 @@ export const useResize = (id, dispatch, frame, imageFrame) => {
   const stateRef = useRef({
     beginningFrame: null,
     beginningImageFrame: null,
-    ratio: null
+    hRatio: null,
+    vRatio: null
   });
 
   useElementListener("resizeStart", id, () => {
     const state = stateRef.current;
     state.beginningFrame = frame;
     state.beginningImageFrame = imageFrame;
-    state.ratio = frame.width / imageFrame.width;
+    state.hRatio = frame.width / imageFrame.width;
+    state.vRatio = frame.height / imageFrame.height;
   });
 
   useElementListener("resize", id, ({ position, frame }) => {
-    const { beginningFrame, beginningImageFrame, ratio } = stateRef.current;
+    const {
+      beginningFrame,
+      beginningImageFrame,
+      hRatio,
+      vRatio
+    } = stateRef.current;
     const { vertical, horizontal } = resolvePosition(position);
     let newFrame;
 
@@ -26,10 +33,10 @@ export const useResize = (id, dispatch, frame, imageFrame) => {
       newFrame = {
         width:
           beginningImageFrame.width +
-          (frame.width - beginningFrame.width) / ratio,
+          (frame.width - beginningFrame.width) / hRatio,
         height:
           beginningImageFrame.height +
-          (frame.height - beginningFrame.height) / ratio,
+          (frame.height - beginningFrame.height) / vRatio,
         x: beginningImageFrame.x * (frame.width / beginningFrame.width),
         y: beginningImageFrame.y * (frame.height / beginningFrame.height)
       };
@@ -51,6 +58,7 @@ export const useResize = (id, dispatch, frame, imageFrame) => {
     const state = stateRef.current;
     state.beginningFrame = null;
     state.beginningImageFrame = null;
-    state.ratio = null;
+    state.hRatio = null;
+    state.rRatio = null;
   });
 };
