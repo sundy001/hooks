@@ -1,7 +1,7 @@
-import React, { memo, useState, useCallback } from "react";
+import React, { memo, useCallback } from "react";
 import { Image } from "./Image";
 import { useResize } from "./hooks/useResize";
-import { useElementListener } from "../hooks/useEventListener";
+import { useElementListener } from "../../../eventBus/useEventListener";
 import { ImageCropper } from "../../ImageCropper";
 import {
   updateControlBox,
@@ -20,15 +20,15 @@ export const ImageContainer = memo(props => {
   const onFinish = useCallback((imageFrame, frame) => {
     dispatch(updateControlBox({ frame }));
     dispatch(updateElement(id, { imageFrame, frame, isCropping: false }));
-  });
+  }, []);
 
   const onCropperMount = useCallback(() => {
     dispatch(hideControlBox());
-  });
+  }, []);
 
   const onCropperUnmount = useCallback(() => {
     dispatch(showControlBox());
-  });
+  }, []);
 
   if (isCropping) {
     return (

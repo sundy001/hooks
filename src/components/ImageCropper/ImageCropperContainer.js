@@ -80,16 +80,16 @@ export const ImageCropperContainer = memo(
           dragMouseMove(event);
           outerResizeMouseMove(event);
           innerResizeMouseMove(event);
-        })}
+        }, [])}
         onMouseUp={useCallback(event => {
           dragMouseUp(event);
           outerResizeMouseUp(event);
           innerResizeMouseUp(event);
-        })}
-        onMaskMouseDown={useCallback(event => {
-          event.stopPropagation();
+        }, [])}
+        onMaskMouseDown={useCallback(({ original, imageFrame, frame }) => {
+          original.stopPropagation();
           onFinish(imageFrame, frame);
-        })}
+        }, [])}
         onInnerResizeMouseDown={innerResizeMouseDown}
         onOuterResizeMouseDown={outerResizeMouseDown}
       />

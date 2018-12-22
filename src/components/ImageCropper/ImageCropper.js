@@ -20,7 +20,12 @@ export const ImageCropper = ({
     onMouseMove={onMouseMove}
     onMouseUp={onMouseUp}
   >
-    <div className="image-croppoer__masked" onMouseDown={onMaskMouseDown} />
+    <div
+      className="image-croppoer__masked"
+      onMouseDown={event => {
+        onMaskMouseDown({ original: event, frame, imageFrame });
+      }}
+    />
     <div
       className="image-container"
       style={{

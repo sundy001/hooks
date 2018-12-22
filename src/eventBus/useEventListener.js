@@ -1,5 +1,5 @@
 import { useRef, useEffect } from "react";
-import { addListener, removeListener } from "../../../eventBus";
+import { addListener, removeListener } from "./eventBus";
 
 export const useElementListener = (eventName, id, handler) => {
   const handlerRef = useRef();
