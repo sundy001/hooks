@@ -1,8 +1,9 @@
 import { useRef } from "react";
 import { resolvePosition, TOP, LEFT } from "../../../../math/rect";
 import { useElementListener } from "../../hooks/useEventListener";
+import { updateElement } from "../../../Canvas/CanvasAction";
 
-export const useResize = (id, setImageFrame, frame, imageFrame) => {
+export const useResize = (id, dispatch, frame, imageFrame) => {
   const stateRef = useRef({
     beginningFrame: null,
     beginningImageFrame: null,
@@ -43,7 +44,7 @@ export const useResize = (id, setImageFrame, frame, imageFrame) => {
       }
     }
 
-    setImageFrame(newFrame);
+    dispatch(updateElement(id, { imageFrame: newFrame }));
   });
 
   useElementListener("resizeEnd", id, () => {

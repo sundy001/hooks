@@ -11,19 +11,15 @@ import {
 } from "../../Canvas/CanvasAction";
 
 export const ImageContainer = memo(props => {
-  const { id, dispatch, imageFrame: initialImageFrame } = props;
-  const [imageFrame, setImageFrame] = useState(initialImageFrame);
-  const [isCropping, setIsCropping] = useState(false);
+  const { id, dispatch, imageFrame, isCropping } = props;
   useElementListener("doubleClick", id, () => {
-    setIsCropping(true);
+    dispatch(updateElement(id, { isCropping: true }));
   });
-  useResize(id, setImageFrame, props.frame, imageFrame);
+  useResize(id, dispatch, props.frame, imageFrame);
 
-  const onFinish = useCallback((newImageFrame, newFrame) => {
-    setImageFrame(newImageFrame);
-    dispatch(updateControlBox({ frame: newFrame }));
-    dispatch(updateElement(id, { frame: newFrame }));
-    setIsCropping(false);
+  const onFinish = useCallback((imageFrame, frame) => {
+    dispatch(updateControlBox({ frame }));
+    dispatch(updateElement(id, { imageFrame, frame, isCropping: false }));
   });
 
   const onCropperMount = useCallback(() => {
@@ -41,10 +37,9 @@ export const ImageContainer = memo(props => {
         onFinish={onFinish}
         onMount={onCropperMount}
         onUnmount={onCropperUnmount}
-        imageFrame={imageFrame}
       />
     );
   } else {
-    return <Image {...props} imageFrame={imageFrame} />;
+    return <Image {...props} />;
   }
 });
