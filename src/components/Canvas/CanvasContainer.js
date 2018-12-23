@@ -13,6 +13,12 @@ import { useResize } from "./hooks/useResize";
 import { useSelectionBox } from "./hooks/useSelectionBox";
 import { useDeselect } from "./hooks/useDeselect";
 import { useSelect } from "./hooks/useSelect";
+import {
+  copyElements,
+  setSelections,
+  updateElement,
+  raiseElements
+} from "./CanvasAction";
 
 export const CanvasContainer = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -26,10 +32,6 @@ export const CanvasContainer = () => {
     show: showControlBox
   } = state.controlBox;
   const { selectionBox: selectionBoxFrame, selections } = state;
-  const selectedIdStr = selections.reduce(
-    (prevId, { id }) => prevId + "-" + id,
-    ""
-  );
 
   // hooks
   const { dragMouseDown, dragMouseMove, dragMouseUp } = useDragAndDrop(
@@ -72,30 +74,56 @@ export const CanvasContainer = () => {
     dragMouseDown(event);
     selectMouseDown(event);
   }, []);
-  const children = createElements(elements, onChildrenMouseDown, dispatch);
-
-  // control box
-  children.push(
-    <ControlBox
-      key={`control-frame${selectedIdStr}`}
-      show={showControlBox}
-      frame={controlBoxFrame}
-      angle={controlBoxAngle}
-      // TODO: when the logic become complicated, move it to selector
-      resizeHandlerPosition={selections.length > 1 ? "corner" : "all"}
-      onRotateMouseDown={rotateMouseDown}
-      onResizeMouseDown={resizeMouseDown}
-    />
+  const children = createElements(
+    dispatch,
+    elements,
+    state.raise,
+    onChildrenMouseDown
   );
 
-  // selection box
-  children.push(
-    <SelectionBox
-      key="selection-frame"
-      frame={selectionBoxFrame}
-      elements={elements}
-    />
-  );
+  const toolButtons = [];
+  if (selectedElements.length > 0) {
+    toolButtons.push(
+      <button
+        key="copy"
+        onClick={() => {
+          dispatch(copyElements());
+
+          // TODO: need to think about how the get new Id
+          const selectionLength = state.selections.length;
+          const newElementIds = [];
+          let maxId = Math.max(...state.elements.allIds);
+          for (let i = 0; i < selectionLength; i++) {
+            newElementIds.push(++maxId);
+          }
+          dispatch(setSelections(newElementIds));
+        }}
+      >
+        Copy
+      </button>
+    );
+  }
+  if (selectedElements.length === 1) {
+    if (
+      selectedElements[0].name === "Image" &&
+      !selectedElements[0].isCropping
+    ) {
+      toolButtons.push(
+        <button
+          key="crop"
+          onClick={() => {
+            const id = selectedElements[0].id;
+            dispatch(updateElement(id, { isCropping: true }));
+            dispatch(raiseElements([id]));
+          }}
+        >
+          Crop
+        </button>
+      );
+    } else if (selectedElements[0].name === "Test") {
+    }
+  } else if (selectedElements.length > 1) {
+  }
 
   // canvas
   return (
@@ -123,6 +151,26 @@ export const CanvasContainer = () => {
       }, [])}
     >
       {children}
+      <SelectionBox frame={selectionBoxFrame} elements={elements} />
+      <ControlBox
+        show={showControlBox}
+        frame={controlBoxFrame}
+        angle={controlBoxAngle}
+        // TODO: when the logic become complicated, move it to selector
+        resizeHandlerPosition={selections.length > 1 ? "corner" : "all"}
+        onRotateMouseDown={rotateMouseDown}
+        onResizeMouseDown={resizeMouseDown}
+      />
+      <div
+        style={{
+          background: "yellow",
+          position: "absolute",
+          left: 0,
+          right: 0
+        }}
+      >
+        {toolButtons}
+      </div>
     </div>
   );
 };

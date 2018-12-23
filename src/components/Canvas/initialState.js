@@ -27,6 +27,7 @@ export const initialState = {
     allIds: [0, 1, 2]
   },
   selections: [],
+  raise: [],
   controlBox: {
     show: true,
     angle: 0,

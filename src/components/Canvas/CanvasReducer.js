@@ -5,11 +5,15 @@ import {
   HIDE_CONTROL_BOX,
   UPDATE_ELEMENT,
   UPDATE_SELECTION_BOX,
-  SET_SELECRIONS
+  SET_SELECIONS,
+  COPY_ELEMENTS,
+  RAISE_ELEMENTS,
+  CLEAR_RAISE_ELEMENTS
 } from "./CanvasAction";
 import { updateEntity } from "../../updateEntity";
 import { sizeOfRectVertices } from "../../math/frame";
 import Victor from "victor";
+import cloneDeep from "lodash/cloneDeep";
 import { verticesOfElement } from "../../element";
 
 export const elements = (state, action) => {
@@ -57,8 +61,19 @@ export const selectionBox = (state, action) => {
 
 export const selections = (state, action) => {
   switch (action.type) {
-    case SET_SELECRIONS:
+    case SET_SELECIONS:
       return action.selections;
+    default:
+      return state;
+  }
+};
+
+export const raise = (state, action) => {
+  switch (action.type) {
+    case RAISE_ELEMENTS:
+      return action.elements;
+    case CLEAR_RAISE_ELEMENTS:
+      return [];
     default:
       return state;
   }
@@ -97,7 +112,7 @@ export const selectionBoxUpdatedBySelection = (
   elementStore
 ) => {
   switch (action.type) {
-    case SET_SELECRIONS:
+    case SET_SELECIONS:
       if (selections.length === 0) {
         return { ...state, show: false };
       }
@@ -127,9 +142,43 @@ export const selectionBoxUpdatedBySelection = (
   }
 };
 
+export const copySelectedElements = (state, action, selections) => {
+  switch (action.type) {
+    case COPY_ELEMENTS:
+      if (selections.length === 0) {
+        return state;
+      }
+      let lastId = Math.max(...state.allIds);
+
+      const byId = { ...state.byId };
+      const allIds = [...state.allIds];
+      selections.forEach(id => {
+        const newElement = cloneDeep(state.byId[id]);
+        newElement.id = ++lastId;
+        newElement.frame.x += 20;
+        newElement.frame.y += 20;
+
+        byId[newElement.id] = newElement;
+        allIds.push(newElement.id);
+      });
+
+      return {
+        byId,
+        allIds
+      };
+    default:
+      return state;
+  }
+};
+
 export const crossSliceReducer = (state, action) => {
   switch (action.type) {
-    case SET_SELECRIONS:
+    case COPY_ELEMENTS:
+      return {
+        ...state,
+        elements: copySelectedElements(state.elements, action, state.selections)
+      };
+    case SET_SELECIONS:
       return {
         ...state,
         controlBox: selectionBoxUpdatedBySelection(
@@ -148,7 +197,8 @@ const combinedReducer = combineReducers({
   elements,
   selections,
   controlBox,
-  selectionBox
+  selectionBox,
+  raise
 });
 
 export const reducer = (state, action) => {

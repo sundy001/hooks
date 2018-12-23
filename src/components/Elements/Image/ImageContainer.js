@@ -7,19 +7,23 @@ import {
   updateControlBox,
   updateElement,
   hideControlBox,
-  showControlBox
+  showControlBox,
+  raiseElements,
+  clearRaiseElements
 } from "../../Canvas/CanvasAction";
 
 export const ImageContainer = memo(props => {
   const { id, dispatch, imageFrame, isCropping } = props;
   useElementListener("doubleClick", id, () => {
     dispatch(updateElement(id, { isCropping: true }));
+    dispatch(raiseElements([id]));
   });
   useResize(id, dispatch, props.frame, imageFrame);
 
   const onFinish = useCallback((imageFrame, frame) => {
     dispatch(updateControlBox({ frame }));
     dispatch(updateElement(id, { imageFrame, frame, isCropping: false }));
+    dispatch(clearRaiseElements());
   }, []);
 
   const onCropperMount = useCallback(() => {
