@@ -43,11 +43,10 @@ export const useSelect = (dispatch, selections) => {
 
       const elementHTMLElement = original.target.closest(".element");
       if (elementHTMLElement !== null) {
-        const element = selections.find(
-          id => id === Number(elementHTMLElement.dataset.id)
-        );
+        const elementId = Number(elementHTMLElement.dataset.id);
+        const element = selections.find(id => id === elementId);
         if (element === undefined) {
-          dispatch(setSelections([elementHTMLElement.dataset.id]));
+          dispatch(setSelections([elementId]));
         }
       }
     },
@@ -75,7 +74,7 @@ export const useSelect = (dispatch, selections) => {
 
       if (!dragged && mouseDowned && element !== null) {
         if (selections.length > 1) {
-          dispatch(setSelections([element.dataset.id]));
+          dispatch(setSelections([Number(element.dataset.id)]));
         }
 
         state.consecutiveClickCount++;

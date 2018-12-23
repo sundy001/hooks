@@ -5,6 +5,7 @@ export const SHOW_CONTROL_BOX = "SHOW_CONTROL_BOX";
 export const HIDE_CONTROL_BOX = "HIDE_CONTROL_BOX";
 export const UPDATE_SELECTION_BOX = "UPDATE_SELECTION_FRAME";
 export const COPY_ELEMENTS = "COPY_ELEMENTS";
+export const DELETE_ELEMENTS = "DELETE_ELEMENTS";
 export const RAISE_ELEMENTS = "RAISE_ELEMENTS";
 export const CLEAR_RAISE_ELEMENTS = "CLEAR_RAISE_ELEMENTS";
 
@@ -44,6 +45,11 @@ export const updateSelectionBox = frame => ({
 
 export const copyElements = () => ({
   type: COPY_ELEMENTS
+});
+
+export const deleteElements = elements => ({
+  type: DELETE_ELEMENTS,
+  elements
 });
 
 export const raiseElements = elements => ({

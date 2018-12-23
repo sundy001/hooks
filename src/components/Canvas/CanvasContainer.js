@@ -17,7 +17,8 @@ import {
   copyElements,
   setSelections,
   updateElement,
-  raiseElements
+  raiseElements,
+  deleteElements
 } from "./CanvasAction";
 
 export const CanvasContainer = () => {
@@ -100,6 +101,17 @@ export const CanvasContainer = () => {
         }}
       >
         Copy
+      </button>
+    );
+
+    toolButtons.push(
+      <button
+        key="delete"
+        onClick={() => {
+          dispatch(deleteElements(state.selections));
+        }}
+      >
+        Delete
       </button>
     );
   }

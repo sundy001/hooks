@@ -8,7 +8,8 @@ import {
   SET_SELECIONS,
   COPY_ELEMENTS,
   RAISE_ELEMENTS,
-  CLEAR_RAISE_ELEMENTS
+  CLEAR_RAISE_ELEMENTS,
+  DELETE_ELEMENTS
 } from "./CanvasAction";
 import { updateEntity } from "../../updateEntity";
 import { sizeOfRectVertices } from "../../math/frame";
@@ -22,6 +23,28 @@ export const elements = (state, action) => {
       const { type: _, id, ...props } = action;
 
       return updateEntity(state, () => props, id);
+
+    case DELETE_ELEMENTS:
+      const byId = {};
+      const allIds = [];
+      Object.keys(state.byId).forEach(id => {
+        if (action.elements.indexOf(id) !== -1) {
+          return;
+        }
+        byId[id] = state.byId[id];
+      });
+
+      state.allIds.forEach(id => {
+        if (action.elements.indexOf(id) !== -1) {
+          return;
+        }
+        allIds.push(id);
+      });
+
+      return {
+        byId,
+        allIds
+      };
     default:
       return state;
   }
@@ -45,6 +68,11 @@ export const controlBox = (state, action) => {
         ...state,
         show: false
       };
+    case DELETE_ELEMENTS:
+      return {
+        ...state,
+        show: false
+      };
     default:
       return state;
   }
@@ -63,6 +91,8 @@ export const selections = (state, action) => {
   switch (action.type) {
     case SET_SELECIONS:
       return action.selections;
+    case DELETE_ELEMENTS:
+      return [];
     default:
       return state;
   }
