@@ -1,6 +1,7 @@
 import React from "react";
 import { ControlBox } from "../ControlBox";
 import "./ImageCropper.scss";
+import { getFrameStyle } from "../../getFrameStyle";
 
 export const ImageCropper = ({
   imageUrl,
@@ -29,31 +30,21 @@ export const ImageCropper = ({
     <div
       className="image-container"
       style={{
-        background: "green",
-        width: `${frame.width}px`,
-        height: `${frame.height}px`,
-        transform: `translate(${frame.x}px, ${frame.y}px) rotate(${angle}rad)`
+        background: "red",
+        ...getFrameStyle(frame, angle)
       }}
     >
       <img
         className="image-container__image"
-        style={{
-          width: `${imageFrame.width}px`,
-          height: `${imageFrame.height}px`,
-          transform: `translate(${imageFrame.x}px, ${imageFrame.y}px)`
-        }}
+        style={getFrameStyle(imageFrame)}
         src={imageUrl}
       />
     </div>
     <img
       className="image-container__image"
       style={{
-        opacity: 0.5,
-        width: `${outerBoxFrame.width}px`,
-        height: `${outerBoxFrame.height}px`,
-        transform: `translate(${outerBoxFrame.x}px, ${
-          outerBoxFrame.y
-        }px) rotate(${angle}rad)`
+        ...getFrameStyle(outerBoxFrame, angle),
+        opacity: 0.5
       }}
       src={imageUrl}
     />

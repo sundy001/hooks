@@ -11,13 +11,12 @@ import {
 
 export const ImageContainer = memo(props => {
   const { id, dispatch, imageFrame, isCropping } = props;
+
+  useResize(id, dispatch, props.frame, imageFrame);
+
   useElementListener("doubleClick", id, () => {
     dispatch(startCroppingImage(id));
   });
-  useElementListener("cropEnd", id, () => {
-    dispatch(startCroppingImage(id));
-  });
-  useResize(id, dispatch, props.frame, imageFrame);
 
   const onChange = useCallback(({ frame, imageFrame }) => {
     dispatch(updateCroppingImage(id, frame, imageFrame));
