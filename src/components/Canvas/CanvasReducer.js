@@ -7,9 +7,10 @@ import {
   UPDATE_SELECTION_BOX,
   SET_SELECIONS,
   COPY_ELEMENTS,
-  RAISE_ELEMENTS,
-  CLEAR_RAISE_ELEMENTS,
-  DELETE_ELEMENTS
+  DELETE_ELEMENTS,
+  START_CROPPING_IMAGE,
+  STOP_CROPPING_IMAGE,
+  UPDATE_CROPPING_IMAGE
 } from "./CanvasAction";
 import { updateEntity } from "../../updateEntity";
 import { sizeOfRectVertices } from "../../math/frame";
@@ -23,6 +24,34 @@ export const elements = (state, action) => {
       const { type: _, id, ...props } = action;
 
       return updateEntity(state, () => props, id);
+
+    case START_CROPPING_IMAGE:
+      return updateEntity(
+        state,
+        () => ({
+          isCropping: true
+        }),
+        action.element
+      );
+
+    case STOP_CROPPING_IMAGE:
+      return updateEntity(
+        state,
+        () => ({
+          isCropping: false
+        }),
+        action.element
+      );
+
+    case UPDATE_CROPPING_IMAGE:
+      return updateEntity(
+        state,
+        () => ({
+          frame: action.frame,
+          imageFrame: action.imageFrame
+        }),
+        action.element
+      );
 
     case DELETE_ELEMENTS:
       const byId = {};
@@ -73,6 +102,21 @@ export const controlBox = (state, action) => {
         ...state,
         show: false
       };
+    case START_CROPPING_IMAGE:
+      return {
+        ...state,
+        show: false
+      };
+    case STOP_CROPPING_IMAGE:
+      return {
+        ...state,
+        show: true
+      };
+    case UPDATE_CROPPING_IMAGE:
+      return {
+        ...state,
+        frame: action.frame
+      };
     default:
       return state;
   }
@@ -100,9 +144,9 @@ export const selections = (state, action) => {
 
 export const raise = (state, action) => {
   switch (action.type) {
-    case RAISE_ELEMENTS:
-      return action.elements;
-    case CLEAR_RAISE_ELEMENTS:
+    case START_CROPPING_IMAGE:
+      return [action.element];
+    case STOP_CROPPING_IMAGE:
       return [];
     default:
       return state;

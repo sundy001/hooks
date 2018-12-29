@@ -23,7 +23,7 @@ export const ImageCropper = ({
     <div
       className="image-croppoer__masked"
       onMouseDown={event => {
-        onMaskMouseDown({ original: event, frame, imageFrame });
+        onMaskMouseDown(event);
       }}
     />
     <div
@@ -49,8 +49,8 @@ export const ImageCropper = ({
       className="image-container__image"
       style={{
         opacity: 0.5,
-        width: `${imageFrame.width}px`,
-        height: `${imageFrame.height}px`,
+        width: `${outerBoxFrame.width}px`,
+        height: `${outerBoxFrame.height}px`,
         transform: `translate(${outerBoxFrame.x}px, ${
           outerBoxFrame.y
         }px) rotate(${angle}rad)`

@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useCallback, useState } from "react";
+import React, { memo, useCallback, useState } from "react";
 
 import { useDragAndDrop } from "./hooks/useDragAndDrop";
 import { useOuterResize } from "./hooks/useOuterResize";
@@ -9,18 +9,25 @@ import { getInitialOuterBoxPosition } from "./getInitialOuterBoxPosition";
 export const ImageCropperContainer = memo(
   ({
     imageUrl,
-    imageFrame: initalImageFrame,
     frame: initialFrame,
+    imageFrame: initalImageFrame,
     angle,
-    onMount,
-    onUnmount,
-    onFinish
+    onMaskMouseDown,
+    onChange
   }) => {
-    const [imageFrame, setImageFrame] = useState(initalImageFrame);
     const [frame, setFrame] = useState(initialFrame);
+    const [imageFrame, setImageFrame] = useState(initalImageFrame);
     const [outerBoxPosition, setOuterPosition] = useState(
       getInitialOuterBoxPosition(frame, imageFrame, angle)
     );
+    const callOnChangeIfExist = () => {
+      if (onChange) {
+        onChange({
+          frame,
+          imageFrame
+        });
+      }
+    };
 
     const outerBoxFrame = {
       ...imageFrame,
@@ -28,16 +35,10 @@ export const ImageCropperContainer = memo(
       y: outerBoxPosition.y
     };
 
-    useEffect(() => {
-      onMount();
-      return () => {
-        onUnmount();
-      };
-    }, []);
-
     const { dragMouseDown, dragMouseMove, dragMouseUp } = useDragAndDrop(
       setImageFrame,
       setOuterPosition,
+      callOnChangeIfExist,
       imageFrame,
       outerBoxPosition,
       angle
@@ -50,6 +51,7 @@ export const ImageCropperContainer = memo(
     } = useOuterResize(
       setOuterPosition,
       setImageFrame,
+      callOnChangeIfExist,
       outerBoxFrame,
       frame,
       angle
@@ -62,6 +64,7 @@ export const ImageCropperContainer = memo(
     } = useInnerResize(
       setFrame,
       setImageFrame,
+      callOnChangeIfExist,
       frame,
       imageFrame,
       outerBoxPosition,
@@ -86,9 +89,9 @@ export const ImageCropperContainer = memo(
           outerResizeMouseUp(event);
           innerResizeMouseUp(event);
         }, [])}
-        onMaskMouseDown={useCallback(({ original, imageFrame, frame }) => {
-          original.stopPropagation();
-          onFinish(imageFrame, frame);
+        onMaskMouseDown={useCallback(event => {
+          event.stopPropagation();
+          onMaskMouseDown();
         }, [])}
         onInnerResizeMouseDown={innerResizeMouseDown}
         onOuterResizeMouseDown={outerResizeMouseDown}

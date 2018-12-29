@@ -4,44 +4,32 @@ import { useResize } from "./hooks/useResize";
 import { useElementListener } from "../../../eventBus/useEventListener";
 import { ImageCropper } from "../../ImageCropper";
 import {
-  updateControlBox,
-  updateElement,
-  hideControlBox,
-  showControlBox,
-  raiseElements,
-  clearRaiseElements
+  startCroppingImage,
+  stopCroppingImage,
+  updateCroppingImage
 } from "../../Canvas/CanvasAction";
 
 export const ImageContainer = memo(props => {
   const { id, dispatch, imageFrame, isCropping } = props;
   useElementListener("doubleClick", id, () => {
-    dispatch(updateElement(id, { isCropping: true }));
-    dispatch(raiseElements([id]));
+    dispatch(startCroppingImage(id));
+  });
+  useElementListener("cropEnd", id, () => {
+    dispatch(startCroppingImage(id));
   });
   useResize(id, dispatch, props.frame, imageFrame);
 
-  const onFinish = useCallback((imageFrame, frame) => {
-    dispatch(updateControlBox({ frame }));
-    dispatch(updateElement(id, { imageFrame, frame, isCropping: false }));
-    dispatch(clearRaiseElements());
+  const onChange = useCallback(({ frame, imageFrame }) => {
+    dispatch(updateCroppingImage(id, frame, imageFrame));
   }, []);
 
-  const onCropperMount = useCallback(() => {
-    dispatch(hideControlBox());
-  }, []);
-
-  const onCropperUnmount = useCallback(() => {
-    dispatch(showControlBox());
+  const onFinish = useCallback(() => {
+    dispatch(stopCroppingImage(id));
   }, []);
 
   if (isCropping) {
     return (
-      <ImageCropper
-        {...props}
-        onFinish={onFinish}
-        onMount={onCropperMount}
-        onUnmount={onCropperUnmount}
-      />
+      <ImageCropper {...props} onMaskMouseDown={onFinish} onChange={onChange} />
     );
   } else {
     return <Image {...props} />;

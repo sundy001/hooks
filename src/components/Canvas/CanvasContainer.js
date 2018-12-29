@@ -16,10 +16,11 @@ import { useSelect } from "./hooks/useSelect";
 import {
   copyElements,
   setSelections,
-  updateElement,
-  raiseElements,
-  deleteElements
+  deleteElements,
+  startCroppingImage,
+  stopCroppingImage
 } from "./CanvasAction";
+import { emit } from "../../eventBus";
 
 export const CanvasContainer = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -116,22 +117,30 @@ export const CanvasContainer = () => {
     );
   }
   if (selectedElements.length === 1) {
-    if (
-      selectedElements[0].name === "Image" &&
-      !selectedElements[0].isCropping
-    ) {
-      toolButtons.push(
-        <button
-          key="crop"
-          onClick={() => {
-            const id = selectedElements[0].id;
-            dispatch(updateElement(id, { isCropping: true }));
-            dispatch(raiseElements([id]));
-          }}
-        >
-          Crop
-        </button>
-      );
+    if (selectedElements[0].name === "Image") {
+      if (selectedElements[0].isCropping) {
+        toolButtons.push(
+          <button
+            key="end"
+            onClick={() => {
+              dispatch(stopCroppingImage(selectedElements[0].id));
+            }}
+          >
+            End
+          </button>
+        );
+      } else {
+        toolButtons.push(
+          <button
+            key="crop"
+            onClick={() => {
+              dispatch(startCroppingImage(selectedElements[0].id));
+            }}
+          >
+            Crop
+          </button>
+        );
+      }
     } else if (selectedElements[0].name === "Test") {
     }
   } else if (selectedElements.length > 1) {

@@ -5,6 +5,7 @@ import { useDragAndDrop as useDrag } from "../../../hooks/useDragAndDrop";
 export const useDragAndDrop = (
   setImageFrame,
   setOuterPosition,
+  dragMouseEnd,
   imageFrame,
   outerBoxPosition,
   angle
@@ -15,7 +16,7 @@ export const useDragAndDrop = (
 
   const [dragMouseDown, dragMouseMove, dragMouseUp] = useDrag({
     onMouseDown({ original }) {
-      // TOOD: may be can removed later, after stop canvas event handler
+      // TODO: may be can removed later, after stop canvas event handler
       // copy from canvas useDragAndDrop
       original.stopPropagation();
 
@@ -47,6 +48,9 @@ export const useDragAndDrop = (
 
       previousPoint.x = pageX;
       previousPoint.y = pageY;
+    },
+    onDragEnd() {
+      dragMouseEnd();
     }
   });
 

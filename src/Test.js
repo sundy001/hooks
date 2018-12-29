@@ -5,5 +5,7 @@ import "./Test.css";
 export const Test = memo(({ id, ...props }) => {
   const elementProps = useElement(props);
 
-  return <div data-id={id} className="element" {...elementProps} />;
+  return (
+    <div data-id={id} tabIndex="0" className="element" {...elementProps} />
+  );
 });

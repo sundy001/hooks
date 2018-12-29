@@ -56,12 +56,7 @@ export const useSelect = (dispatch, selections) => {
     onMouseUp({ original }) {
       const { target, pageX, pageY } = original;
       const state = stateRef.current;
-      const {
-        clickPosition,
-        mouseDowned,
-        dragged,
-        consecutiveClickCount
-      } = state;
+      const { clickPosition, mouseDowned, dragged } = state;
 
       const element = target.closest(".element");
       const isClickPositionDifferent =
@@ -79,7 +74,7 @@ export const useSelect = (dispatch, selections) => {
 
         state.consecutiveClickCount++;
 
-        if (consecutiveClickCount === 1) {
+        if (state.consecutiveClickCount === 1) {
           state.clickPosition = { x: pageX, y: pageY };
         }
 
@@ -87,6 +82,7 @@ export const useSelect = (dispatch, selections) => {
       }
 
       if (state.consecutiveClickCount === 2) {
+        console.log("doubleClick");
         emit("doubleClick", { id: Number(element.dataset.id) });
         restartDoubleClickTimer();
       }

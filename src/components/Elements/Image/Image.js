@@ -4,7 +4,12 @@ import { useElement } from "../../../hooks/useElement";
 import { component, image } from "./Image.module.css";
 
 export const Image = memo(({ id, imageUrl, imageFrame, ...props }) => (
-  <div data-id={id} className={cx("element", component)} {...useElement(props)}>
+  <div
+    data-id={id}
+    tabIndex="0"
+    className={cx("element", component)}
+    {...useElement(props)}
+  >
     <img
       className={image}
       style={{
