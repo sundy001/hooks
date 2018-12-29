@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { useDragAndDrop as useDrag } from "../../../hooks/useDragAndDrop";
+import { useDrag } from "../../../hooks/useDrag";
 import { setSelections } from "../CanvasAction";
 import { emit } from "../../../eventBus";
 
@@ -82,7 +82,6 @@ export const useSelect = (dispatch, selections) => {
       }
 
       if (state.consecutiveClickCount === 2) {
-        console.log("doubleClick");
         emit("doubleClick", { id: Number(element.dataset.id) });
         restartDoubleClickTimer();
       }

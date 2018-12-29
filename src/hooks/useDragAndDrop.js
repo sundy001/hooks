@@ -1,95 +1,55 @@
-import { useCallback, useRef } from "react";
+import { useRef } from "react";
+import { useDrag } from "./useDrag";
 
 export const useDragAndDrop = ({
   onMouseDown,
-  onMouseUp,
-  shouldDrag,
   onDragStart,
   onDrag,
   onDragEnd
-} = {}) => {
-  const callbackRef = useRef();
-  callbackRef.current = {
-    onMouseDown,
-    onMouseUp,
-    shouldDrag,
-    onDragStart,
-    onDrag,
-    onDragEnd
-  };
+}) => {
+  const previousPointRef = useRef(null);
 
-  const stateRef = useRef({
-    target: null,
-    isMouseDown: false,
-    isMouseMove: false,
-    shouldDragChecked: null
-  });
-
-  const callCallbackIfExist = (callback, event) => {
+  const callCallbackIfExist = (callback, event, delta = {}) => {
     if (!callback) {
       return;
     }
 
     callback({
-      target: stateRef.current.target,
-      original: event
+      original: event,
+      ...delta
     });
   };
 
-  const dragEndCleanUp = () => {
-    const state = stateRef.current;
-    state.target = null;
-    state.isMouseDown = false;
-    state.isMouseMove = false;
-    state.shouldDragChecked = null;
-  };
+  const [dragMouseDown, dragMouseMove, dragMouseUp] = useDrag({
+    onMouseDown({ original }) {
+      previousPointRef.current = {
+        x: original.pageX,
+        y: original.pageY
+      };
 
-  // useCallback to ensure handleMouseDown always return the same callback
-  const handleMouseDown = useCallback(event => {
-    if (event.button !== 0) {
-      return;
+      callCallbackIfExist(onMouseDown, original);
+    },
+    onMouseUp() {
+      previousPointRef.current = null;
+    },
+
+    onDragStart({ original }) {
+      callCallbackIfExist(onDragStart, original);
+    },
+    onDrag({ original }) {
+      const previousPoint = previousPointRef.current;
+      const { pageX, pageY } = original;
+      const dx = pageX - previousPoint.x;
+      const dy = pageY - previousPoint.y;
+      previousPoint.x = pageX;
+      previousPoint.y = pageY;
+
+      callCallbackIfExist(onDrag, original, { dx, dy });
+    },
+    onDragEnd({ original }) {
+      callCallbackIfExist(onDragEnd, original);
     }
+  });
 
-    event.preventDefault();
-
-    const state = stateRef.current;
-    state.isMouseDown = true;
-    state.target = event.target;
-
-    callCallbackIfExist(callbackRef.current.onMouseDown, event);
-  }, []);
-
-  const handleMouseUp = useCallback(event => {
-    callCallbackIfExist(callbackRef.current.onMouseUp, event);
-    if (stateRef.current.isMouseMove) {
-      callCallbackIfExist(callbackRef.current.onDragEnd, event);
-    }
-
-    dragEndCleanUp();
-  }, []);
-
-  const handleMouseMove = useCallback(event => {
-    const state = stateRef.current;
-    const { shouldDragChecked, isMouseDown } = state;
-    const { shouldDrag, onDrag } = callbackRef.current;
-
-    if (!isMouseDown) return;
-    if (!state.isMouseMove) {
-      callCallbackIfExist(callbackRef.current.onDragStart, event);
-    }
-
-    state.isMouseMove = true;
-
-    if (shouldDrag && !shouldDragChecked) {
-      state.shouldDragChecked = true;
-      if (!shouldDrag(event)) {
-        dragEndCleanUp();
-        return;
-      }
-    }
-
-    callCallbackIfExist(onDrag, event);
-  }, []);
-
-  return [handleMouseDown, handleMouseMove, handleMouseUp];
+  return { dragMouseDown, dragMouseMove, dragMouseUp };
 };

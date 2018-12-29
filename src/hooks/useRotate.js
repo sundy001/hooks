@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { useDragAndDrop } from "./useDragAndDrop";
+import { useDrag } from "./useDrag";
 import { angleOfThreePoints } from "../math/angle";
 
 export const useRotate = (
@@ -10,7 +10,7 @@ export const useRotate = (
     beginningX: null,
     beginningY: null
   });
-  const [rotateMouseDown, rotateMouseMove, rotateMouseUp] = useDragAndDrop({
+  const [rotateMouseDown, rotateMouseMove, rotateMouseUp] = useDrag({
     onMouseDown(event) {
       if (onMouseDown) {
         onMouseDown(event);

@@ -1,37 +1,19 @@
 import Victor from "victor";
-import { useRef } from "react";
-import { useDragAndDrop as useDrag } from "../../../hooks/useDragAndDrop";
+import { useDragAndDrop as useRawDragAndDrop } from "../../../hooks/useDragAndDrop";
 
 export const useDragAndDrop = (
   setImageFrame,
   setOuterPosition,
-  dragMouseEnd,
+  onDragMouseEnd,
   imageFrame,
   outerBoxPosition,
   angle
 ) => {
-  const stateRef = useRef({
-    previousPoint: null
-  });
-
-  const [dragMouseDown, dragMouseMove, dragMouseUp] = useDrag({
+  return useRawDragAndDrop({
     onMouseDown({ original }) {
-      // TODO: may be can removed later, after stop canvas event handler
-      // copy from canvas useDragAndDrop
       original.stopPropagation();
-
-      stateRef.current.previousPoint = { x: original.pageX, y: original.pageY };
     },
-    onMouseUp() {
-      stateRef.current.previousPoint = null;
-    },
-    onDrag({ original }) {
-      // copy from canvas useDragAndDrop
-      const { previousPoint } = stateRef.current;
-      const { pageX, pageY } = original;
-
-      const dx = pageX - previousPoint.x;
-      const dy = pageY - previousPoint.y;
+    onDrag({ dx, dy }) {
       const v = new Victor(dx, dy);
       v.rotate(-angle);
 
@@ -45,14 +27,9 @@ export const useDragAndDrop = (
         x: outerBoxPosition.x + dx,
         y: outerBoxPosition.y + dy
       });
-
-      previousPoint.x = pageX;
-      previousPoint.y = pageY;
     },
     onDragEnd() {
-      dragMouseEnd();
+      onDragMouseEnd();
     }
   });
-
-  return { dragMouseDown, dragMouseMove, dragMouseUp };
 };

@@ -1,6 +1,6 @@
 import Victor from "victor";
 import { useRef } from "react";
-import { useDragAndDrop } from "./useDragAndDrop";
+import { useDrag } from "./useDrag";
 import {
   RECT_VERTICES,
   indexOfOppositeVertex,
@@ -24,6 +24,10 @@ export const useResize = (
   });
 
   const callCallbackIfExist = (callback, event, frame) => {
+    if (!callback) {
+      return;
+    }
+
     const { beginningWidth, beginningHeight } = stateRef.current;
 
     callback({
@@ -34,7 +38,7 @@ export const useResize = (
     });
   };
 
-  return useDragAndDrop({
+  return useDrag({
     onMouseDown(event) {
       // TODO: check position and keepAsepectRatio compatability
       if (onMouseDown) {

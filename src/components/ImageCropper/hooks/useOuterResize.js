@@ -6,7 +6,7 @@ import { transform } from "../../../math/affineTransformation";
 export const useOuterResize = (
   setOuterPosition,
   setImageFrame,
-  outerResizeEnd,
+  onOuterResizeEnd,
   outerBoxFrame,
   frame,
   angle
@@ -36,7 +36,7 @@ export const useOuterResize = (
           });
         },
         onResizeEnd() {
-          outerResizeEnd();
+          onOuterResizeEnd();
         }
       }
     );

@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { useDragAndDrop } from "./useDragAndDrop";
+import { useDrag } from "./useDrag";
 import { verticesOfRect } from "../math/frame";
 import { overlapCache, overlapedIdsByCache } from "../math/overlapDetection";
 
@@ -14,11 +14,7 @@ export const useSelectionBox = (
     selectedElements: null
   });
 
-  const [
-    selectBoxMouseDown,
-    selectBoxMouseMove,
-    selectBoxMouseUp
-  ] = useDragAndDrop({
+  const [selectBoxMouseDown, selectBoxMouseMove, selectBoxMouseUp] = useDrag({
     shouldDrag(event) {
       return shouldSelect ? shouldSelect(event) : true;
     },

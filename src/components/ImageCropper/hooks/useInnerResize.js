@@ -6,7 +6,7 @@ import { transform } from "../../../math/affineTransformation";
 export const useInnerResize = (
   setFrame,
   setImageFrame,
-  innerResizeEnd,
+  onInnerResizeEnd,
   frame,
   imageFrame,
   outerBoxPosition,
@@ -45,7 +45,7 @@ export const useInnerResize = (
           });
         },
         onResizeEnd() {
-          innerResizeEnd();
+          onInnerResizeEnd();
         }
       }
     );

@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { useDragAndDrop as useDrag } from "../../../hooks/useDragAndDrop";
+import { useDragAndDrop as useRawDragAndDrop } from "../../../hooks/useDragAndDrop";
 import { updateControlBox, updateElement } from "../CanvasAction";
 
 export const useDragAndDrop = (dispatch, selectedElements, controlBoxFrame) => {
@@ -8,23 +8,18 @@ export const useDragAndDrop = (dispatch, selectedElements, controlBoxFrame) => {
     beginningFrame: null
   });
 
-  const [dragMouseDown, dragMouseMove, dragMouseUp] = useDrag({
+  return useRawDragAndDrop({
     onMouseDown({ original }) {
       original.stopPropagation();
-
-      stateRef.current.previousPoint = { x: original.pageX, y: original.pageY };
     },
     onDragStart() {
       stateRef.current.beginningFrame = { ...controlBoxFrame };
     },
-    onDrag({ original }) {
-      const { previousPoint, beginningFrame } = stateRef.current;
-
-      const { pageX, pageY } = original;
-      const dx = pageX - previousPoint.x;
-      const dy = pageY - previousPoint.y;
-      previousPoint.x = pageX;
-      previousPoint.y = pageY;
+    onDragEnd() {
+      stateRef.current.beginningFrame = null;
+    },
+    onDrag({ dx, dy }) {
+      const { beginningFrame } = stateRef.current;
 
       // move elements
       selectedElements.forEach(({ id, frame }) => {
@@ -40,18 +35,9 @@ export const useDragAndDrop = (dispatch, selectedElements, controlBoxFrame) => {
       });
 
       // move control box
-
       beginningFrame.x += dx;
       beginningFrame.y += dy;
       dispatch(updateControlBox({ frame: { ...beginningFrame } }));
-    },
-    onMouseUp() {
-      stateRef.current.previousPoint = null;
-    },
-    onDragEnd() {
-      stateRef.current.beginningFrame = null;
     }
   });
-
-  return { dragMouseDown, dragMouseMove, dragMouseUp };
 };

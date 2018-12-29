@@ -1,14 +1,10 @@
 import { useRef } from "react";
-import { useDragAndDrop } from "./useDragAndDrop";
+import { useDrag } from "./useDrag";
 
 export const useDeselect = (shouldDeselect, { onDeselect } = {}) => {
   const shouldDeselectRef = useRef(null);
 
-  const [
-    deselectMouseDown,
-    deselectMouseMove,
-    deselectMouseUp
-  ] = useDragAndDrop({
+  const [deselectMouseDown, deselectMouseMove, deselectMouseUp] = useDrag({
     onMouseDown(event) {
       shouldDeselectRef.current = shouldDeselect(event);
     },
