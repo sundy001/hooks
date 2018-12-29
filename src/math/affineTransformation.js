@@ -3,27 +3,22 @@ import Victor from "victor";
 // transform the given vertex to actual cordination system
 // ref: https://gamedev.stackexchange.com/questions/16719/what-is-the-correct-order-to-multiply-scale-rotation-and-translation-matrices-f
 export const transform = (vertex, { x, y, width, height }, angle) => {
-  const translate = new Victor(x, y);
-  if (angle === 0) {
-    return vertex.clone().add(translate);
-  }
-
   const half = new Victor(width / 2, height / 2);
+
   return (
     vertex
       .clone()
-      // rotate element by angle at origin
+      // rotate vertex by angle at origin
       .subtract(half)
       .rotate(angle)
       .add(half)
-      // translate element
-      .add(translate)
+      // translate vertex
+      .add(new Victor(x, y))
   );
 };
 
-// TODO: rename rotationTransform and frameDisplament
-export const rotationTransform = (
-  controlBoxOffset,
+export const getDisplacementInControlBox = (
+  elementOffset, // element position in control box coordinate system
   { width, height }, // size of element
   elementAngle,
   controlBoxFrame,
@@ -35,7 +30,7 @@ export const rotationTransform = (
     controlBoxFrame.height / 2
   );
 
-  // rotate element at origin
+  // rotate vertex by the total angle (element angle + control box angle)
   const rotatedOrigin = new Victor(0, 0)
     .subtract(elementHalfSize)
     .rotate(elementAngle + controlBoxAngle)
@@ -43,33 +38,39 @@ export const rotationTransform = (
 
   return (
     new Victor(0, 0)
-      // rotate element by element angle at origin
+      // rotate vertex by element angle at origin
       .subtract(elementHalfSize)
       .rotate(elementAngle)
       .add(elementHalfSize)
-      // move according control box coordinate system
-      .add(controlBoxOffset)
-      // rotate control box by control box angle at origin
+      // move vertex by element position in control box coordinate system
+      .add(elementOffset)
+      // rotate vertex by control box angle at origin
       .subtract(controlBoxHalfSize)
       .rotate(controlBoxAngle)
       .add(controlBoxHalfSize)
-      // translate control box
+      // translate vertex by control box position
       .add(new Victor(controlBoxFrame.x, controlBoxFrame.y))
-      // compare rotated element at origin
+      // compare rotated vertex at origin
       .subtract(rotatedOrigin)
   );
 };
 
-export const frameDisplacement = (vertex, width, height, angle, target) => {
+export const getDisplacement = (
+  rawVertex,
+  width,
+  height,
+  angle,
+  targetVertex
+) => {
   const half = new Victor(width / 2, height / 2);
 
-  // rotate element at origin
-  const rotatedOrigin = vertex
+  // rotate vertex at origin
+  const rotatedRawVertex = rawVertex
     .clone()
     .subtract(half)
     .rotate(angle)
     .add(half);
 
-  // compare rotated element at origin
-  return target.clone().subtract(rotatedOrigin);
+  // compare target vertex with the rotated vertex
+  return targetVertex.clone().subtract(rotatedRawVertex);
 };

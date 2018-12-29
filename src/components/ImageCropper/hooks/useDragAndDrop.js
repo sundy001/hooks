@@ -14,8 +14,7 @@ export const useDragAndDrop = (
       original.stopPropagation();
     },
     onDrag({ dx, dy }) {
-      const v = new Victor(dx, dy);
-      v.rotate(-angle);
+      const v = new Victor(dx, dy).rotate(-angle);
 
       setImageFrame({
         ...imageFrame,

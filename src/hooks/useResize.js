@@ -9,7 +9,7 @@ import {
   indexesOfEdge
 } from "../math/rect";
 import { minDistanceFromVertexToLine } from "../math/vector";
-import { transform, frameDisplacement } from "../math/affineTransformation";
+import { transform, getDisplacement } from "../math/affineTransformation";
 
 export const useResize = (
   position,
@@ -62,7 +62,7 @@ export const useResize = (
 
       let virtualPosition;
       if (keepAsepectRatio) {
-        virtualPosition = mousePositionKeepAspectRatio(
+        virtualPosition = getMousePositionKeepAspectRatio(
           position,
           frame,
           angle,
@@ -97,7 +97,7 @@ export const useResize = (
             : Math.trunc(axisDistance(horizontal, frame, angle, pageX, pageY));
       }
 
-      const { x: newX, y: newY } = newXY(
+      const { x: newX, y: newY } = getNewPosition(
         position,
         frame,
         angle,
@@ -122,24 +122,26 @@ export const useResize = (
   });
 };
 
-const mousePositionKeepAspectRatio = (position, frame, angle, mX, mY) => {
+const getMousePositionKeepAspectRatio = (position, frame, angle, mX, mY) => {
   const index = RECT_VERTICES.indexOf(position);
   const oppositeIndex = indexOfOppositeVertex(index);
   const [vertex, oppositeVertex] = [index, oppositeIndex].map(i =>
     transform(vertexOfOriginRect(i, frame.width, frame.height), frame, angle)
   );
 
+  // calculate normalized diagonal vector
   const axis = vertex
     .clone()
     .subtract(oppositeVertex)
     .normalize();
 
-  const distance = axis.dot(new Victor(mX, mY)) - axis.dot(oppositeVertex);
+  const mousePosition = new Victor(mX, mY);
+  // axis.dot(mousePosition): length of mouse position project on diagonal axis
+  // axis.dot(oppositeVertex): length of opposite vertex project on diagonal axis
+  // subtraction result is distance(scalar) between mouse and opposite vertex
+  const distance = axis.dot(mousePosition) - axis.dot(oppositeVertex);
 
-  return axis
-    .clone()
-    .multiply(new Victor(distance, distance))
-    .add(oppositeVertex);
+  return axis.multiply(new Victor(distance, distance)).add(oppositeVertex);
 };
 
 const axisDistance = (token, frame, angle, mX, mY) => {
@@ -156,7 +158,9 @@ const axisDistance = (token, frame, angle, mX, mY) => {
   );
 };
 
-const newXY = (position, frame, angle, hDistance, vDistance) => {
+// base of the fact that the opposite vertex of the resize handler does not change position
+// calculate the new position of element
+const getNewPosition = (position, frame, angle, hDistance, vDistance) => {
   const positionIndex = RECT_VERTICES.indexOf(position);
   const oppositeIndex = indexOfOppositeVertex(positionIndex);
   const oppositeVertex = transform(
@@ -165,7 +169,7 @@ const newXY = (position, frame, angle, hDistance, vDistance) => {
     angle
   );
 
-  return frameDisplacement(
+  return getDisplacement(
     vertexOfOriginRect(oppositeIndex, hDistance, vDistance), //  raw vertex
     hDistance,
     vDistance,

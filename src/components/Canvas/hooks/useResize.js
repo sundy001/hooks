@@ -3,7 +3,7 @@ import { useResize as useRawResize } from "../../../hooks/useResize";
 import { useSelectionBeginningValue } from "./useSelectionBeginningValue";
 import { RECT_VERTICES } from "../../../math/rect";
 import { updateControlBox, updateElement } from "../CanvasAction";
-import { rotationTransform } from "../../../math/affineTransformation";
+import { getDisplacementInControlBox } from "../../../math/affineTransformation";
 import { emit } from "../../../eventBus";
 
 export const useResize = (
@@ -49,7 +49,7 @@ export const useResize = (
             const newHeight = beginningValue[id].height * vRatio;
 
             const { x: offsetX, y: offsetY } = beginningValue[id].offset;
-            const { x: newX, y: newY } = rotationTransform(
+            const { x: newX, y: newY } = getDisplacementInControlBox(
               new Victor(offsetX * hRatio, offsetY * vRatio),
               { width: newWidth, height: newHeight },
               beginningValue[id].angle,

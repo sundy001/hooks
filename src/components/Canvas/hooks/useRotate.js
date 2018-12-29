@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { useRotate as useRawRotate } from "../../../hooks/useRotate";
 import { useSelectionBeginningValue } from "./useSelectionBeginningValue";
 import { updateControlBox, updateElement } from "../CanvasAction";
-import { rotationTransform } from "../../../math/affineTransformation";
+import { getDisplacementInControlBox } from "../../../math/affineTransformation";
 
 export const useRotate = (
   dispatch,
@@ -32,7 +32,7 @@ export const useRotate = (
 
       // rotate elements
       selectedElements.forEach(({ id, frame }) => {
-        const { x: newX, y: newY } = rotationTransform(
+        const { x: newX, y: newY } = getDisplacementInControlBox(
           beginningValue[id].offset,
           frame,
           beginningValue[id].angle,

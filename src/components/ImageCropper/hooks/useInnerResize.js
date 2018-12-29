@@ -3,6 +3,8 @@ import { useResize } from "../../../hooks/useResize";
 import { RECT_VERTICES, CORNER_INDEXES } from "../../../math/rect";
 import { transform } from "../../../math/affineTransformation";
 
+const TOP_LEFT = new Victor(0, 0);
+
 export const useInnerResize = (
   setFrame,
   setImageFrame,
@@ -30,15 +32,15 @@ export const useInnerResize = (
           setFrame(newFrame);
 
           const outerTopLeft = transform(
-            new Victor(0, 0),
+            TOP_LEFT,
             {
               ...imageFrame,
               ...outerBoxPosition
             },
             angle
           );
-          const frameTopLeft = transform(new Victor(0, 0), newFrame, angle);
 
+          const frameTopLeft = transform(TOP_LEFT, newFrame, angle);
           setImageFrame({
             ...imageFrame,
             ...outerTopLeft.subtract(frameTopLeft).rotate(-angle)

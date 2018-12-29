@@ -3,6 +3,8 @@ import { useResize } from "../../../hooks/useResize";
 import { RECT_VERTICES, CORNER_INDEXES } from "../../../math/rect";
 import { transform } from "../../../math/affineTransformation";
 
+const TOP_LEFT = new Victor(0, 0);
+
 export const useOuterResize = (
   setOuterPosition,
   setImageFrame,
@@ -28,8 +30,8 @@ export const useOuterResize = (
         onResize({ frame: newFrame }) {
           setOuterPosition({ x: newFrame.x, y: newFrame.y });
 
-          const topLeft = transform(new Victor(0, 0), newFrame, angle);
-          const frameTopLeft = transform(new Victor(0, 0), frame, angle);
+          const topLeft = transform(TOP_LEFT, newFrame, angle);
+          const frameTopLeft = transform(TOP_LEFT, frame, angle);
           setImageFrame({
             ...newFrame,
             ...topLeft.subtract(frameTopLeft).rotate(-angle)
