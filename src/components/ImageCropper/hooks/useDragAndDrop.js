@@ -14,12 +14,12 @@ export const useDragAndDrop = (
       original.stopPropagation();
     },
     onDrag({ dx, dy }) {
-      const v = new Victor(dx, dy).rotate(-angle);
+      const imageFrameOffset = new Victor(dx, dy).rotate(-angle);
 
       setImageFrame({
         ...imageFrame,
-        x: imageFrame.x + v.x,
-        y: imageFrame.y + v.y
+        x: imageFrame.x + imageFrameOffset.x,
+        y: imageFrame.y + imageFrameOffset.y
       });
 
       setOuterPosition({

@@ -1,6 +1,5 @@
 import { useRef } from "react";
 import { useDrag } from "./useDrag";
-import { angleOfThreePoints } from "../math/angle";
 
 export const useRotate = (
   { x, y, width, height },
@@ -59,4 +58,10 @@ export const useRotate = (
   });
 
   return { rotateMouseDown, rotateMouseMove, rotateMouseUp };
+};
+
+// (x1, y1) is the middle point
+// (x0, y0), (x2, y2) are the ends of the line
+const angleOfThreePoints = (x0, y0, x1, y1, x2, y2) => {
+  return Math.atan2(y0 - y1, x0 - x1) - Math.atan2(y2 - y1, x2 - x1);
 };

@@ -7,7 +7,7 @@ export const isOverlapByAABB = (vertices1, vertices2) =>
   vertices1[3].y < vertices2[1].y &&
   vertices1[1].y > vertices2[3].y;
 
-export const overlapCache = elements =>
+export const getOverlapCache = elements =>
   elements.map(element => {
     const vertices = verticesOfElement(element);
     const axes =
@@ -26,7 +26,7 @@ export const overlapCache = elements =>
     };
   });
 
-export const overlapedIdsByCache = (comparedVertices, overlapCache) => {
+export const detectOverlapByCache = (comparedVertices, overlapCache) => {
   const overlapedIds = [];
 
   overlapCache.forEach(row => {
@@ -39,15 +39,15 @@ export const overlapedIdsByCache = (comparedVertices, overlapCache) => {
       // ref: http://www.dyn4j.org/2010/01/sat/#sat-top
       // ref: https://gamedevelopment.tutsplus.com/tutorials/collision-detection-using-the-separating-axis-theorem--gamedev-169
       isOverlap = [HORIZONTAL, VERTICAL].every(axis => {
-        const p1 = projectionOfPolygron(comparedVertices, axis);
-        const p2 = projectionOfPolygron(vertices, axis);
+        const p1 = getProjectionOfPolygron(comparedVertices, axis);
+        const p2 = getProjectionOfPolygron(vertices, axis);
         return isProjectionOverlap(p1, p2);
       });
 
       if (isOverlap) {
         isOverlap = axes.every(axis => {
-          const p1 = projectionOfPolygron(comparedVertices, axis);
-          const p2 = projectionOfPolygron(vertices, axis);
+          const p1 = getProjectionOfPolygron(comparedVertices, axis);
+          const p2 = getProjectionOfPolygron(vertices, axis);
           return isProjectionOverlap(p1, p2);
         });
       }
@@ -61,7 +61,7 @@ export const overlapedIdsByCache = (comparedVertices, overlapCache) => {
   return overlapedIds;
 };
 
-const projectionOfPolygron = (vertices, axis) => {
+const getProjectionOfPolygron = (vertices, axis) => {
   let min = axis.dot(vertices[0]);
   let max = min;
   vertices.forEach(vertex => {

@@ -15,6 +15,7 @@ export const verticesOfRect = (fix, diagonal) => {
     Math.max(fix.x, diagonal.x),
     Math.max(fix.y, diagonal.y)
   );
+
   const size = sizeOfRectVertices(vertices[3], vertices[1]);
   const sizeVictor = new Victor(size.width, size.height);
   vertices[0] = vertices[3].clone().addX(sizeVictor);
