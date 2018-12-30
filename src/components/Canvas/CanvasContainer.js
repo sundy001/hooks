@@ -13,14 +13,8 @@ import { useResize } from "./hooks/useResize";
 import { useSelectionBox } from "./hooks/useSelectionBox";
 import { useDeselect } from "./hooks/useDeselect";
 import { useSelect } from "./hooks/useSelect";
-import {
-  copyElements,
-  setSelections,
-  deleteElements,
-  startCroppingImage,
-  stopCroppingImage
-} from "./CanvasAction";
 import { shouldKeepAspectRatio } from "./selectors/shouldKeepAspectRatio";
+import { getComponentsOfElementPanel } from "./selectors/getComponentsOfElementPanel";
 
 export const CanvasContainer = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -84,69 +78,6 @@ export const CanvasContainer = () => {
     onChildrenMouseDown
   );
 
-  const toolButtons = [];
-  if (selectedElements.length > 0) {
-    toolButtons.push(
-      <button
-        key="copy"
-        onClick={() => {
-          dispatch(copyElements());
-
-          // TODO: need to think about how the get new Id
-          const selectionLength = state.selections.length;
-          const newElementIds = [];
-          let maxId = Math.max(...state.elements.allIds);
-          for (let i = 0; i < selectionLength; i++) {
-            newElementIds.push(++maxId);
-          }
-          dispatch(setSelections(newElementIds));
-        }}
-      >
-        Copy
-      </button>
-    );
-
-    toolButtons.push(
-      <button
-        key="delete"
-        onClick={() => {
-          dispatch(deleteElements(state.selections));
-        }}
-      >
-        Delete
-      </button>
-    );
-  }
-  if (selectedElements.length === 1) {
-    if (selectedElements[0].name === "Image") {
-      if (selectedElements[0].isCropping) {
-        toolButtons.push(
-          <button
-            key="end"
-            onClick={() => {
-              dispatch(stopCroppingImage(selectedElements[0].id));
-            }}
-          >
-            End
-          </button>
-        );
-      } else {
-        toolButtons.push(
-          <button
-            key="crop"
-            onClick={() => {
-              dispatch(startCroppingImage(selectedElements[0].id));
-            }}
-          >
-            Crop
-          </button>
-        );
-      }
-    } else if (selectedElements[0].name === "Test") {
-    }
-  } else if (selectedElements.length > 1) {
-  }
-
   // canvas
   return (
     <div
@@ -191,7 +122,7 @@ export const CanvasContainer = () => {
           right: 0
         }}
       >
-        {toolButtons}
+        {getComponentsOfElementPanel(dispatch, state)}
       </div>
     </div>
   );
