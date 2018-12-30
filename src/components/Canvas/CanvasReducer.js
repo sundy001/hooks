@@ -82,40 +82,24 @@ export const elements = (state, action) => {
 export const controlBox = (state, action) => {
   switch (action.type) {
     case UPDATE_CONTROL_BOX:
+    case UPDATE_CROPPING_IMAGE:
       return {
         ...state,
         angle: action.angle !== undefined ? action.angle : state.angle,
         frame: action.frame !== undefined ? action.frame : state.frame
       };
     case SHOW_CONTROL_BOX:
-      return {
-        ...state,
-        show: true
-      };
-    case HIDE_CONTROL_BOX:
-      return {
-        ...state,
-        show: false
-      };
-    case DELETE_ELEMENTS:
-      return {
-        ...state,
-        show: false
-      };
-    case START_CROPPING_IMAGE:
-      return {
-        ...state,
-        show: false
-      };
     case STOP_CROPPING_IMAGE:
       return {
         ...state,
         show: true
       };
-    case UPDATE_CROPPING_IMAGE:
+    case HIDE_CONTROL_BOX:
+    case DELETE_ELEMENTS:
+    case START_CROPPING_IMAGE:
       return {
         ...state,
-        frame: action.frame
+        show: false
       };
     default:
       return state;
@@ -179,7 +163,7 @@ const minMaxVerticesOfSelections = elements => {
   return { min: new Victor(minX, minY), max: new Victor(maxX, maxY) };
 };
 
-export const selectionBoxUpdatedBySelection = (
+export const controlBoxUpdatedBySelection = (
   state,
   action,
   selections,
@@ -255,7 +239,7 @@ export const crossSliceReducer = (state, action) => {
     case SET_SELECIONS:
       return {
         ...state,
-        controlBox: selectionBoxUpdatedBySelection(
+        controlBox: controlBoxUpdatedBySelection(
           state.controlBox,
           action,
           state.selections,

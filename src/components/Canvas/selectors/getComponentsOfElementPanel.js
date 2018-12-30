@@ -1,20 +1,14 @@
 import React from "react";
 import { elementsStatic } from "../elementsStatic";
-import {
-  copyElements,
-  setSelections,
-  deleteElements,
-  startCroppingImage,
-  stopCroppingImage
-} from "../CanvasAction";
+import { copyElements, setSelections, deleteElements } from "../CanvasAction";
 
 export const getComponentsOfElementPanel = (
   dispatch,
   { selections, elements }
 ) => {
-  let toolButtons = [];
+  let components = [];
   if (selections.length > 0) {
-    toolButtons.push(
+    components.push(
       <button
         key="copy"
         onClick={() => {
@@ -34,7 +28,7 @@ export const getComponentsOfElementPanel = (
       </button>
     );
 
-    toolButtons.push(
+    components.push(
       <button
         key="delete"
         onClick={() => {
@@ -45,18 +39,19 @@ export const getComponentsOfElementPanel = (
       </button>
     );
   }
+
   if (selections.length === 1) {
     const element = elements.byId[selections[0]];
     const elementStatic = elementsStatic[element.name];
     if (elementStatic && elementStatic.getComponentsOfPanel) {
-      toolButtons = elementStatic.getComponentsOfPanel(
+      components = elementStatic.getComponentsOfPanel(
         dispatch,
         element,
-        toolButtons
+        components
       );
     }
   } else if (selections.length > 1) {
   }
 
-  return toolButtons;
+  return components;
 };
