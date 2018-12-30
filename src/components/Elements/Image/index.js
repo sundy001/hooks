@@ -1,1 +1,1 @@
-export { ImageContainer as Image } from "./ImageContainer";
+export { ImageContainer as default } from "./ImageContainer";

@@ -1,8 +1,8 @@
 import Victor from "victor";
-import { useResize as useRawResize } from "../../../hooks/useResize";
 import { useSelectionBeginningValue } from "./useSelectionBeginningValue";
-import { RECT_VERTICES } from "../../../math/rect";
 import { updateControlBox, updateElement } from "../CanvasAction";
+import { useResize as useRawResize } from "../../../hooks/useResize";
+import { RECT_VERTICES } from "../../../math/rect";
 import { getDisplacementInControlBox } from "../../../math/affineTransformation";
 import { emit } from "../../../eventBus";
 
@@ -10,7 +10,8 @@ export const useResize = (
   dispatch,
   selectedElements,
   controlBoxFrame,
-  controlBoxAngle
+  controlBoxAngle,
+  shouldKeepAsepectRatio
 ) => {
   const { saveValue, getValue, clearValue } = useSelectionBeginningValue(
     selectedElements,
@@ -26,8 +27,7 @@ export const useResize = (
       position,
       controlBoxFrame,
       controlBoxAngle,
-      // selectedElements.length > 1,
-      true,
+      shouldKeepAsepectRatio,
       {
         onMouseDown({ original }) {
           original.stopPropagation();

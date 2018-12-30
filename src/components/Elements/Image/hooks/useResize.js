@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { resolvePosition, TOP, LEFT } from "../../../../math/rect";
 import { useElementListener } from "../../../../eventBus/useEventListener";
 import { updateElement } from "../../../Canvas/CanvasAction";

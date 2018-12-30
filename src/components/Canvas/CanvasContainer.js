@@ -1,5 +1,5 @@
 import "./Canvas.scss";
-import React, { useCallback, useReducer } from "react";
+import React, { Suspense, useCallback, useReducer } from "react";
 import { ControlBox } from "../ControlBox";
 import { SelectionBox } from "../SelectionBox";
 import { createElements } from "./createElements";
@@ -20,7 +20,6 @@ import {
   startCroppingImage,
   stopCroppingImage
 } from "./CanvasAction";
-import { emit } from "../../eventBus";
 
 export const CanvasContainer = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -33,6 +32,7 @@ export const CanvasContainer = () => {
     angle: controlBoxAngle,
     show: showControlBox
   } = state.controlBox;
+  const shouldKeepAspectRatio = selectedElements.length > 1;
   const { selectionBox: selectionBoxFrame, selections } = state;
 
   // hooks
@@ -58,7 +58,8 @@ export const CanvasContainer = () => {
     dispatch,
     selectedElements,
     controlBoxFrame,
-    controlBoxAngle
+    controlBoxAngle,
+    shouldKeepAspectRatio
   );
 
   const {
@@ -171,7 +172,7 @@ export const CanvasContainer = () => {
         deselectMouseUp(event);
       }, [])}
     >
-      {children}
+      <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
       <SelectionBox frame={selectionBoxFrame} elements={elements} />
       <ControlBox
         show={showControlBox}

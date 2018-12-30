@@ -1,6 +1,6 @@
 import { useRef } from "react";
-import { useDrag } from "../../../hooks/useDrag";
 import { updateSelectionBox, setSelections } from "../CanvasAction";
+import { useDrag } from "../../../hooks/useDrag";
 import { verticesOfRect } from "../../../math/frame";
 import {
   getOverlapCache,

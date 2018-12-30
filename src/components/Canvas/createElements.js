@@ -1,16 +1,24 @@
-import { Test } from "../../Test";
-import { Image } from "../elements/Image";
 import React from "react";
 
-const ELEMENTS = {
-  Test,
-  Image
+const loadedElements = {};
+
+const loadElement = name => {
+  if (loadedElements[name] === undefined) {
+    loadedElements[name] = React.lazy(() =>
+      import(`../elements/${name}`).then(module => {
+        loadedElements[name] = module.default;
+        return module;
+      })
+    );
+  }
+
+  return loadedElements[name];
 };
 
 const createElement = ({ id, name, ...props }, dragMouseDown, dispatch) => {
-  const ElementName = ELEMENTS[name];
+  const Element = loadElement(name);
   return (
-    <ElementName
+    <Element
       key={id}
       id={id}
       {...props}

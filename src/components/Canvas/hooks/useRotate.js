@@ -1,7 +1,7 @@
 import { useRef } from "react";
-import { useRotate as useRawRotate } from "../../../hooks/useRotate";
 import { useSelectionBeginningValue } from "./useSelectionBeginningValue";
 import { updateControlBox, updateElement } from "../CanvasAction";
+import { useRotate as useRawRotate } from "../../../hooks/useRotate";
 import { getDisplacementInControlBox } from "../../../math/affineTransformation";
 
 export const useRotate = (

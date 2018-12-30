@@ -1,5 +1,5 @@
-import { getFrameStyle } from "./getFrameStyle";
-import React, { memo } from "react";
+import { getFrameStyle } from "../../../getFrameStyle";
+import React, { memo, useEffect } from "react";
 import "./Test.css";
 
 export const Test = memo(({ id, onMouseDown, frame, angle }) => {

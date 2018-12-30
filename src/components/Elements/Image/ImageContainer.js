@@ -26,11 +26,9 @@ export const ImageContainer = memo(props => {
     dispatch(stopCroppingImage(id));
   }, []);
 
-  if (isCropping) {
-    return (
-      <ImageCropper {...props} onMaskMouseDown={onFinish} onChange={onChange} />
-    );
-  } else {
-    return <Image {...props} />;
-  }
+  return isCropping ? (
+    <ImageCropper {...props} onMaskMouseDown={onFinish} onChange={onChange} />
+  ) : (
+    <Image {...props} />
+  );
 });
