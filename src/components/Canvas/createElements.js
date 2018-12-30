@@ -1,4 +1,5 @@
 import React from "react";
+import { elementsStatic } from "./elementsStatic";
 
 const loadedElements = {};
 
@@ -7,6 +8,7 @@ const loadElement = name => {
     loadedElements[name] = React.lazy(() =>
       import(`../elements/${name}`).then(module => {
         loadedElements[name] = module.default;
+        elementsStatic[name] = module.elementStatic;
         return module;
       })
     );

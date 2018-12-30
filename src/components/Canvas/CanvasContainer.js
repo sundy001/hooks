@@ -20,6 +20,7 @@ import {
   startCroppingImage,
   stopCroppingImage
 } from "./CanvasAction";
+import { shouldKeepAspectRatio } from "./selectors/shouldKeepAspectRatio";
 
 export const CanvasContainer = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -32,7 +33,6 @@ export const CanvasContainer = () => {
     angle: controlBoxAngle,
     show: showControlBox
   } = state.controlBox;
-  const shouldKeepAspectRatio = selectedElements.length > 1;
   const { selectionBox: selectionBoxFrame, selections } = state;
 
   // hooks
@@ -59,7 +59,7 @@ export const CanvasContainer = () => {
     selectedElements,
     controlBoxFrame,
     controlBoxAngle,
-    shouldKeepAspectRatio
+    shouldKeepAspectRatio(state)
   );
 
   const {
