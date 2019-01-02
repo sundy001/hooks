@@ -1,10 +1,11 @@
 import Victor from "victor";
 import { useSelectionBeginningValue } from "./useSelectionBeginningValue";
-import { updateControlBox, updateElement } from "../CanvasAction";
+import { updateElement } from "../CanvasAction";
 import { useResize as useRawResize } from "../../../hooks/useResize";
 import { RECT_VERTICES } from "../../../math/rect";
 import { getDisplacementInControlBox } from "../../../math/affineTransformation";
 import { emit } from "../../../eventBus";
+import { updateControlBox } from "../../../controlBox";
 
 export const useResize = (
   dispatch,

@@ -1,13 +1,13 @@
 // elements
 export const UPDATE_ELEMENT = "UPDATE_ELEMENT";
-export const COPY_ELEMENTS = "COPY_ELEMENTS";
+export const UPDATE_ELEMENTS = "UPDATE_ELEMENTS";
 export const DELETE_ELEMENTS = "DELETE_ELEMENTS";
-
-// control box
-export const UPDATE_CONTROL_BOX = "UPDATE_CONTROL_BOX";
 
 // seelction box
 export const UPDATE_SELECTION_BOX = "UPDATE_SELECTION_FRAME";
+
+// external features
+export const COPY_ELEMENTS = "COPY_ELEMENTS";
 
 // elements
 // image
@@ -21,9 +21,9 @@ export const updateElement = (id, props) => ({
   ...props
 });
 
-export const updateControlBox = props => ({
-  type: UPDATE_CONTROL_BOX,
-  ...props
+export const updateElements = elements => ({
+  type: UPDATE_ELEMENTS,
+  elements
 });
 
 export const updateSelectionBox = frame => ({

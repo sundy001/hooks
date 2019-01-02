@@ -5,5 +5,4 @@ export {
   clearSelections
 } from "./actions";
 export { reducer } from "./reducer";
-export { useDeselect } from "./useDeselect";
 export { useSelect } from "./useSelect";

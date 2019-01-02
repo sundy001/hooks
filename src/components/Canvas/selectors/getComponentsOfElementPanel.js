@@ -2,6 +2,7 @@ import React from "react";
 import { elementsStatic } from "../elementsStatic";
 import { copyElements, deleteElements } from "../CanvasAction";
 import { setSelections } from "../../../selections";
+import { hideControlBox } from "../../../controlBox";
 
 export const getComponentsOfElementPanel = (
   dispatch,
@@ -34,6 +35,7 @@ export const getComponentsOfElementPanel = (
         key="delete"
         onClick={() => {
           dispatch(deleteElements(selections));
+          dispatch(hideControlBox());
         }}
       >
         Delete

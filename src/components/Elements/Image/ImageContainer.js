@@ -8,6 +8,11 @@ import {
   stopCroppingImage,
   updateCroppingImage
 } from "../../Canvas/CanvasAction";
+import {
+  updateControlBox,
+  showControlBox,
+  hideControlBox
+} from "../../../controlBox";
 
 export const ImageContainer = memo(props => {
   const { id, dispatch, imageFrame, isCropping } = props;
@@ -16,14 +21,17 @@ export const ImageContainer = memo(props => {
 
   useElementListener("doubleClick", id, () => {
     dispatch(startCroppingImage(id));
+    dispatch(hideControlBox());
   });
 
   const onChange = useCallback(({ frame, imageFrame }) => {
     dispatch(updateCroppingImage(id, frame, imageFrame));
+    dispatch(updateControlBox({ frame }));
   }, []);
 
   const onFinish = useCallback(() => {
     dispatch(stopCroppingImage(id));
+    dispatch(showControlBox());
   }, []);
 
   return isCropping ? (

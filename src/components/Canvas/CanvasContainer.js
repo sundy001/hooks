@@ -7,13 +7,17 @@ import { initialState } from "./initialState";
 import { selectAllElements } from "./selectors/selectAllElements";
 import { selectSelectedElements } from "./selectors/selectSelectedElements";
 import { reducer } from "./CanvasReducer";
-import { useDragAndDrop } from "./hooks/useDragAndDrop";
 import { useRotate } from "./hooks/useRotate";
 import { useResize } from "./hooks/useResize";
 import { useSelectionBox } from "./hooks/useSelectionBox";
 import { shouldKeepAspectRatio } from "./selectors/shouldKeepAspectRatio";
 import { getComponentsOfElementPanel } from "./selectors/getComponentsOfElementPanel";
-import { useSelect, useDeselect } from "../../selections";
+import { useSelect } from "../../selections";
+import { useDoubleClick } from "../../hooks/useDoubleClick";
+import { emit } from "../../eventBus";
+import { useDragAndDrop } from "../../hooks/useDragAndDrop";
+import { hideControlBox, updateControlBox } from "../../controlBox";
+import { updateElements } from "./CanvasAction";
 
 export const CanvasContainer = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -29,15 +33,37 @@ export const CanvasContainer = () => {
   const { selectionBox: selectionBoxFrame, selections } = state;
 
   // hooks
-  const { dragMouseDown, dragMouseMove, dragMouseUp } = useDragAndDrop(
-    dispatch,
-    selectedElements,
-    controlBoxFrame
-  );
-
   const { selectMouseDown, selectMouseMove, selectMouseUp } = useSelect(
     dispatch,
-    selections
+    event => event.target.classList.contains("canvas"),
+    selections,
+    {
+      onDeselect() {
+        dispatch(hideControlBox());
+      }
+    }
+  );
+
+  const {
+    doubleClickMouseDown,
+    doubleClickMouseMove,
+    doubleClickMouseUp
+  } = useDoubleClick(id => {
+    emit("doubleClick", { id });
+  });
+
+  const { dragMouseDown, dragMouseMove, dragMouseUp } = useDragAndDrop(
+    event => {
+      dispatch(updateElements(event.elements));
+      dispatch(
+        updateControlBox({
+          frame: { ...controlBoxFrame, ...event.controlBoxPosition }
+        })
+      );
+    },
+    event => Boolean(event.target.closest(".element")),
+    selectedElements,
+    controlBoxFrame
   );
 
   const { rotateMouseDown, rotateMouseMove, rotateMouseUp } = useRotate(
@@ -59,23 +85,13 @@ export const CanvasContainer = () => {
     selectBoxMouseDown,
     selectBoxMouseMove,
     selectBoxMouseUp
-  } = useSelectionBox(dispatch, elements);
-
-  const { deselectMouseDown, deselectMouseMove, deselectMouseUp } = useDeselect(
-    dispatch
-  );
-
-  // create elements
-  const onChildrenMouseDown = useCallback(event => {
-    dragMouseDown(event);
-    selectMouseDown(event);
-  }, []);
-  const children = createElements(
+  } = useSelectionBox(
     dispatch,
-    elements,
-    state.raise,
-    onChildrenMouseDown
+    event => event.target.classList.contains("canvas"),
+    elements
   );
+
+  const children = createElements(dispatch, elements, state.raise);
 
   // canvas
   return (
@@ -83,7 +99,9 @@ export const CanvasContainer = () => {
       className="canvas"
       onMouseDown={useCallback(event => {
         selectBoxMouseDown(event);
-        deselectMouseDown(event);
+        dragMouseDown(event);
+        selectMouseDown(event);
+        doubleClickMouseDown(event);
       }, [])}
       onMouseMove={useCallback(event => {
         dragMouseMove(event);
@@ -91,7 +109,7 @@ export const CanvasContainer = () => {
         rotateMouseMove(event);
         resizeMouseMove(event);
         selectBoxMouseMove(event);
-        deselectMouseMove(event);
+        doubleClickMouseMove(event);
       }, [])}
       onMouseUp={useCallback(event => {
         dragMouseUp(event);
@@ -99,7 +117,7 @@ export const CanvasContainer = () => {
         rotateMouseUp(event);
         resizeMouseUp(event);
         selectBoxMouseUp(event);
-        deselectMouseUp(event);
+        doubleClickMouseUp(event);
       }, [])}
     >
       <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>

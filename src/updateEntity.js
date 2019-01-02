@@ -3,7 +3,9 @@ export const updateEntity = (entityStore, updater, filter = () => true) => {
   let newByIds = null;
 
   if (typeof filter === "function") {
-    Object.keys(byId).forEach(id => {
+    const ids = Object.keys(byId);
+    for (let i = 0; i < ids.length; i++) {
+      const id = ids[i];
       if (!filter(byId[id])) {
         return;
       }
@@ -18,7 +20,7 @@ export const updateEntity = (entityStore, updater, filter = () => true) => {
       }
 
       newByIds[id] = updatedEntity;
-    });
+    }
   } else {
     const id = filter;
     const updatedEntity = getUpdatedEntity(id, updater, byId);
@@ -52,4 +54,34 @@ export const getUpdatedEntity = (id, updater, byId) => {
     ...byId[id],
     ...updatedField
   };
+};
+
+export const updateEntities = (entityStore, entities, updater) => {
+  if (entities.length === 0) {
+    return entityStore;
+  }
+
+  let newById = null;
+  for (let i = 0; i < entities.length; i++) {
+    const id = entities[i].id;
+    const previousEntityState = entityStore.byId[id];
+    const nextEntityState = updater(previousEntityState, entities[i]);
+
+    if (previousEntityState === nextEntityState) {
+      continue;
+    }
+
+    if (newById === null) {
+      newById = Object.assign({}, entityStore.byId);
+    }
+
+    newById[id] = nextEntityState;
+  }
+
+  return newById === null
+    ? entityStore
+    : {
+        byId: newById,
+        allIds: entityStore.allIds
+      };
 };

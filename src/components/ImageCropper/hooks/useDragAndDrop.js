@@ -1,5 +1,5 @@
 import Victor from "victor";
-import { useDragAndDrop as useRawDragAndDrop } from "../../../hooks/useDragAndDrop";
+import { useRawDragAndDrop } from "../../../hooks/useRawDragAndDrop";
 
 export const useDragAndDrop = (
   setImageFrame,

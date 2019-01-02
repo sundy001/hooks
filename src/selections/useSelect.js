@@ -1,46 +1,24 @@
 import { useRef } from "react";
 import { useDrag } from "../hooks/useDrag";
-import { setSelections } from "./actions";
-import { emit } from "../eventBus";
+import { setSelections, clearSelections } from "./actions";
 
-// TODO: move double click out
-const DOUBLE_CLICK_INTERVAL = 500;
-
-export const useSelect = (dispatch, selections) => {
+export const useSelect = (
+  dispatch,
+  shouldDeselect,
+  selections,
+  { onDeselect }
+) => {
   const stateRef = useRef({
-    clickPosition: null,
-    consecutiveClickCount: 0,
-    doubleClickTimer: null,
     mouseDowned: true,
     dragged: null
   });
 
-  const clearDoubleClickData = () => {
-    const state = stateRef.current;
-    state.clickPosition = null;
-    state.consecutiveClickCount = 0;
-    state.doubleClickTimer = null;
-  };
-
-  const restartDoubleClickTimer = () => {
-    const state = stateRef.current;
-
-    if (state.doubleClickTimer !== null) {
-      clearTimeout(state.doubleClickTimer);
-    }
-
-    state.doubleClickTimer = setTimeout(() => {
-      clearDoubleClickData();
-    }, DOUBLE_CLICK_INTERVAL);
-  };
-
   const [selectMouseDown, selectMouseMove, selectMouseUp] = useDrag({
     onMouseDown({ original }) {
-      original.stopPropagation();
-
       const state = stateRef.current;
       state.dragged = false;
       state.mouseDowned = true;
+      state.shouldDeselect = shouldDeselect(original);
 
       const elementHTMLElement = original.target.closest(".element");
       if (elementHTMLElement !== null) {
@@ -53,42 +31,30 @@ export const useSelect = (dispatch, selections) => {
     },
     onDragStart() {
       stateRef.current.dragged = true;
+      stateRef.current.shouldDeselect = false;
     },
     onMouseUp({ original }) {
-      const { target, pageX, pageY } = original;
       const state = stateRef.current;
-      const { clickPosition, mouseDowned, dragged } = state;
+      const { mouseDowned, dragged, shouldDeselect } = state;
+      const element = original.target.closest(".element");
 
-      const element = target.closest(".element");
-      const isClickPositionDifferent =
-        clickPosition !== null &&
-        (clickPosition.x !== pageX || clickPosition.y !== pageY);
-
-      if (isClickPositionDifferent || !mouseDowned) {
-        clearDoubleClickData();
-      }
-
-      if (!dragged && mouseDowned && element !== null) {
-        if (selections.length > 1) {
-          dispatch(setSelections([Number(element.dataset.id)]));
+      if (
+        !dragged &&
+        mouseDowned &&
+        element !== null &&
+        selections.length > 1
+      ) {
+        dispatch(setSelections([Number(element.dataset.id)]));
+      } else if (shouldDeselect) {
+        dispatch(clearSelections());
+        if (onDeselect) {
+          onDeselect();
         }
-
-        state.consecutiveClickCount++;
-
-        if (state.consecutiveClickCount === 1) {
-          state.clickPosition = { x: pageX, y: pageY };
-        }
-
-        restartDoubleClickTimer();
       }
 
-      if (state.consecutiveClickCount === 2) {
-        emit("doubleClick", { id: Number(element.dataset.id) });
-        restartDoubleClickTimer();
-      }
-
-      state.dragged = null;
-      state.mouseDowned = false;
+      stateRef.current.dragged = null;
+      stateRef.current.mouseDowned = false;
+      state.shouldDeselect = null;
     }
   });
 

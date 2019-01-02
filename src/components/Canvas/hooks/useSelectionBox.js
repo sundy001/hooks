@@ -8,8 +8,9 @@ import {
   detectOverlapByCache
 } from "../../../overlapDetection";
 
-export const useSelectionBox = (dispatch, elements) => {
+export const useSelectionBox = (dispatch, shouldSelect, elements) => {
   const stateRef = useRef({
+    shouldSelect: null,
     beginningX: null,
     beginningY: null,
     overlapCache: null,
@@ -19,13 +20,19 @@ export const useSelectionBox = (dispatch, elements) => {
   const [selectBoxMouseDown, selectBoxMouseMove, selectBoxMouseUp] = useDrag({
     onMouseDown({ original }) {
       const state = stateRef.current;
+      state.shouldSelect = shouldSelect(original);
       state.beginningX = original.pageX;
       state.beginningY = original.pageY;
     },
     onMouseUp(event) {
       const state = stateRef.current;
+      state.shouldSelect = null;
       state.beginningX = event.original.pageX;
       state.beginningY = event.original.pageY;
+    },
+
+    shouldDrag() {
+      return stateRef.current.shouldSelect;
     },
 
     onDragStart() {

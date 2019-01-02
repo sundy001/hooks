@@ -1,55 +1,55 @@
 import { useRef } from "react";
-import { useDrag } from "./useDrag";
+import { useRawDragAndDrop } from "./useRawDragAndDrop";
 
-export const useDragAndDrop = ({
-  onMouseDown,
-  onDragStart,
-  onDrag,
-  onDragEnd
-}) => {
-  const previousPointRef = useRef(null);
+export const useDragAndDrop = (
+  onChange,
+  shouldDrag,
+  selectedElements,
+  controlBoxFrame
+) => {
+  const beginningPositionRef = useRef(null);
 
-  const callCallbackIfExist = (callback, event, delta = {}) => {
-    if (!callback) {
-      return;
-    }
+  return useRawDragAndDrop({
+    shouldDrag,
 
-    callback({
-      original: event,
-      ...delta
-    });
-  };
-
-  const [dragMouseDown, dragMouseMove, dragMouseUp] = useDrag({
-    onMouseDown({ original }) {
-      previousPointRef.current = {
-        x: original.pageX,
-        y: original.pageY
+    onDragStart() {
+      beginningPositionRef.current = {
+        x: controlBoxFrame.x,
+        y: controlBoxFrame.y
       };
-
-      callCallbackIfExist(onMouseDown, original);
     },
-    onMouseUp() {
-      previousPointRef.current = null;
+    onDragEnd() {
+      beginningPositionRef.current = null;
     },
 
-    onDragStart({ original }) {
-      callCallbackIfExist(onDragStart, original);
-    },
-    onDrag({ original }) {
-      const previousPoint = previousPointRef.current;
-      const { pageX, pageY } = original;
-      const dx = pageX - previousPoint.x;
-      const dy = pageY - previousPoint.y;
-      previousPoint.x = pageX;
-      previousPoint.y = pageY;
+    onDrag({ dx, dy }) {
+      if (selectedElements.length === 0) {
+        return;
+      }
 
-      callCallbackIfExist(onDrag, original, { dx, dy });
-    },
-    onDragEnd({ original }) {
-      callCallbackIfExist(onDragEnd, original);
+      const event = { elements: [] };
+
+      // move elements
+      for (let i = 0; i < selectedElements.length; i++) {
+        event.elements.push({
+          id: selectedElements[i].id,
+          position: {
+            x: selectedElements[i].frame.x + dx,
+            y: selectedElements[i].frame.y + dy
+          }
+        });
+      }
+
+      // move control box
+      beginningPositionRef.current.x += dx;
+      beginningPositionRef.current.y += dy;
+
+      // onChange
+      event.controlBoxPosition = Object.assign(
+        {},
+        beginningPositionRef.current
+      );
+      onChange(event);
     }
   });
-
-  return { dragMouseDown, dragMouseMove, dragMouseUp };
 };

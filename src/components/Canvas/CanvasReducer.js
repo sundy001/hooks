@@ -1,7 +1,7 @@
 import { combineReducers } from "../../combinReducer";
 import {
-  UPDATE_CONTROL_BOX,
   UPDATE_ELEMENT,
+  UPDATE_ELEMENTS,
   UPDATE_SELECTION_BOX,
   COPY_ELEMENTS,
   DELETE_ELEMENTS,
@@ -9,16 +9,13 @@ import {
   STOP_CROPPING_IMAGE,
   UPDATE_CROPPING_IMAGE
 } from "./CanvasAction";
+import { reducer as selections } from "../../selections";
 import {
-  SET_SELECTIONS,
-  CLEAR_SELECTIONS,
-  reducer as selections
-} from "../../selections";
-import { updateEntity } from "../../updateEntity";
-import { sizeOfRectVertices } from "../../math/frame";
-import Victor from "victor";
+  reducer as controlBox,
+  controlBoxUpdatedBySelection
+} from "../../controlBox";
+import { updateEntity, updateEntities } from "../../updateEntity";
 import cloneDeep from "lodash/cloneDeep";
-import { verticesOfElement } from "../../element";
 
 export const elements = (state, action) => {
   switch (action.type) {
@@ -26,6 +23,30 @@ export const elements = (state, action) => {
       const { type: _, id, ...props } = action;
 
       return updateEntity(state, () => props, id);
+    case UPDATE_ELEMENTS:
+      return updateEntities(
+        state,
+        action.elements,
+        (previouseState, newValue) => {
+          const nextState = Object.assign({}, previouseState);
+
+          if (newValue.position) {
+            nextState.frame = Object.assign(
+              {},
+              previouseState.frame,
+              newValue.position
+            );
+          } else if (newValue.frame) {
+            nextState.frame = newValue.frame;
+          }
+
+          if (newValue.angle) {
+            nextState.angle = newValue.angle;
+          }
+
+          return nextState;
+        }
+      );
 
     case START_CROPPING_IMAGE:
       return updateEntity(
@@ -81,32 +102,6 @@ export const elements = (state, action) => {
   }
 };
 
-export const controlBox = (state, action) => {
-  switch (action.type) {
-    case UPDATE_CONTROL_BOX:
-    case UPDATE_CROPPING_IMAGE:
-      return {
-        ...state,
-        angle: action.angle !== undefined ? action.angle : state.angle,
-        frame: action.frame !== undefined ? action.frame : state.frame
-      };
-    case STOP_CROPPING_IMAGE:
-      return {
-        ...state,
-        show: true
-      };
-    case DELETE_ELEMENTS:
-    case START_CROPPING_IMAGE:
-    case CLEAR_SELECTIONS:
-      return {
-        ...state,
-        show: false
-      };
-    default:
-      return state;
-  }
-};
-
 export const selectionBox = (state, action) => {
   switch (action.type) {
     case UPDATE_SELECTION_BOX:
@@ -124,63 +119,6 @@ export const raise = (state, action) => {
       return [];
     default:
       return state;
-  }
-};
-
-// TODO: extract them later
-const minMaxVerticesOfSelections = elements => {
-  let minX = Number.MAX_VALUE;
-  let minY = Number.MAX_VALUE;
-  let maxX = Number.MIN_VALUE;
-  let maxY = Number.MIN_VALUE;
-  elements.forEach(element => {
-    verticesOfElement(element).forEach(({ x, y }) => {
-      if (x < minX) {
-        minX = x;
-      }
-      if (x > maxX) {
-        maxX = x;
-      }
-      if (y < minY) {
-        minY = y;
-      }
-      if (y > maxY) {
-        maxY = y;
-      }
-    });
-  });
-
-  return { min: new Victor(minX, minY), max: new Victor(maxX, maxY) };
-};
-
-export const controlBoxUpdatedBySelection = (controlBox, elements, action) => {
-  switch (action.type) {
-    case SET_SELECTIONS:
-      switch (action.selections.length) {
-        case 0:
-          return { ...controlBox, show: false };
-        case 1:
-          const { frame, angle } = elements.byId[action.selections[0]];
-
-          return {
-            show: true,
-            frame: { ...frame },
-            angle
-          };
-        default:
-          const { min, max } = minMaxVerticesOfSelections(
-            action.selections.map(id => elements.byId[id])
-          );
-          const { width, height } = sizeOfRectVertices(min, max);
-
-          return {
-            show: true,
-            frame: { x: min.x, y: min.y, width, height },
-            angle: 0
-          };
-      }
-    default:
-      return controlBox;
   }
 };
 
@@ -218,8 +156,8 @@ export const reducer = combineReducers({
   elements: [
     elements,
     {
-      getStates({ elements, selections }) {
-        return [elements, selections];
+      getStates({ selections }) {
+        return [selections];
       },
       reduce: copySelectedElements
     }
@@ -228,8 +166,8 @@ export const reducer = combineReducers({
   controlBox: [
     controlBox,
     {
-      getStates({ controlBox, elements }) {
-        return [controlBox, elements];
+      getStates({ elements }) {
+        return [elements];
       },
       reduce: controlBoxUpdatedBySelection
     }

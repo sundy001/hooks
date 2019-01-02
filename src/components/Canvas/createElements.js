@@ -17,25 +17,17 @@ const loadElement = name => {
   return loadedElements[name];
 };
 
-const createElement = ({ id, name, ...props }, dragMouseDown, dispatch) => {
+const createElement = ({ id, name, ...props }, dispatch) => {
   const Element = loadElement(name);
-  return (
-    <Element
-      key={id}
-      id={id}
-      {...props}
-      onMouseDown={dragMouseDown}
-      dispatch={dispatch}
-    />
-  );
+  return <Element key={id} id={id} {...props} dispatch={dispatch} />;
 };
 
-export const createElements = (dispatch, elements, raise, dragMouseDown) => {
+export const createElements = (dispatch, elements, raise) => {
   const reactElements = [];
   const raisedElements = [];
 
   elements.forEach(props => {
-    const reactElement = createElement(props, dragMouseDown, dispatch);
+    const reactElement = createElement(props, dispatch);
     if (raise.indexOf(props.id) !== -1) {
       raisedElements.push(reactElement);
     } else {

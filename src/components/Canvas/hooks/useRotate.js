@@ -1,8 +1,9 @@
 import { useRef } from "react";
 import { useSelectionBeginningValue } from "./useSelectionBeginningValue";
-import { updateControlBox, updateElement } from "../CanvasAction";
+import { updateElement } from "../CanvasAction";
 import { useRotate as useRawRotate } from "../../../hooks/useRotate";
 import { getDisplacementInControlBox } from "../../../math/affineTransformation";
+import { updateControlBox } from "../../../controlBox";
 
 export const useRotate = (
   dispatch,
