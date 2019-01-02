@@ -1,17 +1,19 @@
 import { combineReducers } from "../../combinReducer";
 import {
   UPDATE_CONTROL_BOX,
-  SHOW_CONTROL_BOX,
-  HIDE_CONTROL_BOX,
   UPDATE_ELEMENT,
   UPDATE_SELECTION_BOX,
-  SET_SELECIONS,
   COPY_ELEMENTS,
   DELETE_ELEMENTS,
   START_CROPPING_IMAGE,
   STOP_CROPPING_IMAGE,
   UPDATE_CROPPING_IMAGE
 } from "./CanvasAction";
+import {
+  SET_SELECTIONS,
+  CLEAR_SELECTIONS,
+  reducer as selections
+} from "../../selections";
 import { updateEntity } from "../../updateEntity";
 import { sizeOfRectVertices } from "../../math/frame";
 import Victor from "victor";
@@ -88,15 +90,14 @@ export const controlBox = (state, action) => {
         angle: action.angle !== undefined ? action.angle : state.angle,
         frame: action.frame !== undefined ? action.frame : state.frame
       };
-    case SHOW_CONTROL_BOX:
     case STOP_CROPPING_IMAGE:
       return {
         ...state,
         show: true
       };
-    case HIDE_CONTROL_BOX:
     case DELETE_ELEMENTS:
     case START_CROPPING_IMAGE:
+    case CLEAR_SELECTIONS:
       return {
         ...state,
         show: false
@@ -110,17 +111,6 @@ export const selectionBox = (state, action) => {
   switch (action.type) {
     case UPDATE_SELECTION_BOX:
       return action.frame;
-    default:
-      return state;
-  }
-};
-
-export const selections = (state, action) => {
-  switch (action.type) {
-    case SET_SELECIONS:
-      return action.selections;
-    case DELETE_ELEMENTS:
-      return [];
     default:
       return state;
   }
@@ -163,55 +153,50 @@ const minMaxVerticesOfSelections = elements => {
   return { min: new Victor(minX, minY), max: new Victor(maxX, maxY) };
 };
 
-export const controlBoxUpdatedBySelection = (
-  state,
-  action,
-  selections,
-  elementStore
-) => {
+export const controlBoxUpdatedBySelection = (controlBox, elements, action) => {
   switch (action.type) {
-    case SET_SELECIONS:
-      if (selections.length === 0) {
-        return { ...state, show: false };
+    case SET_SELECTIONS:
+      switch (action.selections.length) {
+        case 0:
+          return { ...controlBox, show: false };
+        case 1:
+          const { frame, angle } = elements.byId[action.selections[0]];
+
+          return {
+            show: true,
+            frame: { ...frame },
+            angle
+          };
+        default:
+          const { min, max } = minMaxVerticesOfSelections(
+            action.selections.map(id => elements.byId[id])
+          );
+          const { width, height } = sizeOfRectVertices(min, max);
+
+          return {
+            show: true,
+            frame: { x: min.x, y: min.y, width, height },
+            angle: 0
+          };
       }
-
-      if (selections.length === 1) {
-        const { frame, angle } = elementStore.byId[selections[0]];
-
-        return {
-          show: true,
-          frame: { ...frame },
-          angle
-        };
-      }
-
-      const { min, max } = minMaxVerticesOfSelections(
-        selections.map(id => elementStore.byId[id])
-      );
-      const { width, height } = sizeOfRectVertices(min, max);
-
-      return {
-        show: true,
-        frame: { x: min.x, y: min.y, width, height },
-        angle: 0
-      };
     default:
-      return state;
+      return controlBox;
   }
 };
 
-export const copySelectedElements = (state, action, selections) => {
+export const copySelectedElements = (elements, selections, action) => {
   switch (action.type) {
     case COPY_ELEMENTS:
       if (selections.length === 0) {
-        return state;
+        return elements;
       }
-      let lastId = Math.max(...state.allIds);
 
-      const byId = { ...state.byId };
-      const allIds = [...state.allIds];
+      let lastId = Math.max(...elements.allIds);
+
+      const byId = { ...elements.byId };
+      const allIds = [...elements.allIds];
       selections.forEach(id => {
-        const newElement = cloneDeep(state.byId[id]);
+        const newElement = cloneDeep(elements.byId[id]);
         newElement.id = ++lastId;
         newElement.frame.x += 20;
         newElement.frame.y += 20;
@@ -225,41 +210,30 @@ export const copySelectedElements = (state, action, selections) => {
         allIds
       };
     default:
-      return state;
+      return elements;
   }
 };
 
-export const crossSliceReducer = (state, action) => {
-  switch (action.type) {
-    case COPY_ELEMENTS:
-      return {
-        ...state,
-        elements: copySelectedElements(state.elements, action, state.selections)
-      };
-    case SET_SELECIONS:
-      return {
-        ...state,
-        controlBox: controlBoxUpdatedBySelection(
-          state.controlBox,
-          action,
-          state.selections,
-          state.elements
-        )
-      };
-    default:
-      return state;
-  }
-};
-
-const combinedReducer = combineReducers({
-  elements,
+export const reducer = combineReducers({
+  elements: [
+    elements,
+    {
+      getStates({ elements, selections }) {
+        return [elements, selections];
+      },
+      reduce: copySelectedElements
+    }
+  ],
   selections,
-  controlBox,
+  controlBox: [
+    controlBox,
+    {
+      getStates({ controlBox, elements }) {
+        return [controlBox, elements];
+      },
+      reduce: controlBoxUpdatedBySelection
+    }
+  ],
   selectionBox,
   raise
 });
-
-export const reducer = (state, action) => {
-  const intermediateState = combinedReducer(state, action);
-  return crossSliceReducer(intermediateState, action);
-};

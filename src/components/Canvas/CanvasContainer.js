@@ -11,10 +11,9 @@ import { useDragAndDrop } from "./hooks/useDragAndDrop";
 import { useRotate } from "./hooks/useRotate";
 import { useResize } from "./hooks/useResize";
 import { useSelectionBox } from "./hooks/useSelectionBox";
-import { useDeselect } from "./hooks/useDeselect";
-import { useSelect } from "./hooks/useSelect";
 import { shouldKeepAspectRatio } from "./selectors/shouldKeepAspectRatio";
 import { getComponentsOfElementPanel } from "./selectors/getComponentsOfElementPanel";
+import { useSelect, useDeselect } from "../../selections";
 
 export const CanvasContainer = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -110,7 +109,7 @@ export const CanvasContainer = () => {
         frame={controlBoxFrame}
         angle={controlBoxAngle}
         // TODO: when the logic become complicated, move it to selector
-        resizeHandlerPosition={selections.length > 1 ? "corner" : "all"}
+        resizeHandlerPosition={selectedElements.length > 1 ? "corner" : "all"}
         onRotateMouseDown={rotateMouseDown}
         onResizeMouseDown={resizeMouseDown}
       />

@@ -1,8 +1,9 @@
 import { useRef } from "react";
-import { useDrag } from "../../../hooks/useDrag";
-import { setSelections } from "../CanvasAction";
-import { emit } from "../../../eventBus";
+import { useDrag } from "../hooks/useDrag";
+import { setSelections } from "./actions";
+import { emit } from "../eventBus";
 
+// TODO: move double click out
 const DOUBLE_CLICK_INTERVAL = 500;
 
 export const useSelect = (dispatch, selections) => {

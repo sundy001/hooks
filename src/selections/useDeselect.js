@@ -1,5 +1,5 @@
-import { useDeselect as useRawDeslect } from "../../../hooks/useDeselect";
-import { clearSelection } from "../CanvasAction";
+import { useDeselect as useRawDeslect } from "../hooks/useDeselect";
+import { clearSelections } from "./actions";
 
 export const useDeselect = dispatch => {
   return useRawDeslect(
@@ -8,7 +8,7 @@ export const useDeselect = dispatch => {
     },
     {
       onDeselect() {
-        dispatch(clearSelection());
+        dispatch(clearSelections());
       }
     }
   );

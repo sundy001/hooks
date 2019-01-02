@@ -10,9 +10,7 @@
     "node-sass": "^4.10.0",
     "react": "16.7.0-alpha.2",
     "react-dom": "16.7.0-alpha.2",
-    "react-redux": "^6.0.0",
     "react-scripts": "2.1.1",
-    "redux": "^4.0.1",
     "victor": "^1.1.0"
   },
   "scripts": {

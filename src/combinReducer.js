@@ -1,23 +1,35 @@
 export const combineReducers = reducers => {
   const reducerKeys = Object.keys(reducers);
-  const finalReducers = {};
-  for (let i = 0; i < reducerKeys.length; i++) {
-    const key = reducerKeys[i];
-
-    if (typeof reducers[key] === "function") {
-      finalReducers[key] = reducers[key];
-    }
-  }
-  const finalReducerKeys = Object.keys(finalReducers);
 
   return function combination(state = {}, action) {
     let hasChanged = false;
     const nextState = {};
-    for (let i = 0; i < finalReducerKeys.length; i++) {
-      const key = finalReducerKeys[i];
-      const reducer = finalReducers[key];
+    for (let i = 0; i < reducerKeys.length; i++) {
+      const key = reducerKeys[i];
+      const value = reducers[key];
+
       const previousStateForKey = state[key];
-      const nextStateForKey = reducer(previousStateForKey, action);
+
+      let nextStateForKey;
+      if (typeof value === "function") {
+        nextStateForKey = value(previousStateForKey, action);
+      } else {
+        const reducers = value;
+        for (let i = 0; i < reducers.length; i++) {
+          const reducer = reducers[i];
+          if (typeof reducer === "function") {
+            nextStateForKey = reducer(previousStateForKey, action);
+          } else {
+            const states = reducer.getStates(state);
+            nextStateForKey = reducer.reduce(...states, action);
+          }
+
+          if (nextStateForKey !== previousStateForKey) {
+            break;
+          }
+        }
+      }
+
       nextState[key] = nextStateForKey;
       hasChanged = hasChanged || nextStateForKey !== previousStateForKey;
     }

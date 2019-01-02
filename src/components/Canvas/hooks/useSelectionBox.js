@@ -1,5 +1,6 @@
 import { useRef } from "react";
-import { updateSelectionBox, setSelections } from "../CanvasAction";
+import { updateSelectionBox } from "../CanvasAction";
+import { setSelections } from "../../../selections";
 import { useDrag } from "../../../hooks/useDrag";
 import { verticesOfRect } from "../../../math/frame";
 import {

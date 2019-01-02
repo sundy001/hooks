@@ -1,6 +1,7 @@
 import React from "react";
 import { elementsStatic } from "../elementsStatic";
-import { copyElements, setSelections, deleteElements } from "../CanvasAction";
+import { copyElements, deleteElements } from "../CanvasAction";
+import { setSelections } from "../../../selections";
 
 export const getComponentsOfElementPanel = (
   dispatch,
