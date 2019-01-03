@@ -1,14 +1,13 @@
 import { useRef } from "react";
-import { updateSelectionBox } from "../CanvasAction";
-import { setSelections } from "../../../selections";
-import { useDrag } from "../../../hooks/useDrag";
-import { verticesOfRect } from "../../../math/frame";
-import {
-  getOverlapCache,
-  detectOverlapByCache
-} from "../../../overlapDetection";
+import { useDrag } from "../hooks/useDrag";
+import { verticesOfRect } from "../math/frame";
+import { getOverlapCache, detectOverlapByCache } from "../overlapDetection";
 
-export const useSelectionBox = (dispatch, shouldSelect, elements) => {
+export const useSelectionBox = (
+  shouldSelect,
+  elements,
+  { onSelect, onSelectEnd } = {}
+) => {
   const stateRef = useRef({
     shouldSelect: null,
     beginningX: null,
@@ -39,9 +38,9 @@ export const useSelectionBox = (dispatch, shouldSelect, elements) => {
       stateRef.current.overlapCache = getOverlapCache(elements);
     },
     onDragEnd() {
-      dispatch(setSelections(stateRef.current.selectedElements));
-      dispatch(updateSelectionBox({ x: 0, y: 0, width: 0, height: 0 }));
-
+      if (onSelectEnd) {
+        onSelectEnd(stateRef.current.selectedElements);
+      }
       stateRef.current.selectedElements = null;
       stateRef.current.overlapCache = null;
     },
@@ -67,7 +66,9 @@ export const useSelectionBox = (dispatch, shouldSelect, elements) => {
         height: size.height
       };
 
-      dispatch(updateSelectionBox(frame));
+      if (onSelect) {
+        onSelect({ selectedElements, frame });
+      }
     }
   });
 

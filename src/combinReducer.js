@@ -20,7 +20,9 @@ export const combineReducers = reducers => {
           if (typeof reducer === "function") {
             nextStateForKey = reducer(previousStateForKey, action);
           } else {
-            const states = reducer.getStates(state);
+            const states = reducer.getStates
+              ? reducer.getStates(state)
+              : undefined;
             nextStateForKey = reducer.reduce(
               previousStateForKey,
               ...states,

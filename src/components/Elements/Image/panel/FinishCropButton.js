@@ -1,5 +1,5 @@
 import React, { memo, useCallback } from "react";
-import { stopCroppingImage } from "../../../Canvas/CanvasAction";
+import { stopCroppingImage } from "../actions";
 
 export const FinishCropButton = memo(({ dispatch, id }) => (
   <button

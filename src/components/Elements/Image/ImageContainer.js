@@ -1,13 +1,13 @@
 import React, { memo, useCallback } from "react";
 import { Image } from "./Image";
 import { useResize } from "./hooks/useResize";
-import { useElementListener } from "../../../eventBus/useEventListener";
+import { useElementListener } from "../../../eventBus";
 import { ImageCropper } from "../../ImageCropper";
 import {
   startCroppingImage,
   stopCroppingImage,
   updateCroppingImage
-} from "../../Canvas/CanvasAction";
+} from "./actions";
 import {
   updateControlBox,
   showControlBox,

@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { useDrag } from "../hooks/useDrag";
+import { useDrag } from "./useDrag";
 
 const DOUBLE_CLICK_INTERVAL = 500;
 

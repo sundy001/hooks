@@ -1,3 +1,4 @@
+import { useCallback, useMemo } from "react";
 import Victor from "victor";
 import { useRawResize } from "../../../hooks/useRawResize";
 import { RECT_VERTICES, CORNER_INDEXES } from "../../../math/rect";
@@ -14,11 +15,13 @@ export const useInnerResize = (
   outerBoxPosition,
   angle
 ) => {
-  const innerResizeMouseDown = {};
+  const resizeDownHandlers = {};
   const resizeMoveHandlers = [];
   const resizeUpHandlers = [];
 
-  CORNER_INDEXES.map(index => RECT_VERTICES[index]).forEach(position => {
+  const positions = CORNER_INDEXES.map(index => RECT_VERTICES[index]);
+  for (let i = 0; i < positions.length; i++) {
+    const position = positions[i];
     const [theResizeDown, theResizeMove, theResizeUp] = useRawResize(
       position,
       frame,
@@ -52,22 +55,24 @@ export const useInnerResize = (
       }
     );
 
-    innerResizeMouseDown[position] = theResizeDown;
+    resizeDownHandlers[position] = theResizeDown;
     resizeMoveHandlers.push(theResizeMove);
     resizeUpHandlers.push(theResizeUp);
-  });
+  }
 
-  const innerResizeMouseMove = event => {
-    resizeMoveHandlers.forEach(handler => {
-      handler(event);
-    });
-  };
+  const innerResizeMouseDown = useMemo(() => resizeDownHandlers, []);
 
-  const innerResizeMouseUp = event => {
-    resizeUpHandlers.forEach(handler => {
-      handler(event);
-    });
-  };
+  const innerResizeMouseMove = useCallback(event => {
+    for (let i = 0; i < resizeMoveHandlers.length; i++) {
+      resizeMoveHandlers[i](event);
+    }
+  }, []);
+
+  const innerResizeMouseUp = useCallback(event => {
+    for (let i = 0; i < resizeUpHandlers.length; i++) {
+      resizeUpHandlers[i](event);
+    }
+  }, []);
 
   return { innerResizeMouseDown, innerResizeMouseMove, innerResizeMouseUp };
 };

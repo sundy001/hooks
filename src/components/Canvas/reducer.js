@@ -2,14 +2,12 @@ import { combineReducers } from "../../combinReducer";
 import {
   UPDATE_ELEMENT,
   UPDATE_ELEMENTS,
-  UPDATE_SELECTION_BOX,
   COPY_ELEMENTS,
-  DELETE_ELEMENTS,
-  START_CROPPING_IMAGE,
-  STOP_CROPPING_IMAGE,
-  UPDATE_CROPPING_IMAGE
-} from "./CanvasAction";
+  DELETE_ELEMENTS
+} from "./actions";
 import { reducer as selections } from "../../selections";
+import { elements as imageElements, raise } from "../elements/Image";
+import { reducer as selectionBox } from "../../selectionBox";
 import {
   reducer as controlBox,
   controlBoxUpdatedBySelection
@@ -44,34 +42,6 @@ export const elements = (state, action) => {
         }
       );
 
-    case START_CROPPING_IMAGE:
-      return updateEntity(
-        state,
-        () => ({
-          isCropping: true
-        }),
-        action.element
-      );
-
-    case STOP_CROPPING_IMAGE:
-      return updateEntity(
-        state,
-        () => ({
-          isCropping: false
-        }),
-        action.element
-      );
-
-    case UPDATE_CROPPING_IMAGE:
-      return updateEntity(
-        state,
-        () => ({
-          frame: action.frame,
-          imageFrame: action.imageFrame
-        }),
-        action.element
-      );
-
     case DELETE_ELEMENTS:
       const byId = {};
       const allIds = [];
@@ -93,26 +63,6 @@ export const elements = (state, action) => {
         byId,
         allIds
       };
-    default:
-      return state;
-  }
-};
-
-export const selectionBox = (state, action) => {
-  switch (action.type) {
-    case UPDATE_SELECTION_BOX:
-      return action.frame;
-    default:
-      return state;
-  }
-};
-
-export const raise = (state, action) => {
-  switch (action.type) {
-    case START_CROPPING_IMAGE:
-      return [action.element];
-    case STOP_CROPPING_IMAGE:
-      return [];
     default:
       return state;
   }
@@ -151,6 +101,7 @@ export const copySelectedElements = (elements, selections, action) => {
 export const reducer = combineReducers({
   elements: [
     elements,
+    imageElements,
     {
       getStates({ selections }) {
         return [selections];

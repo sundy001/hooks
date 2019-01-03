@@ -1,6 +1,6 @@
 import React, { memo, useCallback } from "react";
 import { hideControlBox } from "../../../../controlBox";
-import { startCroppingImage } from "../../../Canvas/CanvasAction";
+import { startCroppingImage } from "../actions";
 
 export const CropButton = memo(({ dispatch, id }) => (
   <button

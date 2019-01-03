@@ -1,6 +1,6 @@
 import React from "react";
 import { elementsStatic } from "../elementsStatic";
-import { copyElements, deleteElements } from "../CanvasAction";
+import { copyElements, deleteElements } from "../actions";
 import { setSelections } from "../../../selections";
 import { hideControlBox } from "../../../controlBox";
 

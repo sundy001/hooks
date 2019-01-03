@@ -1,23 +1,31 @@
 import "./Canvas.scss";
 import React, { Suspense, useCallback, useReducer, memo } from "react";
+
 import { ControlBox } from "../ControlBox";
 import { SelectionBox } from "../SelectionBox";
-import { createElements } from "./createElements";
+
 import { initialState } from "./initialState";
+import { updateElements } from "./actions";
+import { reducer } from "./reducer";
+
+import { createElements } from "./createElements";
 import { selectAllElements } from "./selectors/selectAllElements";
 import { selectSelectedElements } from "./selectors/selectSelectedElements";
-import { reducer } from "./CanvasReducer";
-import { useRotate } from "../../hooks/useRotate";
-import { useResize } from "../../hooks/useResize";
-import { useSelectionBox } from "./hooks/useSelectionBox";
 import { shouldKeepAspectRatio } from "./selectors/shouldKeepAspectRatio";
 import { getComponentsOfElementPanel } from "./selectors/getComponentsOfElementPanel";
-import { useSelect } from "../../selections";
-import { useDoubleClick } from "../../hooks/useDoubleClick";
+
 import { emit } from "../../eventBus";
+import { useResize } from "../../hooks/useResize";
+import { useRotate } from "../../hooks/useRotate";
+import { useDoubleClick } from "../../hooks/useDoubleClick";
 import { useDragAndDrop } from "../../hooks/useDragAndDrop";
+import { useSelect, setSelections } from "../../selections";
 import { hideControlBox, updateControlBox } from "../../controlBox";
-import { updateElements } from "./CanvasAction";
+import {
+  useSelectionBox,
+  updateSelectionBox,
+  hideSelectionBox
+} from "../../selectionBox";
 
 export const CanvasContainer = memo(() => {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -130,9 +138,17 @@ export const CanvasContainer = memo(() => {
     selectBoxMouseMove,
     selectBoxMouseUp
   } = useSelectionBox(
-    dispatch,
     event => event.target.classList.contains("canvas"),
-    elements
+    elements,
+    {
+      onSelectEnd(selectedElements) {
+        dispatch(setSelections(selectedElements));
+        dispatch(hideSelectionBox());
+      },
+      onSelect({ frame }) {
+        dispatch(updateSelectionBox(frame));
+      }
+    }
   );
 
   const children = createElements(dispatch, elements, state.raise);
