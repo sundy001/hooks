@@ -3,7 +3,7 @@ import cx from "classnames";
 import { getFrameStyle } from "../../../getFrameStyle";
 import { component, image } from "./Image.module.css";
 
-export const Image = memo(({ id, imageUrl, imageFrame, frame, angle }) => (
+export const Image = ({ id, imageUrl, imageFrame, frame, angle }) => (
   <div
     data-id={id}
     tabIndex="0"
@@ -15,4 +15,6 @@ export const Image = memo(({ id, imageUrl, imageFrame, frame, angle }) => (
   >
     <img className={image} style={getFrameStyle(imageFrame)} src={imageUrl} />
   </div>
-));
+);
+
+Image.displayName = "Image";

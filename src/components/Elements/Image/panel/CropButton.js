@@ -12,3 +12,5 @@ export const CropButton = memo(({ dispatch, id }) => (
     Crop
   </button>
 ));
+
+CropButton.displayName = "CropButton";

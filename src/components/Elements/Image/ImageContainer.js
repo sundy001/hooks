@@ -40,3 +40,5 @@ export const ImageContainer = memo(props => {
     <Image {...props} />
   );
 });
+
+ImageContainer.displayName = "ImageContainer";

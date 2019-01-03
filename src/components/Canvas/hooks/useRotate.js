@@ -32,7 +32,8 @@ export const useRotate = (
       const { beginningControlBoxAngle } = stateRef.current;
 
       // rotate elements
-      selectedElements.forEach(({ id, frame }) => {
+      for (let i = 0; i < selectedElements.length; i++) {
+        const { id, frame } = selectedElements[i];
         const { x: newX, y: newY } = getDisplacementInControlBox(
           beginningValue[id].offset,
           frame,
@@ -52,7 +53,7 @@ export const useRotate = (
             frame: { ...frame, x: newX, y: newY }
           })
         );
-      });
+      }
 
       // rotate control box
       dispatch(updateControlBox({ angle: beginningControlBoxAngle + angle }));

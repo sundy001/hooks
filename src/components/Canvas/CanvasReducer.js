@@ -28,14 +28,10 @@ export const elements = (state, action) => {
         state,
         action.elements,
         (previouseState, newValue) => {
-          const nextState = Object.assign({}, previouseState);
+          const nextState = { ...previouseState };
 
           if (newValue.position) {
-            nextState.frame = Object.assign(
-              {},
-              previouseState.frame,
-              newValue.position
-            );
+            nextState.frame = { ...previouseState.frame, ...newValue.position };
           } else if (newValue.frame) {
             nextState.frame = newValue.frame;
           }

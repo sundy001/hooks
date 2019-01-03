@@ -45,10 +45,8 @@ export const useDragAndDrop = (
       beginningPositionRef.current.y += dy;
 
       // onChange
-      event.controlBoxPosition = Object.assign(
-        {},
-        beginningPositionRef.current
-      );
+      event.controlBoxPosition = { ...beginningPositionRef.current };
+
       onChange(event);
     }
   });

@@ -15,3 +15,5 @@ export const Test = memo(({ id, frame, angle }) => {
     />
   );
 });
+
+Test.displayName = "Test";

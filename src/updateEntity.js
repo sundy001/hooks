@@ -72,7 +72,7 @@ export const updateEntities = (entityStore, entities, updater) => {
     }
 
     if (newById === null) {
-      newById = Object.assign({}, entityStore.byId);
+      newById = { ...entityStore.byId };
     }
 
     newById[id] = nextEntityState;

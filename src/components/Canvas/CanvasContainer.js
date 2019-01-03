@@ -1,5 +1,5 @@
 import "./Canvas.scss";
-import React, { Suspense, useCallback, useReducer } from "react";
+import React, { Suspense, useCallback, useReducer, memo } from "react";
 import { ControlBox } from "../ControlBox";
 import { SelectionBox } from "../SelectionBox";
 import { createElements } from "./createElements";
@@ -19,7 +19,7 @@ import { useDragAndDrop } from "../../hooks/useDragAndDrop";
 import { hideControlBox, updateControlBox } from "../../controlBox";
 import { updateElements } from "./CanvasAction";
 
-export const CanvasContainer = () => {
+export const CanvasContainer = memo(() => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   // selectors
@@ -122,6 +122,7 @@ export const CanvasContainer = () => {
     >
       <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
       <SelectionBox frame={selectionBoxFrame} elements={elements} />
+
       <ControlBox
         show={showControlBox}
         frame={controlBoxFrame}
@@ -143,4 +144,6 @@ export const CanvasContainer = () => {
       </div>
     </div>
   );
-};
+});
+
+CanvasContainer.displayName = "CanvasContainer";

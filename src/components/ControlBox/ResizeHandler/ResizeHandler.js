@@ -1,7 +1,9 @@
-import React, { memo } from "react";
+import React from "react";
 import "./ResizeHandler.scss";
 import cx from "classnames";
 
-export const ResizeHandler = memo(({ position, ...props }) => (
+export const ResizeHandler = ({ position, ...props }) => (
   <div {...props} className={cx("resizable-handler", position)} />
-));
+);
+
+ResizeHandler.displayName = "ResizeHandler";

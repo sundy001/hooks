@@ -1,3 +1,4 @@
+import { useCallback, useMemo } from "react";
 import Victor from "victor";
 import { useSelectionBeginningValue } from "./useSelectionBeginningValue";
 import { updateElement } from "../CanvasAction";
@@ -19,11 +20,13 @@ export const useResize = (
     controlBoxFrame
   );
 
-  const resizeMouseDown = {};
   const resizeMoveHandlers = [];
   const resizeUpHandlers = [];
+  const resizeDownHandlers = {};
+  const resizeMouseDown = useMemo(() => resizeDownHandlers, []);
 
-  RECT_VERTICES.forEach(position => {
+  for (let i = 0; i < RECT_VERTICES.length; i++) {
+    const position = RECT_VERTICES[i];
     const [theResizeDown, theResizeMove, theResizeUp] = useRawResize(
       position,
       controlBoxFrame,
@@ -36,16 +39,17 @@ export const useResize = (
         onResizeStart() {
           saveValue();
 
-          selectedElements.forEach(({ id }) => {
-            emit("resizeStart", { id, position });
-          });
+          for (let i = 0; i < selectedElements.length; i++) {
+            emit("resizeStart", { id: selectedElements[i].id, position });
+          }
         },
         onResize({ frame, beginningWidth, beginningHeight }) {
           const beginningValue = getValue();
           const hRatio = frame.width / beginningWidth;
           const vRatio = frame.height / beginningHeight;
 
-          selectedElements.forEach(({ id }) => {
+          for (let i = 0; i < selectedElements.length; i++) {
+            const { id } = selectedElements[i];
             const newWidth = beginningValue[id].width * hRatio;
             const newHeight = beginningValue[id].height * vRatio;
 
@@ -72,36 +76,36 @@ export const useResize = (
             );
 
             emit("resize", { id, position, frame: newFrame });
-          });
+          }
 
           dispatch(updateControlBox({ frame }));
         },
         onResizeEnd() {
           clearValue();
 
-          selectedElements.forEach(({ id }) => {
-            emit("resizeEnd", { id, position });
-          });
+          for (let i = 0; i < selectedElements.length; i++) {
+            emit("resizeEnd", { id: selectedElements[i].id, position });
+          }
         }
       }
     );
 
-    resizeMouseDown[position] = theResizeDown;
+    resizeDownHandlers[position] = theResizeDown;
     resizeMoveHandlers.push(theResizeMove);
     resizeUpHandlers.push(theResizeUp);
-  });
+  }
 
-  const resizeMouseMove = event => {
-    resizeMoveHandlers.forEach(handler => {
-      handler(event);
-    });
-  };
+  const resizeMouseMove = useCallback(event => {
+    for (let i = 0; i < resizeMoveHandlers.length; i++) {
+      resizeMoveHandlers[i](event);
+    }
+  }, []);
 
-  const resizeMouseUp = event => {
-    resizeUpHandlers.forEach(handler => {
-      handler(event);
-    });
-  };
+  const resizeMouseUp = useCallback(event => {
+    for (let i = 0; i < resizeUpHandlers.length; i++) {
+      resizeUpHandlers[i](event);
+    }
+  }, []);
 
   return {
     resizeMouseDown,

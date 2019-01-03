@@ -10,3 +10,5 @@ export const FinishCropButton = memo(({ dispatch, id }) => (
     End
   </button>
 ));
+
+FinishCropButton.displayName = "FinishCropButton";

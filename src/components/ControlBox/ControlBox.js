@@ -1,5 +1,5 @@
 import "./ControlBox.scss";
-import React, { memo } from "react";
+import React, { memo, useCallback } from "react";
 import cx from "classnames";
 import { ResizeHandler } from "./ResizeHandler";
 import { RotationHandler } from "./RotationHandler";
@@ -34,8 +34,9 @@ export const ControlBox = memo(
 
     // resize
     if (controls.indexOf("resize") !== -1) {
-      POSITION_VERTEX_INDEX_MAP[resizeHandlerPosition].forEach(index => {
-        const position = RECT_VERTICES[index];
+      const indexes = POSITION_VERTEX_INDEX_MAP[resizeHandlerPosition];
+      for (let i = 0; i < indexes.length; i++) {
+        const position = RECT_VERTICES[indexes[i]];
         children.push(
           <ResizeHandler
             key={`resize-${position}`}
@@ -43,7 +44,7 @@ export const ControlBox = memo(
             onMouseDown={onResizeMouseDown[position]}
           />
         );
-      });
+      }
     }
 
     // rotation
@@ -52,9 +53,9 @@ export const ControlBox = memo(
         <RotationHandler
           key="rotate-bottom"
           position="bottom"
-          onMouseDown={event => {
+          onMouseDown={useCallback(event => {
             onRotateMouseDown(event);
-          }}
+          }, [])}
         />
       );
     }
@@ -76,6 +77,8 @@ export const ControlBox = memo(
     );
   }
 );
+
+ControlBox.displayName = "ControlBox";
 
 ControlBox.defaultProps = {
   resizeHandlerPosition: "all",

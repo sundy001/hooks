@@ -13,3 +13,5 @@ export const SelectionBox = memo(({ frame: { x, y, width, height } }) =>
     />
   )
 );
+
+SelectionBox.displayName = "SelectionBox";

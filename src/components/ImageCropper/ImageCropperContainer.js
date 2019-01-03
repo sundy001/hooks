@@ -99,3 +99,5 @@ export const ImageCropperContainer = memo(
     );
   }
 );
+
+ImageCropperContainer.displayName = "ImageCropperContainer";

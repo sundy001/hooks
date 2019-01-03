@@ -26,14 +26,15 @@ export const createElements = (dispatch, elements, raise) => {
   const reactElements = [];
   const raisedElements = [];
 
-  elements.forEach(props => {
+  for (let i = 0; i < elements.length; i++) {
+    const props = elements[i];
     const reactElement = createElement(props, dispatch);
     if (raise.indexOf(props.id) !== -1) {
       raisedElements.push(reactElement);
     } else {
       reactElements.push(reactElement);
     }
-  });
+  }
 
   return reactElements.concat(raisedElements);
 };

@@ -29,7 +29,8 @@ export const getOverlapCache = elements =>
 export const detectOverlapByCache = (comparedVertices, overlapCache) => {
   const overlapedIds = [];
 
-  overlapCache.forEach(row => {
+  for (let i = 0; i < overlapCache.length; i++) {
+    const row = overlapCache[i];
     let isOverlap;
     const { id, vertices, angle, axes } = row;
     if (angle === 0) {
@@ -56,7 +57,7 @@ export const detectOverlapByCache = (comparedVertices, overlapCache) => {
     if (isOverlap) {
       overlapedIds.push(id);
     }
-  });
+  }
 
   return overlapedIds;
 };
@@ -64,15 +65,15 @@ export const detectOverlapByCache = (comparedVertices, overlapCache) => {
 const getProjectionOfPolygron = (vertices, axis) => {
   let min = axis.dot(vertices[0]);
   let max = min;
-  vertices.forEach(vertex => {
+  for (let i = 0; i < vertices.length; i++) {
     // NOTE: the axis must be normalized to get accurate projections
-    const p = axis.dot(vertex);
+    const p = axis.dot(vertices[i]);
     if (p < min) {
       min = p;
     } else if (p > max) {
       max = p;
     }
-  });
+  }
 
   return {
     min,
