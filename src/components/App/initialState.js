@@ -37,23 +37,5 @@ export const initialState = {
       }
     },
     allIds: [0]
-  },
-  selections: [],
-  raise: [],
-  controlBox: {
-    show: true,
-    angle: 0,
-    frame: {
-      x: 0,
-      y: 0,
-      width: 0,
-      height: 0
-    }
-  },
-  selectionBox: {
-    x: 0,
-    y: 0,
-    width: 0,
-    height: 0
   }
 };

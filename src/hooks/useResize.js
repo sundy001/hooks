@@ -6,14 +6,14 @@ import { RECT_VERTICES } from "../math/rect";
 import { getDisplacementInControlBox } from "../math/affineTransformation";
 
 export const useResize = (
-  selectedElements,
+  elements,
   controlBoxFrame,
   controlBoxAngle,
   shouldKeepAsepectRatio,
   { onResizeStart, onResize, onResizeEnd } = {}
 ) => {
   const { saveValue, getValue, clearValue } = useSelectionBeginningValue(
-    selectedElements,
+    elements,
     controlBoxFrame
   );
 
@@ -37,9 +37,9 @@ export const useResize = (
 
           if (onResizeStart) {
             const event = { position, elements: [] };
-            for (let i = 0; i < selectedElements.length; i++) {
+            for (let i = 0; i < elements.length; i++) {
               event.elements.push({
-                id: selectedElements[i].id
+                id: elements[i].id
               });
             }
             onResizeStart(event);
@@ -52,8 +52,8 @@ export const useResize = (
 
           const event = { position, elements: [] };
 
-          for (let i = 0; i < selectedElements.length; i++) {
-            const { id } = selectedElements[i];
+          for (let i = 0; i < elements.length; i++) {
+            const { id } = elements[i];
             const newWidth = beginningValue[id].width * hRatio;
             const newHeight = beginningValue[id].height * vRatio;
 
@@ -90,9 +90,9 @@ export const useResize = (
 
           if (onResizeEnd) {
             const event = { position, elements: [] };
-            for (let i = 0; i < selectedElements.length; i++) {
+            for (let i = 0; i < elements.length; i++) {
               event.elements.push({
-                id: selectedElements[i].id
+                id: elements[i].id
               });
             }
             onResizeEnd(event);

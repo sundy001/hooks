@@ -1,5 +1,5 @@
 import React from "react";
-import { elementsStatic } from "./elementsStatic";
+import { elementsStatic } from "../App/elementsStatic";
 
 const loadedElements = {};
 
@@ -22,19 +22,5 @@ const createElement = ({ id, name, ...props }, dispatch) => {
   return <Element key={id} id={id} {...props} dispatch={dispatch} />;
 };
 
-export const createElements = (dispatch, elements, raise) => {
-  const reactElements = [];
-  const raisedElements = [];
-
-  for (let i = 0; i < elements.length; i++) {
-    const props = elements[i];
-    const reactElement = createElement(props, dispatch);
-    if (raise.indexOf(props.id) !== -1) {
-      raisedElements.push(reactElement);
-    } else {
-      reactElements.push(reactElement);
-    }
-  }
-
-  return reactElements.concat(raisedElements);
-};
+export const createElements = (dispatch, elements) =>
+  elements.map(props => createElement(props, dispatch));

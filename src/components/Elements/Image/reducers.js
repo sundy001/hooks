@@ -39,7 +39,7 @@ export const elements = (state, action) => {
   }
 };
 
-export const raise = (state, action) => {
+export const raise = (state = [], action) => {
   switch (action.type) {
     case START_CROPPING_IMAGE:
       return [action.element];

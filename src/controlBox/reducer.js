@@ -8,7 +8,19 @@ import {
 } from "./actions";
 import { SET_SELECTIONS } from "../selections";
 
-export const reducer = (state, action) => {
+export const reducer = (
+  state = {
+    show: true,
+    angle: 0,
+    frame: {
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
+    }
+  },
+  action
+) => {
   switch (action.type) {
     case UPDATE_CONTROL_BOX:
       return {

@@ -4,7 +4,7 @@ import {
   UPDATE_ELEMENTS,
   COPY_ELEMENTS,
   DELETE_ELEMENTS
-} from "./actions";
+} from "../Canvas/actions";
 import { reducer as selections } from "../../selections";
 import { elements as imageElements, raise } from "../elements/Image";
 import { reducer as selectionBox } from "../../selectionBox";

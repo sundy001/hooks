@@ -3,7 +3,7 @@ import { useRawDragAndDrop } from "./useRawDragAndDrop";
 
 export const useDragAndDrop = (
   shouldDrag,
-  selectedElements,
+  elements,
   controlBoxFrame,
   { onDrag } = {}
 ) => {
@@ -23,19 +23,19 @@ export const useDragAndDrop = (
     },
 
     onDrag({ dx, dy }) {
-      if (selectedElements.length === 0) {
+      if (elements.length === 0) {
         return;
       }
 
       const event = { elements: [] };
 
       // move elements
-      for (let i = 0; i < selectedElements.length; i++) {
+      for (let i = 0; i < elements.length; i++) {
         event.elements.push({
-          id: selectedElements[i].id,
+          id: elements[i].id,
           position: {
-            x: selectedElements[i].frame.x + dx,
-            y: selectedElements[i].frame.y + dy
+            x: elements[i].frame.x + dx,
+            y: elements[i].frame.y + dy
           }
         });
       }

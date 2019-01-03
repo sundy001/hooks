@@ -1,6 +1,6 @@
 import { elementsStatic } from "../elementsStatic";
 
-export const shouldKeepAspectRatio = ({ selections, elements }) => {
+export const shouldResizeKeepAspectRatio = ({ selections, elements }) => {
   if (selections.length === 0) {
     return false;
   }
