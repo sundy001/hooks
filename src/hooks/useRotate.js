@@ -1,67 +1,70 @@
 import { useRef } from "react";
-import { useDrag } from "./useDrag";
+import { useSelectionBeginningValue } from "./useSelectionBeginningValue";
+import { useRawRotate } from "./useRawRotate";
+import { getDisplacementInControlBox } from "../math/affineTransformation";
 
 export const useRotate = (
-  { x, y, width, height },
-  { onMouseDown, onRotateStart, onRotate, onRotateEnd } = {}
+  selectedElements,
+  controlBoxFrame,
+  controlBoxAngle,
+  { onRotate } = {}
 ) => {
   const stateRef = useRef({
-    beginningX: null,
-    beginningY: null
+    beginningControlBoxAngle: null
   });
-  const [rotateMouseDown, rotateMouseMove, rotateMouseUp] = useDrag({
-    onMouseDown(event) {
-      if (onMouseDown) {
-        onMouseDown(event);
+  const { saveValue, getValue, clearValue } = useSelectionBeginningValue(
+    selectedElements,
+    controlBoxFrame
+  );
+
+  return useRawRotate(controlBoxFrame, {
+    onMouseDown({ original }) {
+      original.stopPropagation();
+    },
+    onRotateStart() {
+      stateRef.current.beginningControlBoxAngle = controlBoxAngle;
+      saveValue();
+    },
+    onRotate({ angle }) {
+      const beginningValue = getValue();
+      const { beginningControlBoxAngle } = stateRef.current;
+
+      const event = { elements: [] };
+
+      // rotate elements
+      for (let i = 0; i < selectedElements.length; i++) {
+        const { id, frame } = selectedElements[i];
+        const { x: newX, y: newY } = getDisplacementInControlBox(
+          beginningValue[id].offset,
+          frame,
+          beginningValue[id].angle,
+          controlBoxFrame,
+          angle
+        );
+
+        const beginningAngle =
+          selectedElements.length === 1
+            ? beginningControlBoxAngle
+            : beginningValue[id].angle;
+
+        event.elements.push({
+          id,
+          angle: beginningAngle + angle,
+          frame: { ...frame, x: newX, y: newY }
+        });
       }
+
+      event.controlBoxAngle = beginningControlBoxAngle + angle;
+
+      if (onRotate) {
+        onRotate(event);
+      }
+    },
+    onRotateEnd() {
+      clearValue();
 
       const state = stateRef.current;
-      state.beginningX = event.original.pageX;
-      state.beginningY = event.original.pageY;
-    },
-    onDragStart(event) {
-      if (onRotateStart) {
-        onRotateStart(event);
-      }
-    },
-    onDrag(event) {
-      if (!onRotate) {
-        return;
-      }
-      const { pageX, pageY } = event.original;
-      const { beginningX, beginningY } = stateRef.current;
-
-      const newAngle = -angleOfThreePoints(
-        beginningX,
-        beginningY,
-        x + width / 2,
-        y + height / 2,
-        pageX,
-        pageY
-      );
-
-      onRotate({
-        ...event,
-        angle: newAngle
-      });
-    },
-    onMouseUp(event) {
-      const state = stateRef.current;
-      state.beginningX = event.original.pageX;
-      state.beginningY = event.original.pageY;
-    },
-    onDragEnd(event) {
-      if (onRotateEnd) {
-        onRotateEnd(event);
-      }
+      state.beginningControlBoxAngle = null;
     }
   });
-
-  return { rotateMouseDown, rotateMouseMove, rotateMouseUp };
-};
-
-// (x1, y1) is the middle point
-// (x0, y0), (x2, y2) are the ends of the line
-const angleOfThreePoints = (x0, y0, x1, y1, x2, y2) => {
-  return Math.atan2(y0 - y1, x0 - x1) - Math.atan2(y2 - y1, x2 - x1);
 };

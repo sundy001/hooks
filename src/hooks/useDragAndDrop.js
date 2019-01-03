@@ -2,10 +2,10 @@ import { useRef } from "react";
 import { useRawDragAndDrop } from "./useRawDragAndDrop";
 
 export const useDragAndDrop = (
-  onChange,
   shouldDrag,
   selectedElements,
-  controlBoxFrame
+  controlBoxFrame,
+  { onDrag } = {}
 ) => {
   const beginningPositionRef = useRef(null);
 
@@ -44,10 +44,11 @@ export const useDragAndDrop = (
       beginningPositionRef.current.x += dx;
       beginningPositionRef.current.y += dy;
 
-      // onChange
       event.controlBoxPosition = { ...beginningPositionRef.current };
 
-      onChange(event);
+      if (onDrag) {
+        onDrag(event);
+      }
     }
   });
 };

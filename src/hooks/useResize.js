@@ -1,204 +1,128 @@
+import { useCallback, useMemo } from "react";
 import Victor from "victor";
-import { useRef } from "react";
-import { useDrag } from "./useDrag";
-import {
-  RECT_VERTICES,
-  indexOfOppositeVertex,
-  vertexOfOriginRect,
-  resolvePosition,
-  indexesOfEdge
-} from "../math/rect";
-import { transform, getDisplacement } from "../math/affineTransformation";
+import { useSelectionBeginningValue } from "./useSelectionBeginningValue";
+import { useRawResize } from "./useRawResize";
+import { RECT_VERTICES } from "../math/rect";
+import { getDisplacementInControlBox } from "../math/affineTransformation";
 
 export const useResize = (
-  position,
-  frame,
-  angle,
+  selectedElements,
+  controlBoxFrame,
+  controlBoxAngle,
   shouldKeepAsepectRatio,
-  { onMouseDown, onResizeStart, onResize, onResizeEnd } = {}
+  { onResizeStart, onResize, onResizeEnd } = {}
 ) => {
-  const stateRef = useRef({
-    beginningWidth: null,
-    beginningHeight: null
-  });
+  const { saveValue, getValue, clearValue } = useSelectionBeginningValue(
+    selectedElements,
+    controlBoxFrame
+  );
 
-  const callCallbackIfExist = (callback, event, frame) => {
-    if (!callback) {
-      return;
-    }
+  const resizeMoveHandlers = [];
+  const resizeUpHandlers = [];
+  const resizeDownHandlers = {};
 
-    const { beginningWidth, beginningHeight } = stateRef.current;
+  for (let i = 0; i < RECT_VERTICES.length; i++) {
+    const position = RECT_VERTICES[i];
+    const [theResizeDown, theResizeMove, theResizeUp] = useRawResize(
+      position,
+      controlBoxFrame,
+      controlBoxAngle,
+      shouldKeepAsepectRatio,
+      {
+        onMouseDown({ original }) {
+          original.stopPropagation();
+        },
+        onResizeStart() {
+          saveValue();
 
-    callback({
-      ...event,
-      frame,
-      beginningWidth,
-      beginningHeight
-    });
-  };
+          if (onResizeStart) {
+            const event = { position, elements: [] };
+            for (let i = 0; i < selectedElements.length; i++) {
+              event.elements.push({
+                id: selectedElements[i].id
+              });
+            }
+            onResizeStart(event);
+          }
+        },
+        onResize({ frame, beginningWidth, beginningHeight }) {
+          const beginningValue = getValue();
+          const hRatio = frame.width / beginningWidth;
+          const vRatio = frame.height / beginningHeight;
 
-  return useDrag({
-    onMouseDown(event) {
-      // TODO: check position and keepAsepectRatio compatability
-      if (onMouseDown) {
-        callCallbackIfExist(onMouseDown, event);
-      }
-    },
-    onDragStart(event) {
-      const state = stateRef.current;
-      state.beginningWidth = frame.width;
-      state.beginningHeight = frame.height;
+          const event = { position, elements: [] };
 
-      if (onResizeStart) {
-        callCallbackIfExist(onResizeStart, event);
-      }
-    },
-    onDrag(event) {
-      const { pageX, pageY } = event.original;
-      const { vertical, horizontal } = resolvePosition(position);
-      const keepAsepectRatio =
-        vertical !== null && horizontal !== null && shouldKeepAsepectRatio;
+          for (let i = 0; i < selectedElements.length; i++) {
+            const { id } = selectedElements[i];
+            const newWidth = beginningValue[id].width * hRatio;
+            const newHeight = beginningValue[id].height * vRatio;
 
-      let virtualPosition;
-      if (keepAsepectRatio) {
-        virtualPosition = getMousePositionKeepAspectRatio(
-          position,
-          frame,
-          angle,
-          pageX,
-          pageY
-        );
-      } else {
-        virtualPosition = { x: pageX, y: pageY };
-      }
-
-      const newHeight =
-        vertical === null
-          ? frame.height
-          : Math.trunc(
-              axisDistance(
-                vertical,
-                frame,
-                angle,
-                virtualPosition.x,
-                virtualPosition.y
-              )
+            const { x: offsetX, y: offsetY } = beginningValue[id].offset;
+            const { x: newX, y: newY } = getDisplacementInControlBox(
+              new Victor(offsetX * hRatio, offsetY * vRatio),
+              { width: newWidth, height: newHeight },
+              beginningValue[id].angle,
+              frame,
+              0
             );
 
-      let newWidth;
-      if (keepAsepectRatio) {
-        const { beginningWidth, beginningHeight } = stateRef.current;
-        newWidth = (newHeight * beginningWidth) / beginningHeight;
-      } else {
-        newWidth =
-          horizontal === null
-            ? frame.width
-            : Math.trunc(axisDistance(horizontal, frame, angle, pageX, pageY));
-      }
+            const newFrame = {
+              x: newX,
+              y: newY,
+              width: newWidth,
+              height: newHeight
+            };
 
-      const { x: newX, y: newY } = getNewPosition(
-        position,
-        frame,
-        angle,
-        newWidth,
-        newHeight
-      );
+            event.elements.push({
+              id,
+              frame: newFrame
+            });
+          }
 
-      if (onResize) {
-        const frame = { x: newX, y: newY, width: newWidth, height: newHeight };
-        callCallbackIfExist(onResize, event, frame);
-      }
-    },
-    onDragEnd(event) {
-      if (onResizeEnd) {
-        callCallbackIfExist(onResizeEnd, event);
-      }
+          event.controlBoxFrame = frame;
 
-      const state = stateRef.current;
-      state.beginningWidth = null;
-      state.beginningHeight = null;
+          if (onResize) {
+            onResize(event);
+          }
+        },
+        onResizeEnd() {
+          clearValue();
+
+          if (onResizeEnd) {
+            const event = { position, elements: [] };
+            for (let i = 0; i < selectedElements.length; i++) {
+              event.elements.push({
+                id: selectedElements[i].id
+              });
+            }
+            onResizeEnd(event);
+          }
+        }
+      }
+    );
+
+    resizeDownHandlers[position] = theResizeDown;
+    resizeMoveHandlers.push(theResizeMove);
+    resizeUpHandlers.push(theResizeUp);
+  }
+
+  const resizeMouseDown = useMemo(() => resizeDownHandlers, []);
+
+  const resizeMouseMove = useCallback(event => {
+    for (let i = 0; i < resizeMoveHandlers.length; i++) {
+      resizeMoveHandlers[i](event);
     }
-  });
-};
+  }, []);
 
-const getMousePositionKeepAspectRatio = (position, frame, angle, mX, mY) => {
-  const index = RECT_VERTICES.indexOf(position);
-  const oppositeIndex = indexOfOppositeVertex(index);
-  const [vertex, oppositeVertex] = [index, oppositeIndex].map(i =>
-    transform(vertexOfOriginRect(i, frame.width, frame.height), frame, angle)
-  );
+  const resizeMouseUp = useCallback(event => {
+    for (let i = 0; i < resizeUpHandlers.length; i++) {
+      resizeUpHandlers[i](event);
+    }
+  }, []);
 
-  // calculate normalized diagonal vector
-  const axis = vertex
-    .clone()
-    .subtract(oppositeVertex)
-    .normalize();
-
-  const mousePosition = new Victor(mX, mY);
-  // axis.dot(mousePosition): length of mouse position project on diagonal axis
-  // axis.dot(oppositeVertex): length of opposite vertex project on diagonal axis
-  // subtraction result is distance(scalar) between mouse and opposite vertex
-  const distance = axis.dot(mousePosition) - axis.dot(oppositeVertex);
-
-  return axis.multiply(new Victor(distance, distance)).add(oppositeVertex);
-};
-
-const axisDistance = (token, frame, angle, mX, mY) => {
-  const index = RECT_VERTICES.indexOf(token);
-  const oppositeIndex = indexOfOppositeVertex(index);
-  const edgeVertices = indexesOfEdge(oppositeIndex).map(i =>
-    transform(vertexOfOriginRect(i, frame.width, frame.height), frame, angle)
-  );
-
-  return minDistanceFromVertexToLine(
-    edgeVertices[0],
-    edgeVertices[1],
-    new Victor(mX, mY)
-  );
-};
-
-// base of the fact that the opposite vertex of the resize handler does not change position
-// calculate the new position of element
-const getNewPosition = (position, frame, angle, hDistance, vDistance) => {
-  const positionIndex = RECT_VERTICES.indexOf(position);
-  const oppositeIndex = indexOfOppositeVertex(positionIndex);
-  const oppositeVertex = transform(
-    vertexOfOriginRect(oppositeIndex, frame.width, frame.height),
-    frame,
-    angle
-  );
-
-  return getDisplacement(
-    vertexOfOriginRect(oppositeIndex, hDistance, vDistance), //  raw vertex
-    hDistance,
-    vDistance,
-    angle,
-    oppositeVertex // target vertex
-  );
-};
-
-// reference: https://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment
-// v, w are two ends of the line
-// p is the vertex
-export const minDistanceFromVertexToLine = (v, w, p) => {
-  const l2 = v.distanceSq(w);
-  if (l2 === 0) return p.distance(v);
-
-  const t = Math.max(
-    0,
-    Math.min(
-      1,
-      p
-        .clone()
-        .subtract(v)
-        .dot(w.clone().subtract(v)) / l2
-    )
-  );
-  const projection = v.clone().add(
-    w
-      .clone()
-      .subtract(v)
-      .multiply(new Victor(t, t))
-  );
-  return p.distance(projection);
+  return {
+    resizeMouseDown,
+    resizeMouseMove,
+    resizeMouseUp
+  };
 };

@@ -1,5 +1,5 @@
 import Victor from "victor";
-import { useResize } from "../../../hooks/useResize";
+import { useRawResize } from "../../../hooks/useRawResize";
 import { RECT_VERTICES, CORNER_INDEXES } from "../../../math/rect";
 import { transform } from "../../../math/affineTransformation";
 
@@ -19,7 +19,7 @@ export const useInnerResize = (
   const resizeUpHandlers = [];
 
   CORNER_INDEXES.map(index => RECT_VERTICES[index]).forEach(position => {
-    const [theResizeDown, theResizeMove, theResizeUp] = useResize(
+    const [theResizeDown, theResizeMove, theResizeUp] = useRawResize(
       position,
       frame,
       angle,

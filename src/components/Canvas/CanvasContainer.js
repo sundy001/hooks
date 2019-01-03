@@ -7,8 +7,8 @@ import { initialState } from "./initialState";
 import { selectAllElements } from "./selectors/selectAllElements";
 import { selectSelectedElements } from "./selectors/selectSelectedElements";
 import { reducer } from "./CanvasReducer";
-import { useRotate } from "./hooks/useRotate";
-import { useResize } from "./hooks/useResize";
+import { useRotate } from "../../hooks/useRotate";
+import { useResize } from "../../hooks/useResize";
 import { useSelectionBox } from "./hooks/useSelectionBox";
 import { shouldKeepAspectRatio } from "./selectors/shouldKeepAspectRatio";
 import { getComponentsOfElementPanel } from "./selectors/getComponentsOfElementPanel";
@@ -53,32 +53,76 @@ export const CanvasContainer = memo(() => {
   });
 
   const { dragMouseDown, dragMouseMove, dragMouseUp } = useDragAndDrop(
-    event => {
-      dispatch(updateElements(event.elements));
-      dispatch(
-        updateControlBox({
-          frame: { ...controlBoxFrame, ...event.controlBoxPosition }
-        })
-      );
-    },
     event => Boolean(event.target.closest(".element")),
     selectedElements,
-    controlBoxFrame
+    controlBoxFrame,
+    {
+      onDrag({ elements, controlBoxPosition }) {
+        dispatch(updateElements(elements));
+        dispatch(
+          updateControlBox({
+            frame: { ...controlBoxFrame, ...controlBoxPosition }
+          })
+        );
+      }
+    }
   );
 
   const { rotateMouseDown, rotateMouseMove, rotateMouseUp } = useRotate(
-    dispatch,
-    selectedElements,
-    controlBoxFrame,
-    controlBoxAngle
-  );
-
-  const { resizeMouseDown, resizeMouseMove, resizeMouseUp } = useResize(
-    dispatch,
     selectedElements,
     controlBoxFrame,
     controlBoxAngle,
-    shouldKeepAspectRatio(state)
+    {
+      onRotate({ elements, controlBoxAngle }) {
+        dispatch(updateElements(elements));
+        dispatch(
+          updateControlBox({
+            angle: controlBoxAngle
+          })
+        );
+      }
+    }
+  );
+
+  const { resizeMouseDown, resizeMouseMove, resizeMouseUp } = useResize(
+    selectedElements,
+    controlBoxFrame,
+    controlBoxAngle,
+    shouldKeepAspectRatio(state),
+    {
+      onResizeStart({ elements, position }) {
+        for (let i = 0; i < elements.length; i++) {
+          emit("resizeStart", {
+            id: elements[i].id,
+            position: position
+          });
+        }
+      },
+      onResize({ elements, controlBoxFrame, position }) {
+        dispatch(updateElements(elements));
+        dispatch(
+          updateControlBox({
+            frame: controlBoxFrame
+          })
+        );
+
+        for (let i = 0; i < elements.length; i++) {
+          emit("resize", {
+            id: elements[i].id,
+            position: position,
+            frame: elements[i].frame
+          });
+        }
+      },
+      onResizeEnd({ elements, position }) {
+        for (let i = 0; i < elements.length; i++) {
+          emit("resizeEnd", {
+            id: elements[i].id,
+            position: position
+          });
+        }
+      }
+    }
   );
 
   const {
