@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React from "react";
 import cx from "classnames";
 import { getFrameStyle } from "../../../getFrameStyle";
 import { component, image } from "./Image.module.css";

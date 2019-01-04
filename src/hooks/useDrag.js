@@ -74,11 +74,6 @@ export const useDrag = ({
     const { shouldDrag, onDrag } = callbackRef.current;
 
     if (!isMouseDown) return;
-    if (!state.isMouseMove) {
-      callCallbackIfExist(callbackRef.current.onDragStart, event);
-    }
-
-    state.isMouseMove = true;
 
     if (shouldDrag && !shouldDragChecked) {
       state.shouldDragChecked = true;
@@ -87,6 +82,12 @@ export const useDrag = ({
         return;
       }
     }
+
+    if (!state.isMouseMove) {
+      callCallbackIfExist(callbackRef.current.onDragStart, event);
+    }
+
+    state.isMouseMove = true;
 
     callCallbackIfExist(onDrag, event);
   }, []);

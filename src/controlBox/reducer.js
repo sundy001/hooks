@@ -6,7 +6,7 @@ import {
   SHOW_CONTROL_BOX,
   HIDE_CONTROL_BOX
 } from "./actions";
-import { SET_SELECTIONS } from "../selections";
+import { SET_SELECTIONS, CLEAR_SELECTIONS } from "../selections";
 
 export const reducer = (
   state = {
@@ -28,11 +28,13 @@ export const reducer = (
         angle: action.angle !== undefined ? action.angle : state.angle,
         frame: action.frame !== undefined ? action.frame : state.frame
       };
+
     case SHOW_CONTROL_BOX:
       return {
         ...state,
         show: true
       };
+    case CLEAR_SELECTIONS:
     case HIDE_CONTROL_BOX:
       return {
         ...state,
@@ -43,23 +45,42 @@ export const reducer = (
   }
 };
 
-export const controlBoxUpdatedBySelection = (controlBox, elements, action) => {
+export const controlBoxUpdatedBySelection = (
+  controlBox,
+  elements,
+  pageOffsetById,
+  action
+) => {
   switch (action.type) {
     case SET_SELECTIONS:
       switch (action.selections.length) {
         case 0:
           return { ...controlBox, show: false };
         case 1:
-          const { frame, angle } = elements.byId[action.selections[0]];
+          const { frame, angle, page } = elements.byId[action.selections[0]];
 
           return {
             show: true,
-            frame: { ...frame },
+            frame: {
+              ...frame,
+              x: frame.x + pageOffsetById[page].x,
+              y: frame.y + pageOffsetById[page].y
+            },
             angle
           };
         default:
           const { min, max } = minMaxVerticesOfSelections(
-            action.selections.map(id => elements.byId[id])
+            action.selections.map(id => {
+              const { frame, angle, page } = elements.byId[id];
+              return {
+                frame: {
+                  ...frame,
+                  x: frame.x + pageOffsetById[page].x,
+                  y: frame.y + pageOffsetById[page].y
+                },
+                angle
+              };
+            })
           );
           const { width, height } = sizeOfRectVertices(min, max);
 

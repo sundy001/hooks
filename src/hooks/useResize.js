@@ -32,6 +32,7 @@ export const useResize = (
         onMouseDown({ original }) {
           original.stopPropagation();
         },
+
         onResizeStart() {
           saveValue();
 
@@ -45,6 +46,20 @@ export const useResize = (
             onResizeStart(event);
           }
         },
+        onResizeEnd() {
+          clearValue();
+
+          if (onResizeEnd) {
+            const event = { position, elements: [] };
+            for (let i = 0; i < elements.length; i++) {
+              event.elements.push({
+                id: elements[i].id
+              });
+            }
+            onResizeEnd(event);
+          }
+        },
+
         onResize({ frame, beginningWidth, beginningHeight }) {
           const beginningValue = getValue();
           const hRatio = frame.width / beginningWidth;
@@ -83,19 +98,6 @@ export const useResize = (
 
           if (onResize) {
             onResize(event);
-          }
-        },
-        onResizeEnd() {
-          clearValue();
-
-          if (onResizeEnd) {
-            const event = { position, elements: [] };
-            for (let i = 0; i < elements.length; i++) {
-              event.elements.push({
-                id: elements[i].id
-              });
-            }
-            onResizeEnd(event);
           }
         }
       }

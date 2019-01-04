@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { resolvePosition, TOP, LEFT } from "../../../../math/rect";
 import { useElementListener } from "../../../../eventBus";
 // TODO.
-import { updateElement } from "../../../Canvas/actions";
+import { updateElement } from "../../../App/actions";
 
 export const useResize = (id, dispatch, frame, imageFrame) => {
   const stateRef = useRef({

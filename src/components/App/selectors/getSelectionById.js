@@ -3,7 +3,8 @@ export const selectElements = ({ elements: { allIds, byId }, raise }) => {
   const raisedElements = [];
 
   for (let i = 0; i < allIds.length; i++) {
-    const element = byId[allIds[i]];
+    const element = { ...byId[allIds[i]] };
+
     if (raise.length > 0 && raise.indexOf(element.id) !== -1) {
       raisedElements.push(element);
     } else {

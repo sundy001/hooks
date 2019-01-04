@@ -26,7 +26,7 @@ export const ImageContainer = memo(props => {
 
   const onChange = useCallback(({ frame, imageFrame }) => {
     dispatch(updateCroppingImage(id, frame, imageFrame));
-    dispatch(updateControlBox({ frame }));
+    dispatch(updateControlBox({ frame: { ...frame, x: frame.x + 590 } }));
   }, []);
 
   const onFinish = useCallback(() => {

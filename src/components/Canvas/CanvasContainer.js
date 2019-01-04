@@ -1,12 +1,10 @@
 import "./Canvas.scss";
-import React, { Suspense, useCallback, memo } from "react";
+import React, { useCallback, memo } from "react";
 
 import { ControlBox } from "../ControlBox";
 import { SelectionBox } from "../SelectionBox";
 
-import { updateElements } from "./actions";
-
-import { createElements } from "./createElements";
+import { updateElements } from "../App/actions";
 
 import { emit } from "../../eventBus";
 import { useResize } from "../../hooks/useResize";
@@ -21,21 +19,62 @@ import {
   hideSelectionBox
 } from "../../selectionBox";
 
+// TODO extract offset logic later
+const toPageCoordinate = (nextElementStates, pageOffsetById) => {
+  return nextElementStates.map(({ id, frame, angle }) => ({
+    id,
+    angle,
+    frame: {
+      ...frame,
+      x: frame.x - pageOffsetById[id].x,
+      y: frame.y - pageOffsetById[id].y
+    }
+  }));
+};
+
 export const CanvasContainer = memo(
   ({
     dispatch,
     elements,
-    selection,
+    pageOffsetById,
+    selectionIds,
     controlBox,
     selectionBoxFrame,
-    resizeKeepAspectRatio
+    resizeKeepAspectRatio,
+    children
   }) => {
-    const selectionIds = selection.map(({ id }) => id);
+    const selectionById = {};
+    for (let i = 0; i < selectionIds.length; i++) {
+      selectionById[selectionIds[i]] = true;
+    }
+
+    const selection = [];
+    const offsettedElements = [];
+    for (let i = 0; i < elements.length; i++) {
+      const { id, frame, angle } = elements[i];
+      const element = {
+        id,
+        frame: {
+          ...frame,
+          x: frame.x + pageOffsetById[id].x,
+          y: frame.y + pageOffsetById[id].y
+        },
+        angle
+      };
+
+      offsettedElements.push(element);
+
+      if (selectionById[id]) {
+        selection.push(element);
+      }
+    }
 
     // hooks
     const { selectMouseDown, selectMouseMove, selectMouseUp } = useSelect(
       dispatch,
-      event => event.target.classList.contains("canvas"),
+      event =>
+        event.target.classList.contains("canvas") ||
+        event.target.classList.contains("page"),
       selectionIds,
       {
         onDeselect() {
@@ -58,6 +97,7 @@ export const CanvasContainer = memo(
       controlBox.frame,
       {
         onDrag({ elements, controlBoxPosition }) {
+          elements = toPageCoordinate(elements, pageOffsetById);
           dispatch(updateElements(elements));
           dispatch(
             updateControlBox({
@@ -74,6 +114,7 @@ export const CanvasContainer = memo(
       controlBox.angle,
       {
         onRotate({ elements, controlBoxAngle }) {
+          elements = toPageCoordinate(elements, pageOffsetById);
           dispatch(updateElements(elements));
           dispatch(
             updateControlBox({
@@ -99,6 +140,7 @@ export const CanvasContainer = memo(
           }
         },
         onResize({ elements, controlBoxFrame, position }) {
+          elements = toPageCoordinate(elements, pageOffsetById);
           dispatch(updateElements(elements));
           dispatch(
             updateControlBox({
@@ -130,8 +172,10 @@ export const CanvasContainer = memo(
       selectBoxMouseMove,
       selectBoxMouseUp
     } = useSelectionBox(
-      event => event.target.classList.contains("canvas"),
-      elements,
+      event =>
+        event.target.classList.contains("canvas") ||
+        event.target.classList.contains("page"),
+      offsettedElements,
       {
         onSelectEnd(selectedElements) {
           dispatch(setSelections(selectedElements));
@@ -142,8 +186,6 @@ export const CanvasContainer = memo(
         }
       }
     );
-
-    const children = createElements(dispatch, elements);
 
     // canvas
     return (
@@ -172,8 +214,8 @@ export const CanvasContainer = memo(
           doubleClickMouseUp(event);
         }, [])}
       >
-        <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
-        <SelectionBox frame={selectionBoxFrame} elements={elements} />
+        {children}
+        <SelectionBox frame={selectionBoxFrame} elements={offsettedElements} />
 
         <ControlBox
           show={controlBox.show}

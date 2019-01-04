@@ -1,3 +1,5 @@
 .page {
+  position: relative;
   background: pink;
+  margin: 0 auto;
 }

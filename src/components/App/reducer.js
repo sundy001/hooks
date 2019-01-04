@@ -3,8 +3,9 @@ import {
   UPDATE_ELEMENT,
   UPDATE_ELEMENTS,
   COPY_ELEMENTS,
-  DELETE_ELEMENTS
-} from "../Canvas/actions";
+  DELETE_ELEMENTS,
+  UPDATE_PAGE_OFFSETS
+} from "./actions";
 import { reducer as selections } from "../../selections";
 import { elements as imageElements, raise } from "../elements/Image";
 import { reducer as selectionBox } from "../../selectionBox";
@@ -28,12 +29,9 @@ export const elements = (state, action) => {
         (previouseState, newValue) => {
           const nextState = { ...previouseState };
 
-          if (newValue.position) {
-            nextState.frame = { ...previouseState.frame, ...newValue.position };
-          } else if (newValue.frame) {
+          if (newValue.frame) {
             nextState.frame = newValue.frame;
           }
-
           if (newValue.angle) {
             nextState.angle = newValue.angle;
           }
@@ -98,6 +96,15 @@ export const copySelectedElements = (elements, selections, action) => {
   }
 };
 
+export const pageOffsets = (state = {}, action) => {
+  switch (action.type) {
+    case UPDATE_PAGE_OFFSETS:
+      return action.offsets;
+    default:
+      return state;
+  }
+};
+
 export const reducer = combineReducers({
   elements: [
     elements,
@@ -113,12 +120,14 @@ export const reducer = combineReducers({
   controlBox: [
     controlBox,
     {
-      getStates({ elements }) {
-        return [elements];
+      getStates({ elements, pageOffsets }) {
+        return [elements, pageOffsets];
       },
       reduce: controlBoxUpdatedBySelection
     }
   ],
   selectionBox,
-  raise
+  raise,
+  pages: s => s,
+  pageOffsets
 });
