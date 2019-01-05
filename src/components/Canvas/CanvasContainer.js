@@ -25,15 +25,13 @@ export const CanvasContainer = memo(
     resizeKeepAspectRatio,
     children
   }) => {
-    const selectionIds = selections.map(({ id }) => id);
-
     // hooks
     const { selectMouseDown, selectMouseMove, selectMouseUp } = useSelect(
       dispatch,
       event =>
         event.target.classList.contains("canvas") ||
         event.target.classList.contains("page"),
-      selectionIds,
+      selections.map(({ id }) => id),
       {
         onDeselect() {
           dispatch(hideControlBox());

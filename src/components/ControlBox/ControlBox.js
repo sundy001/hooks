@@ -18,7 +18,6 @@ const POSITION_VERTEX_INDEX_MAP = {
 
 export const ControlBox = memo(
   ({
-    show,
     frame: { x, y, width, height },
     angle,
     controls, // (rotation|resize)[]
@@ -26,7 +25,7 @@ export const ControlBox = memo(
     onRotateMouseDown,
     onResizeMouseDown
   }) => {
-    if (!show || width === 0 || height === 0) {
+    if (width === 0 || height === 0) {
       return null;
     }
 

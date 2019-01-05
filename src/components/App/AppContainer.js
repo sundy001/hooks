@@ -1,7 +1,6 @@
-import React, { Suspense, useEffect, useReducer } from "react";
+import React, { useEffect, useReducer } from "react";
 
 import { Canvas } from "../Canvas";
-import { ControlBox } from "../ControlBox";
 import { SelectionBox } from "../SelectionBox";
 
 import { Page } from "../Page";
@@ -10,7 +9,6 @@ import { initialState } from "./initialState";
 import { getComponentsOfElementPanel } from "./selectors/getComponentsOfElementPanel";
 import { selectElements } from "./selectors/selectElements";
 import { shouldResizeKeepAspectRatio } from "./selectors/shouldResizeKeepAspectRatio";
-import { createElements } from "./createElements";
 import { getSelectedElements } from "./selectors/getSelectedElements";
 
 export const AppContainer = () => {
@@ -24,7 +22,7 @@ export const AppContainer = () => {
   const elements = selectElements(state);
 
   const selections = getSelectedElements(state);
-  const { controlBox, pages, selections: selectionIds } = state;
+  const { controlBox, pages } = state;
 
   return (
     <Canvas
@@ -62,31 +60,24 @@ export const AppContainer = () => {
                     return controlBoxPageId === page;
                   });
 
+            const resizeHandlerPosition =
+              selections.length > 1 ? "corner" : "all";
+
+            // TODO: cache pageElements to aviod redraw
             return (
               <Page
                 key={pageId}
+                {...page}
                 id={pageId}
-                width={page.width}
-                height={page.height}
-                backgroundColor={page.backgroundColor}
-              >
-                <Suspense fallback={<div>Loading...</div>}>
-                  {createElements(dispatch, pageElements)}
-                </Suspense>
-                {showControlBox && (
-                  <ControlBox
-                    show={controlBox.show}
-                    frame={controlBox.frame}
-                    angle={controlBox.angle}
-                    // TODO: when the logic become complicated, move it to selector
-                    resizeHandlerPosition={
-                      selections.length > 1 ? "corner" : "all"
-                    }
-                    onRotateMouseDown={rotateMouseDown}
-                    onResizeMouseDown={resizeMouseDown}
-                  />
-                )}
-              </Page>
+                dispatch={dispatch}
+                elements={pageElements}
+                controlBox={
+                  showControlBox && controlBox.show ? controlBox : null
+                }
+                resizeHandlerPosition={resizeHandlerPosition}
+                resizeMouseDown={resizeMouseDown}
+                rotateMouseDown={rotateMouseDown}
+              />
             );
           })
         );
