@@ -54,7 +54,9 @@ export const useRawResize = (
       }
     },
     onDrag(event) {
-      const { pageX, pageY } = event.original;
+      const page = event.target.closest(".page");
+      const pageX = event.original.pageX - page.offsetLeft;
+      const pageY = event.original.pageY - page.offsetTop;
       const { vertical, horizontal } = resolvePosition(position);
       const keepAsepectRatio =
         vertical !== null && horizontal !== null && shouldKeepAsepectRatio;

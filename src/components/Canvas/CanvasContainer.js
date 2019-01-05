@@ -1,9 +1,6 @@
 import "./Canvas.scss";
 import React, { useCallback, memo } from "react";
 
-import { ControlBox } from "../ControlBox";
-import { SelectionBox } from "../SelectionBox";
-
 import { updateElements } from "../App/actions";
 
 import { emit } from "../../eventBus";
@@ -19,55 +16,16 @@ import {
   hideSelectionBox
 } from "../../selectionBox";
 
-// TODO extract offset logic later
-const toPageCoordinate = (nextElementStates, pageOffsetById) => {
-  return nextElementStates.map(({ id, frame, angle }) => ({
-    id,
-    angle,
-    frame: {
-      ...frame,
-      x: frame.x - pageOffsetById[id].x,
-      y: frame.y - pageOffsetById[id].y
-    }
-  }));
-};
-
 export const CanvasContainer = memo(
   ({
     dispatch,
     elements,
-    pageOffsetById,
-    selectionIds,
+    selections,
     controlBox,
-    selectionBoxFrame,
     resizeKeepAspectRatio,
     children
   }) => {
-    const selectionById = {};
-    for (let i = 0; i < selectionIds.length; i++) {
-      selectionById[selectionIds[i]] = true;
-    }
-
-    const selection = [];
-    const offsettedElements = [];
-    for (let i = 0; i < elements.length; i++) {
-      const { id, frame, angle } = elements[i];
-      const element = {
-        id,
-        frame: {
-          ...frame,
-          x: frame.x + pageOffsetById[id].x,
-          y: frame.y + pageOffsetById[id].y
-        },
-        angle
-      };
-
-      offsettedElements.push(element);
-
-      if (selectionById[id]) {
-        selection.push(element);
-      }
-    }
+    const selectionIds = selections.map(({ id }) => id);
 
     // hooks
     const { selectMouseDown, selectMouseMove, selectMouseUp } = useSelect(
@@ -93,11 +51,10 @@ export const CanvasContainer = memo(
 
     const { dragMouseDown, dragMouseMove, dragMouseUp } = useDragAndDrop(
       event => Boolean(event.target.closest(".element")),
-      selection,
+      selections,
       controlBox.frame,
       {
         onDrag({ elements, controlBoxPosition }) {
-          elements = toPageCoordinate(elements, pageOffsetById);
           dispatch(updateElements(elements));
           dispatch(
             updateControlBox({
@@ -109,12 +66,11 @@ export const CanvasContainer = memo(
     );
 
     const { rotateMouseDown, rotateMouseMove, rotateMouseUp } = useRotate(
-      selection,
+      selections,
       controlBox.frame,
       controlBox.angle,
       {
         onRotate({ elements, controlBoxAngle }) {
-          elements = toPageCoordinate(elements, pageOffsetById);
           dispatch(updateElements(elements));
           dispatch(
             updateControlBox({
@@ -126,7 +82,7 @@ export const CanvasContainer = memo(
     );
 
     const { resizeMouseDown, resizeMouseMove, resizeMouseUp } = useResize(
-      selection,
+      selections,
       controlBox.frame,
       controlBox.angle,
       resizeKeepAspectRatio,
@@ -140,7 +96,6 @@ export const CanvasContainer = memo(
           }
         },
         onResize({ elements, controlBoxFrame, position }) {
-          elements = toPageCoordinate(elements, pageOffsetById);
           dispatch(updateElements(elements));
           dispatch(
             updateControlBox({
@@ -175,7 +130,7 @@ export const CanvasContainer = memo(
       event =>
         event.target.classList.contains("canvas") ||
         event.target.classList.contains("page"),
-      offsettedElements,
+      elements,
       {
         onSelectEnd(selectedElements) {
           dispatch(setSelections(selectedElements));
@@ -214,18 +169,7 @@ export const CanvasContainer = memo(
           doubleClickMouseUp(event);
         }, [])}
       >
-        {children}
-        <SelectionBox frame={selectionBoxFrame} elements={offsettedElements} />
-
-        <ControlBox
-          show={controlBox.show}
-          frame={controlBox.frame}
-          angle={controlBox.angle}
-          // TODO: when the logic become complicated, move it to selector
-          resizeHandlerPosition={selection.length > 1 ? "corner" : "all"}
-          onRotateMouseDown={rotateMouseDown}
-          onResizeMouseDown={resizeMouseDown}
-        />
+        {children(resizeMouseDown, rotateMouseDown)}
       </div>
     );
   }

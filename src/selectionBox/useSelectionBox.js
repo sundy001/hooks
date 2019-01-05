@@ -35,7 +35,28 @@ export const useSelectionBox = (
     },
 
     onDragStart() {
-      stateRef.current.overlapCache = getOverlapCache(elements);
+      const offsettedElements = elements.map(({ id, frame, angle, page }) => {
+        const pageElement = document.querySelector(`.page[data-id="${page}"]`);
+        const rect = pageElement.getBoundingClientRect();
+
+        let scrollElement =
+          ((scrollElement = document.documentElement) ||
+            (scrollElement = document.body.parentNode)) &&
+          typeof scrollElement.scrollLeft == "number"
+            ? scrollElement
+            : document.body;
+
+        return {
+          id,
+          frame: {
+            ...frame,
+            x: frame.x + rect.left + scrollElement.scrollLeft,
+            y: frame.y + rect.top + scrollElement.scrollTop
+          },
+          angle
+        };
+      });
+      stateRef.current.overlapCache = getOverlapCache(offsettedElements);
     },
     onDragEnd() {
       if (onSelectEnd) {

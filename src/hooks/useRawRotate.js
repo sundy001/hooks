@@ -15,9 +15,11 @@ export const useRawRotate = (
         onMouseDown(event);
       }
 
+      const page = event.target.closest(".page");
+
       const state = stateRef.current;
-      state.beginningX = event.original.pageX;
-      state.beginningY = event.original.pageY;
+      state.beginningX = event.original.pageX - page.offsetLeft;
+      state.beginningY = event.original.pageY - page.offsetTop;
     },
     onDragStart(event) {
       if (onRotateStart) {
@@ -28,6 +30,9 @@ export const useRawRotate = (
       if (!onRotate) {
         return;
       }
+
+      const page = event.target.closest(".page");
+
       const { pageX, pageY } = event.original;
       const { beginningX, beginningY } = stateRef.current;
 
@@ -36,8 +41,8 @@ export const useRawRotate = (
         beginningY,
         x + width / 2,
         y + height / 2,
-        pageX,
-        pageY
+        pageX - page.offsetLeft,
+        pageY - page.offsetTop
       );
 
       onRotate({

@@ -3,9 +3,6 @@ export const UPDATE_ELEMENT = "UPDATE_ELEMENT";
 export const UPDATE_ELEMENTS = "UPDATE_ELEMENTS";
 export const DELETE_ELEMENTS = "DELETE_ELEMENTS";
 
-// page
-export const UPDATE_PAGE_OFFSETS = "UPDATE_PAGE_OFFSETS";
-
 // external features
 export const COPY_ELEMENTS = "COPY_ELEMENTS";
 
@@ -27,9 +24,4 @@ export const copyElements = () => ({
 export const deleteElements = elements => ({
   type: DELETE_ELEMENTS,
   elements
-});
-
-export const updatePageOffsets = offsets => ({
-  type: UPDATE_PAGE_OFFSETS,
-  offsets
 });

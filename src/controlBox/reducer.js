@@ -4,13 +4,14 @@ import { verticesOfElement } from "../element";
 import {
   UPDATE_CONTROL_BOX,
   SHOW_CONTROL_BOX,
-  HIDE_CONTROL_BOX
+  HIDE_CONTROL_BOX,
+  UPDATE_CONTROL_BOX_BY_ELEMENT
 } from "./actions";
 import { SET_SELECTIONS, CLEAR_SELECTIONS } from "../selections";
 
 export const reducer = (
   state = {
-    show: true,
+    show: false,
     angle: 0,
     frame: {
       x: 0,
@@ -45,42 +46,32 @@ export const reducer = (
   }
 };
 
-export const controlBoxUpdatedBySelection = (
-  controlBox,
-  elements,
-  pageOffsetById,
-  action
-) => {
+export const controlBoxUpdatedBySelection = (controlBox, elements, action) => {
   switch (action.type) {
+    case UPDATE_CONTROL_BOX_BY_ELEMENT:
+      const { frame, angle } = elements.byId[action.element];
+      return {
+        show: true,
+        frame: { ...frame },
+        angle
+      };
+
     case SET_SELECTIONS:
       switch (action.selections.length) {
         case 0:
           return { ...controlBox, show: false };
-        case 1:
-          const { frame, angle, page } = elements.byId[action.selections[0]];
 
+        case 1:
+          const { frame, angle } = elements.byId[action.selections[0]];
           return {
             show: true,
-            frame: {
-              ...frame,
-              x: frame.x + pageOffsetById[page].x,
-              y: frame.y + pageOffsetById[page].y
-            },
+            frame: { ...frame },
             angle
           };
+
         default:
           const { min, max } = minMaxVerticesOfSelections(
-            action.selections.map(id => {
-              const { frame, angle, page } = elements.byId[id];
-              return {
-                frame: {
-                  ...frame,
-                  x: frame.x + pageOffsetById[page].x,
-                  y: frame.y + pageOffsetById[page].y
-                },
-                angle
-              };
-            })
+            action.selections.map(id => elements.byId[id])
           );
           const { width, height } = sizeOfRectVertices(min, max);
 

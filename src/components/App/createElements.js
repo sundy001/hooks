@@ -22,9 +22,5 @@ const createElement = ({ id, name, ...props }, dispatch) => {
   return <Element key={id} id={id} {...props} dispatch={dispatch} />;
 };
 
-export const createElements = (dispatch, elements, pageId) =>
-  elements
-    .filter(({ page }) => {
-      return page === pageId;
-    })
-    .map(props => createElement(props, dispatch));
+export const createElements = (dispatch, elements) =>
+  elements.map(props => createElement(props, dispatch));

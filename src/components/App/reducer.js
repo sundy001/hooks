@@ -3,8 +3,7 @@ import {
   UPDATE_ELEMENT,
   UPDATE_ELEMENTS,
   COPY_ELEMENTS,
-  DELETE_ELEMENTS,
-  UPDATE_PAGE_OFFSETS
+  DELETE_ELEMENTS
 } from "./actions";
 import { reducer as selections } from "../../selections";
 import { elements as imageElements, raise } from "../elements/Image";
@@ -96,15 +95,6 @@ export const copySelectedElements = (elements, selections, action) => {
   }
 };
 
-export const pageOffsets = (state = {}, action) => {
-  switch (action.type) {
-    case UPDATE_PAGE_OFFSETS:
-      return action.offsets;
-    default:
-      return state;
-  }
-};
-
 export const reducer = combineReducers({
   elements: [
     elements,
@@ -120,14 +110,13 @@ export const reducer = combineReducers({
   controlBox: [
     controlBox,
     {
-      getStates({ elements, pageOffsets }) {
-        return [elements, pageOffsets];
+      getStates({ elements }) {
+        return [elements];
       },
       reduce: controlBoxUpdatedBySelection
     }
   ],
   selectionBox,
   raise,
-  pages: s => s,
-  pageOffsets
+  pages: s => s
 });
