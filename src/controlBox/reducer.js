@@ -51,7 +51,7 @@ export const controlBoxUpdatedBySelection = (controlBox, elements, action) => {
     case UPDATE_CONTROL_BOX_BY_ELEMENT:
       const { frame, angle } = elements.byId[action.element];
       return {
-        show: true,
+        show: controlBox.show,
         frame: { ...frame },
         angle
       };
@@ -70,6 +70,16 @@ export const controlBoxUpdatedBySelection = (controlBox, elements, action) => {
           };
 
         default:
+          // TODO: support different mode of cross page selection
+          // const targetPage = action.selections[0].page;
+          // const filteredElements = [];
+          // for (let i = 0; i < action.selections.length; i++) {
+          //   const element = elements.byId[action.selections[i]];
+          //   if (element.page === targetPage) {
+          //     filteredElements.push(element);
+          //   }
+          // }
+
           const { min, max } = minMaxVerticesOfSelections(
             action.selections.map(id => elements.byId[id])
           );

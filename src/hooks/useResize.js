@@ -10,7 +10,7 @@ export const useResize = (
   controlBoxFrame,
   controlBoxAngle,
   shouldKeepAsepectRatio,
-  { onResizeStart, onResize, onResizeEnd } = {}
+  { onResizeStart, onResize, onResizeEnd, getOffset } = {}
 ) => {
   const { saveValue, getValue, clearValue } = useSelectionBeginningValue(
     elements,
@@ -29,6 +29,7 @@ export const useResize = (
       controlBoxAngle,
       shouldKeepAsepectRatio,
       {
+        getOffset,
         onMouseDown({ original }) {
           original.stopPropagation();
         },

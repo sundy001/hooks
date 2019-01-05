@@ -1,21 +1,9 @@
 import React, { Suspense, memo } from "react";
 import "./Page.css";
-import { ControlBox } from "../ControlBox";
 import { createElements } from "../App/createElements";
 
 export const Page = memo(
-  ({
-    id,
-    width,
-    height,
-    backgroundColor,
-    elements,
-    dispatch,
-    controlBox,
-    rotateMouseDown,
-    resizeMouseDown,
-    resizeHandlerPosition
-  }) => {
+  ({ id, width, height, backgroundColor, elements, dispatch, controlBox }) => {
     return (
       <div
         data-id={id}
@@ -29,16 +17,7 @@ export const Page = memo(
         <Suspense fallback={<div>Loading...</div>}>
           {createElements(dispatch, elements)}
         </Suspense>
-        {controlBox && (
-          <ControlBox
-            frame={controlBox.frame}
-            angle={controlBox.angle}
-            // TODO: when the logic become complicated, move it to selector
-            resizeHandlerPosition={resizeHandlerPosition}
-            onRotateMouseDown={rotateMouseDown}
-            onResizeMouseDown={resizeMouseDown}
-          />
-        )}
+        {controlBox}
       </div>
     );
   }

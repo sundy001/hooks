@@ -10,6 +10,7 @@ export const useOuterResize = (
   setOuterPosition,
   setImageFrame,
   onOuterResizeEnd,
+  getOffset,
   outerBoxFrame,
   frame,
   angle
@@ -27,6 +28,7 @@ export const useOuterResize = (
       angle,
       true,
       {
+        getOffset,
         onMouseDown({ original }) {
           original.stopPropagation();
         },

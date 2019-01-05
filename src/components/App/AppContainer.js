@@ -33,7 +33,7 @@ export const AppContainer = () => {
       selections={selections}
       resizeKeepAspectRatio={shouldResizeKeepAspectRatio(state)}
     >
-      {(resizeMouseDown, rotateMouseDown) => {
+      {controlBoxElement => {
         const canvasElements = [];
 
         canvasElements.push(
@@ -60,10 +60,7 @@ export const AppContainer = () => {
                     return controlBoxPageId === page;
                   });
 
-            const resizeHandlerPosition =
-              selections.length > 1 ? "corner" : "all";
-
-            // TODO: cache pageElements to aviod redraw
+            // TODO: cache pageElements to avoid redraw
             return (
               <Page
                 key={pageId}
@@ -72,11 +69,8 @@ export const AppContainer = () => {
                 dispatch={dispatch}
                 elements={pageElements}
                 controlBox={
-                  showControlBox && controlBox.show ? controlBox : null
+                  showControlBox && controlBox.show ? controlBoxElement : null
                 }
-                resizeHandlerPosition={resizeHandlerPosition}
-                resizeMouseDown={resizeMouseDown}
-                rotateMouseDown={rotateMouseDown}
               />
             );
           })

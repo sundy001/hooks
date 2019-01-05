@@ -10,6 +10,7 @@ export const useInnerResize = (
   setFrame,
   setImageFrame,
   onInnerResizeEnd,
+  getOffset,
   frame,
   imageFrame,
   outerBoxPosition,
@@ -28,6 +29,7 @@ export const useInnerResize = (
       angle,
       false,
       {
+        getOffset,
         onMouseDown({ original }) {
           original.stopPropagation();
         },

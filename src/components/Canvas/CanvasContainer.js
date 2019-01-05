@@ -1,5 +1,7 @@
 import "./Canvas.scss";
-import React, { useCallback, memo } from "react";
+import React, { useCallback, useRef, memo } from "react";
+
+import { ControlBox } from "../ControlBox";
 
 import { updateElements } from "../App/actions";
 
@@ -15,6 +17,7 @@ import {
   updateSelectionBox,
   hideSelectionBox
 } from "../../selectionBox";
+import { getScrollPosition } from "../../getScrollPosition";
 
 export const CanvasContainer = memo(
   ({
@@ -63,11 +66,24 @@ export const CanvasContainer = memo(
       }
     );
 
+    const controlBoxRef = useRef();
+    const getOffset = () => {
+      const offsetParent = controlBoxRef.current.offsetParent;
+      const rect = offsetParent.getBoundingClientRect();
+      const scrollPosition = getScrollPosition();
+
+      return {
+        x: rect.left + scrollPosition.left,
+        y: rect.top + scrollPosition.top
+      };
+    };
+
     const { rotateMouseDown, rotateMouseMove, rotateMouseUp } = useRotate(
       selections,
       controlBox.frame,
       controlBox.angle,
       {
+        getOffset,
         onRotate({ elements, controlBoxAngle }) {
           dispatch(updateElements(elements));
           dispatch(
@@ -85,6 +101,7 @@ export const CanvasContainer = memo(
       controlBox.angle,
       resizeKeepAspectRatio,
       {
+        getOffset,
         onResizeStart({ elements, position }) {
           for (let i = 0; i < elements.length; i++) {
             emit("resizeStart", {
@@ -130,6 +147,18 @@ export const CanvasContainer = memo(
         event.target.classList.contains("page"),
       elements,
       {
+        getOffset(page) {
+          const pageElement = document.querySelector(
+            `.page[data-id="${page}"]`
+          );
+          const rect = pageElement.getBoundingClientRect();
+          const scrollPosition = getScrollPosition();
+
+          return {
+            x: rect.left + scrollPosition.left,
+            y: rect.top + scrollPosition.top
+          };
+        },
         onSelectEnd(selectedElements) {
           dispatch(setSelections(selectedElements));
           dispatch(hideSelectionBox());
@@ -138,6 +167,18 @@ export const CanvasContainer = memo(
           dispatch(updateSelectionBox(frame));
         }
       }
+    );
+
+    const resizeHandlerPosition = selections.length > 1 ? "corner" : "all";
+    const controlBoxElement = (
+      <ControlBox
+        ref={controlBoxRef}
+        frame={controlBox.frame}
+        angle={controlBox.angle}
+        resizeHandlerPosition={resizeHandlerPosition}
+        onRotateMouseDown={rotateMouseDown}
+        onResizeMouseDown={resizeMouseDown}
+      />
     );
 
     // canvas
@@ -167,7 +208,7 @@ export const CanvasContainer = memo(
           doubleClickMouseUp(event);
         }, [])}
       >
-        {children(resizeMouseDown, rotateMouseDown)}
+        {children(controlBoxElement)}
       </div>
     );
   }

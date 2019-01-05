@@ -1,10 +1,11 @@
-import React, { memo, useCallback, useState } from "react";
+import React, { memo, useCallback, useRef, useState } from "react";
 
 import { useDragAndDrop } from "./hooks/useDragAndDrop";
 import { useOuterResize } from "./hooks/useOuterResize";
 import { useInnerResize } from "./hooks/useInnerResize";
 import { ImageCropper } from "./ImageCropper";
 import { getInitialOuterBoxPosition } from "./getInitialOuterBoxPosition";
+import { getScrollPosition } from "../../getScrollPosition";
 
 export const ImageCropperContainer = memo(
   ({
@@ -44,6 +45,18 @@ export const ImageCropperContainer = memo(
       angle
     );
 
+    const imageCropperRef = useRef();
+    const getOffset = () => {
+      const offsetParent = imageCropperRef.current.offsetParent;
+      const rect = offsetParent.getBoundingClientRect();
+      const scrollPosition = getScrollPosition();
+
+      return {
+        x: rect.left + scrollPosition.left,
+        y: rect.top + scrollPosition.top
+      };
+    };
+
     const {
       outerResizeMouseDown,
       outerResizeMouseMove,
@@ -52,6 +65,7 @@ export const ImageCropperContainer = memo(
       setOuterPosition,
       setImageFrame,
       callOnChangeIfExist,
+      getOffset,
       outerBoxFrame,
       frame,
       angle
@@ -65,6 +79,7 @@ export const ImageCropperContainer = memo(
       setFrame,
       setImageFrame,
       callOnChangeIfExist,
+      getOffset,
       frame,
       imageFrame,
       outerBoxPosition,
@@ -73,6 +88,7 @@ export const ImageCropperContainer = memo(
 
     return (
       <ImageCropper
+        ref={imageCropperRef}
         imageUrl={imageUrl}
         frame={frame}
         imageFrame={imageFrame}

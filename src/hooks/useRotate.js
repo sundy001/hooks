@@ -7,7 +7,7 @@ export const useRotate = (
   elements,
   controlBoxFrame,
   controlBoxAngle,
-  { onRotate } = {}
+  { onRotate, getOffset } = {}
 ) => {
   const stateRef = useRef({
     beginningControlBoxAngle: null
@@ -18,6 +18,7 @@ export const useRotate = (
   );
 
   return useRawRotate(controlBoxFrame, {
+    getOffset,
     onMouseDown({ original }) {
       original.stopPropagation();
     },

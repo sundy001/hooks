@@ -15,7 +15,7 @@ export const useRawResize = (
   frame,
   angle,
   shouldKeepAsepectRatio,
-  { onMouseDown, onResizeStart, onResize, onResizeEnd } = {}
+  { onMouseDown, onResizeStart, onResize, onResizeEnd, getOffset } = {}
 ) => {
   const stateRef = useRef({
     beginningWidth: null,
@@ -54,9 +54,9 @@ export const useRawResize = (
       }
     },
     onDrag(event) {
-      const page = event.target.closest(".page");
-      const pageX = event.original.pageX - page.offsetLeft;
-      const pageY = event.original.pageY - page.offsetTop;
+      const offset = getOffset ? getOffset(event) : { x: 0, y: 0 };
+      const pageX = event.original.pageX - offset.x;
+      const pageY = event.original.pageY - offset.y;
       const { vertical, horizontal } = resolvePosition(position);
       const keepAsepectRatio =
         vertical !== null && horizontal !== null && shouldKeepAsepectRatio;

@@ -6,7 +6,7 @@ import { getOverlapCache, detectOverlapByCache } from "../overlapDetection";
 export const useSelectionBox = (
   shouldSelect,
   elements,
-  { onSelect, onSelectEnd } = {}
+  { onSelect, onSelectEnd, getOffset } = {}
 ) => {
   const stateRef = useRef({
     shouldSelect: null,
@@ -36,22 +36,13 @@ export const useSelectionBox = (
 
     onDragStart() {
       const offsettedElements = elements.map(({ id, frame, angle, page }) => {
-        const pageElement = document.querySelector(`.page[data-id="${page}"]`);
-        const rect = pageElement.getBoundingClientRect();
-
-        let scrollElement =
-          ((scrollElement = document.documentElement) ||
-            (scrollElement = document.body.parentNode)) &&
-          typeof scrollElement.scrollLeft == "number"
-            ? scrollElement
-            : document.body;
-
+        const offset = getOffset ? getOffset(page) : { x: 0, y: 0 };
         return {
           id,
           frame: {
             ...frame,
-            x: frame.x + rect.left + scrollElement.scrollLeft,
-            y: frame.y + rect.top + scrollElement.scrollTop
+            x: frame.x + offset.x,
+            y: frame.y + offset.y
           },
           angle
         };

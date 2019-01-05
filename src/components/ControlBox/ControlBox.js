@@ -17,64 +17,66 @@ const POSITION_VERTEX_INDEX_MAP = {
 };
 
 export const ControlBox = memo(
-  ({
-    frame: { x, y, width, height },
-    angle,
-    controls, // (rotation|resize)[]
-    resizeHandlerPosition, // all, edge, corner
-    onRotateMouseDown,
-    onResizeMouseDown
-  }) => {
-    if (width === 0 || height === 0) {
-      return null;
-    }
+  React.forwardRef(
+    (
+      {
+        frame: { x, y, width, height },
+        angle,
+        controls, // (rotation|resize)[]
+        resizeHandlerPosition, // all, edge, corner
+        onRotateMouseDown,
+        onResizeMouseDown
+      },
+      ref
+    ) => {
+      const children = [];
 
-    const children = [];
+      // resize
+      if (controls.indexOf("resize") !== -1) {
+        const indexes = POSITION_VERTEX_INDEX_MAP[resizeHandlerPosition];
+        for (let i = 0; i < indexes.length; i++) {
+          const position = RECT_VERTICES[indexes[i]];
+          children.push(
+            <ResizeHandler
+              key={`resize-${position}`}
+              position={position}
+              onMouseDown={onResizeMouseDown[position]}
+            />
+          );
+        }
+      }
 
-    // resize
-    if (controls.indexOf("resize") !== -1) {
-      const indexes = POSITION_VERTEX_INDEX_MAP[resizeHandlerPosition];
-      for (let i = 0; i < indexes.length; i++) {
-        const position = RECT_VERTICES[indexes[i]];
+      // rotation
+      if (controls.indexOf("rotation") !== -1) {
         children.push(
-          <ResizeHandler
-            key={`resize-${position}`}
-            position={position}
-            onMouseDown={onResizeMouseDown[position]}
+          <RotationHandler
+            key="rotate-bottom"
+            position="bottom"
+            onMouseDown={useCallback(event => {
+              onRotateMouseDown(event);
+            }, [])}
           />
         );
       }
-    }
 
-    // rotation
-    if (controls.indexOf("rotation") !== -1) {
-      children.push(
-        <RotationHandler
-          key="rotate-bottom"
-          position="bottom"
-          onMouseDown={useCallback(event => {
-            onRotateMouseDown(event);
-          }, [])}
-        />
+      return (
+        <div
+          ref={ref}
+          className={cx("control-box", {
+            // resizing: isResizing,
+            // rotating: isRotating
+          })}
+          style={{
+            width: `${width}px`,
+            height: `${height}px`,
+            transform: `translate(${x}px, ${y}px) rotate(${angle}rad)`
+          }}
+        >
+          {children}
+        </div>
       );
     }
-
-    return (
-      <div
-        className={cx("control-box", {
-          // resizing: isResizing,
-          // rotating: isRotating
-        })}
-        style={{
-          width: `${width}px`,
-          height: `${height}px`,
-          transform: `translate(${x}px, ${y}px) rotate(${angle}rad)`
-        }}
-      >
-        {children}
-      </div>
-    );
-  }
+  )
 );
 
 ControlBox.displayName = "ControlBox";
