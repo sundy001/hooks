@@ -61,12 +61,13 @@ export const useRawResize = (
       const { vertical, horizontal } = resolvePosition(position);
       const keepAsepectRatio =
         vertical !== null && horizontal !== null && shouldKeepAsepectRatio;
+      const scaledFrame = multiple(frame, zoom);
 
       let virtualPosition;
       if (keepAsepectRatio) {
         virtualPosition = getMousePositionKeepAspectRatio(
           position,
-          frame,
+          scaledFrame,
           angle,
           pageX,
           pageY
@@ -81,7 +82,7 @@ export const useRawResize = (
           : Math.trunc(
               axisDistance(
                 vertical,
-                multiple(frame, zoom),
+                scaledFrame,
                 angle,
                 virtualPosition.x,
                 virtualPosition.y
@@ -97,13 +98,8 @@ export const useRawResize = (
           horizontal === null
             ? frame.width
             : Math.trunc(
-                axisDistance(
-                  horizontal,
-                  multiple(frame, zoom),
-                  angle,
-                  pageX,
-                  pageY
-                ) / zoom
+                axisDistance(horizontal, scaledFrame, angle, pageX, pageY) /
+                  zoom
               );
       }
 

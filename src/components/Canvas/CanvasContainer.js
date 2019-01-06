@@ -116,7 +116,6 @@ export const CanvasContainer = memo(
           }
         },
         onResize({ elements, controlBoxFrame, position }) {
-          console.log(controlBoxFrame);
           dispatch(updateElements(elements));
           dispatch(
             updateControlBox({
