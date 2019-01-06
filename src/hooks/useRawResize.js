@@ -15,7 +15,7 @@ export const useRawResize = (
   position,
   frame,
   angle,
-  shouldKeepAsepectRatio,
+  shouldKeepAspectRatio,
   { zoom = 1, getOffset, onResizeStart, onResize, onResizeEnd } = {}
 ) => {
   const stateRef = useRef({
@@ -59,12 +59,12 @@ export const useRawResize = (
       const pageX = event.original.pageX - offset.x;
       const pageY = event.original.pageY - offset.y;
       const { vertical, horizontal } = resolvePosition(position);
-      const keepAsepectRatio =
-        vertical !== null && horizontal !== null && shouldKeepAsepectRatio;
+      const keepAspectRatio =
+        vertical !== null && horizontal !== null && shouldKeepAspectRatio;
       const scaledFrame = multiple(frame, zoom);
 
       let virtualPosition;
-      if (keepAsepectRatio) {
+      if (keepAspectRatio) {
         virtualPosition = getMousePositionKeepAspectRatio(
           position,
           scaledFrame,
@@ -90,7 +90,7 @@ export const useRawResize = (
             );
 
       let newWidth;
-      if (keepAsepectRatio) {
+      if (keepAspectRatio) {
         const { beginningWidth, beginningHeight } = stateRef.current;
         newWidth = (newHeight * beginningWidth) / beginningHeight;
       } else {

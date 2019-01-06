@@ -9,7 +9,7 @@ export const useResize = (
   elements,
   controlBoxFrame,
   controlBoxAngle,
-  shouldKeepAsepectRatio,
+  shouldKeepAspectRatio,
   { zoom, getOffset, onResizeStart, onResize, onResizeEnd } = {}
 ) => {
   const { saveValue, getValue, clearValue } = useSelectionBeginningValue(
@@ -27,7 +27,7 @@ export const useResize = (
       position,
       controlBoxFrame,
       controlBoxAngle,
-      shouldKeepAsepectRatio,
+      shouldKeepAspectRatio,
       {
         zoom,
         getOffset,
