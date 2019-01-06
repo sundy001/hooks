@@ -1,4 +1,4 @@
-export const getFrameStyle = (frame, angle?) => ({
+export const getFrameStyle = (frame, angle?: number) => ({
   width: `${frame.width}px`,
   height: `${frame.height}px`,
   transform:

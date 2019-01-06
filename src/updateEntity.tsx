@@ -1,7 +1,7 @@
 export const updateEntity = (
   entityStore,
   updater,
-  filter = (id: number) => true
+  filter: ((id: number) => boolean) | number = () => true
 ) => {
   const { allIds, byId } = entityStore;
   let newByIds = null;

@@ -1,38 +1,34 @@
-import {
-  START_CROPPING_IMAGE,
-  STOP_CROPPING_IMAGE,
-  UPDATE_CROPPING_IMAGE
-} from "./actions";
+import * as actions from "./actions";
 import { updateEntity } from "../../../updateEntity";
 
-export const elements = (state, action) => {
+export const elements = (state, action: actions.Action) => {
   switch (action.type) {
-    case START_CROPPING_IMAGE:
+    case actions.START_CROPPING_IMAGE:
       return updateEntity(
         state,
         () => ({
           isCropping: true
         }),
-        action.element
+        action.payload
       );
 
-    case STOP_CROPPING_IMAGE:
+    case actions.STOP_CROPPING_IMAGE:
       return updateEntity(
         state,
         () => ({
           isCropping: false
         }),
-        action.element
+        action.payload
       );
 
-    case UPDATE_CROPPING_IMAGE:
+    case actions.UPDATE_CROPPING_IMAGE:
       return updateEntity(
         state,
         () => ({
-          frame: action.frame,
-          imageFrame: action.imageFrame
+          frame: action.payload.frame,
+          imageFrame: action.payload.imageFrame
         }),
-        action.element
+        action.payload.element
       );
     default:
       return state;

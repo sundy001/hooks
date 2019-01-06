@@ -48,7 +48,7 @@ export const useDoubleClick = onDoubleClick => {
       const state = stateRef.current;
       const { clickPosition, mouseDowned, dragged } = state;
 
-      const element = target.closest(".element");
+      const element = (target as any).closest(".element");
       const isClickPositionDifferent =
         clickPosition !== null &&
         (clickPosition.x !== pageX || clickPosition.y !== pageY);

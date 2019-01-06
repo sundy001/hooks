@@ -9,7 +9,7 @@ export const BOTTOM_LEFT = "bottom-left";
 export const LEFT = "left";
 export const TOP_LEFT = "top-left";
 
-export const RECT_VERTICES = [
+export const RECT_VERTICES: Readonly<string[]> = [
   TOP,
   TOP_RIGHT,
   RIGHT,
@@ -20,16 +20,16 @@ export const RECT_VERTICES = [
   TOP_LEFT
 ];
 
-export const ALL_INDEXES = [0, 1, 2, 3, 4, 5, 6, 7];
+export const ALL_INDEXES: Readonly<number[]> = [0, 1, 2, 3, 4, 5, 6, 7];
 
-export const EDGE_INDEXES = [0, 2, 4, 6];
+export const EDGE_INDEXES: Readonly<number[]> = [0, 2, 4, 6];
 
-export const CORNER_INDEXES = [1, 3, 5, 7];
+export const CORNER_INDEXES: Readonly<number[]> = [1, 3, 5, 7];
 
-export const resolvePosition = vertex => {
-  const token = vertex.split("-");
-  let vertical = null;
-  let horizontal = null;
+export const resolvePosition = (position: string) => {
+  const token = position.split("-");
+  let vertical: string | null = null;
+  let horizontal: string | null = null;
   if (token.length === 1) {
     if (token[0] === "top" || token[0] === "bottom") {
       vertical = token[0];
@@ -47,15 +47,19 @@ export const resolvePosition = vertex => {
   };
 };
 
-export const indexesOfEdge = index => [
+export const indexesOfEdge = (index: number): [number, number] => [
   (index + 1 + RECT_VERTICES.length) % RECT_VERTICES.length,
   (index - 1 + RECT_VERTICES.length) % RECT_VERTICES.length
 ];
 
-export const indexOfOppositeVertex = index =>
+export const indexOfOppositeVertex = (index: number) =>
   (index + 4 + RECT_VERTICES.length) % RECT_VERTICES.length;
 
-export const vertexOfOriginRect = (index, width, height) => {
+export const vertexOfOriginRect = (
+  index: number,
+  width: number,
+  height: number
+) => {
   switch (index) {
     case 0:
       return new Victor(width / 2, 0);

@@ -2,7 +2,11 @@ import Victor from "victor";
 
 // transform the given vertex to actual cordination system
 // ref: https://gamedev.stackexchange.com/questions/16719/what-is-the-correct-order-to-multiply-scale-rotation-and-translation-matrices-f
-export const transform = (vertex, { x, y, width, height }, angle) => {
+export const transform = (
+  vertex: Victor,
+  { x, y, width, height }: Frame,
+  angle: number
+) => {
   const half = new Victor(width / 2, height / 2);
 
   return (
@@ -18,11 +22,11 @@ export const transform = (vertex, { x, y, width, height }, angle) => {
 };
 
 export const getDisplacementInControlBox = (
-  elementOffset, // element position in control box coordinate system
-  { width, height }, // size of element
-  elementAngle,
-  controlBoxFrame,
-  controlBoxAngle
+  elementOffset: Victor, // element position in control box coordinate system
+  { width, height }: Readonly<{ width: number; height: number }>, // size of element
+  elementAngle: number,
+  controlBoxFrame: Frame,
+  controlBoxAngle: number
 ) => {
   const elementHalfSize = new Victor(width / 2, height / 2);
   const controlBoxHalfSize = new Victor(
@@ -56,11 +60,11 @@ export const getDisplacementInControlBox = (
 };
 
 export const getDisplacement = (
-  rawVertex,
-  width,
-  height,
-  angle,
-  targetVertex
+  rawVertex: Victor,
+  width: number,
+  height: number,
+  angle: number,
+  targetVertex: Victor
 ) => {
   const half = new Victor(width / 2, height / 2);
 
@@ -74,3 +78,5 @@ export const getDisplacement = (
   // compare target vertex with the rotated vertex
   return targetVertex.clone().subtract(rotatedRawVertex);
 };
+
+type Frame = { x: number; y: number; width: number; height: number };

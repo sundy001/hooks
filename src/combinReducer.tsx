@@ -1,9 +1,23 @@
-export const combineReducers = reducers => {
+type Reducer = (state: any, action: any) => any;
+
+export const combineReducers: (
+  reducers: {
+    [key: string]:
+      | Reducer
+      | ReadonlyArray<
+          | Reducer
+          | {
+              getStates: (state: any) => any[];
+              reduce: (...props: any[]) => any;
+            }
+        >;
+  }
+) => any = reducers => {
   const reducerKeys = Object.keys(reducers);
 
-  return function combination(state = {}, action) {
+  return function combination(state: any = {}, action: any) {
     let hasChanged = false;
-    const nextState = {};
+    const nextState: any = {};
     for (let i = 0; i < reducerKeys.length; i++) {
       const key = reducerKeys[i];
       const value = reducers[key];

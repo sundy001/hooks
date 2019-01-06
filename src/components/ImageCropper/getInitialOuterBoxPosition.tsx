@@ -3,7 +3,11 @@ import { transform, getDisplacement } from "../../math/affineTransformation";
 
 const TOP_LEFT = new Victor(0, 0);
 
-export const getInitialOuterBoxPosition = (frame, imageFrame, angle) => () => {
+export const getInitialOuterBoxPosition = (
+  frame,
+  imageFrame,
+  angle: number
+) => () => {
   const { x, y, width, height } = imageFrame;
   const offset = new Victor(x, y);
   offset.rotate(angle);

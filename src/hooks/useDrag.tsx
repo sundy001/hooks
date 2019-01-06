@@ -1,21 +1,19 @@
 import { useCallback, useRef } from "react";
 
-export const useDrag: (
-  options?: {
-    onMouseDown?: any;
-    onMouseUp?: any;
-    shouldDrag?: any;
-    onDragStart?: any;
-    onDrag?: any;
-    onDragEnd?: any;
-  }
-) => any[] = ({
+export const useDrag = ({
   onMouseDown,
   onMouseUp,
   shouldDrag,
   onDragStart,
   onDrag,
   onDragEnd
+}: {
+  onMouseDown?: Callback;
+  onMouseUp?: Callback;
+  shouldDrag?: (event: MouseEvent) => boolean;
+  onDragStart?: Callback;
+  onDrag?: Callback;
+  onDragEnd?: Callback;
 } = {}) => {
   const callbacks = {
     onMouseDown,
@@ -55,7 +53,7 @@ export const useDrag: (
   };
 
   // useCallback to ensure handleMouseDown always return the same callback
-  const handleMouseDown = useCallback(event => {
+  const handleMouseDown = useCallback((event: MouseEvent) => {
     if (event.button !== 0) {
       return;
     }
@@ -69,7 +67,7 @@ export const useDrag: (
     callCallbackIfExist(callbackRef.current.onMouseDown, event);
   }, []);
 
-  const handleMouseUp = useCallback(event => {
+  const handleMouseUp = useCallback((event: MouseEvent) => {
     callCallbackIfExist(callbackRef.current.onMouseUp, event);
     if (stateRef.current.isMouseMove) {
       callCallbackIfExist(callbackRef.current.onDragEnd, event);
@@ -78,7 +76,7 @@ export const useDrag: (
     dragEndCleanUp();
   }, []);
 
-  const handleMouseMove = useCallback(event => {
+  const handleMouseMove = useCallback((event: MouseEvent) => {
     const state = stateRef.current;
     const { shouldDragChecked, isMouseDown } = state;
     const { shouldDrag, onDrag } = callbackRef.current;
@@ -104,3 +102,5 @@ export const useDrag: (
 
   return [handleMouseDown, handleMouseMove, handleMouseUp];
 };
+
+type Callback = (event: { target: HTMLElement; original: MouseEvent }) => void;

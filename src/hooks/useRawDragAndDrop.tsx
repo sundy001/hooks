@@ -9,7 +9,7 @@ export const useRawDragAndDrop: (
     onDragEnd?: any;
     onDrag?: any;
   }
-) => any = ({ zoom = 1, shouldDrag, onDragStart, onDragEnd, onDrag }) => {
+) => any = ({ zoom = 1, shouldDrag, onDragStart, onDragEnd, onDrag } = {}) => {
   const previousPointRef = useRef(null);
 
   const callCallbackIfExist = (callback, event, delta = {}) => {

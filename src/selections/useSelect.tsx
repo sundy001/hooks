@@ -21,7 +21,7 @@ export const useSelect: (
       state.mouseDowned = true;
       state.shouldDeselect = shouldDeselect(original);
 
-      const elementHTMLElement = original.target.closest(".element");
+      const elementHTMLElement = (original.target as any).closest(".element");
       if (elementHTMLElement !== null) {
         const elementId = Number(elementHTMLElement.dataset.id);
         const element = selections.find(id => id === elementId);
@@ -37,7 +37,7 @@ export const useSelect: (
     onMouseUp({ original }) {
       const state = stateRef.current;
       const { mouseDowned, dragged, shouldDeselect } = state;
-      const element = original.target.closest(".element");
+      const element = (original.target as any).closest(".element");
 
       if (
         !dragged &&

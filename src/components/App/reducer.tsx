@@ -19,13 +19,13 @@ import cloneDeep from "lodash/cloneDeep";
 export const elements = (state, action) => {
   switch (action.type) {
     case UPDATE_ELEMENT:
-      const { type: _, id, ...props } = action;
-
+      const { id, props } = action.payload;
       return updateEntity(state, () => props, id);
+
     case UPDATE_ELEMENTS:
       return updateEntities(
         state,
-        action.elements,
+        action.payload,
         (previouseState, newValue) => {
           let nextState = null;
 
@@ -47,17 +47,21 @@ export const elements = (state, action) => {
       );
 
     case DELETE_ELEMENTS:
+      if (action.payload.length === 0) {
+        return state;
+      }
+
       const byId = {};
       const allIds = [];
       Object.keys(state.byId).forEach(id => {
-        if (action.elements.indexOf(id) !== -1) {
+        if (action.payload.indexOf(id) !== -1) {
           return;
         }
         byId[id] = state.byId[id];
       });
 
       state.allIds.forEach(id => {
-        if (action.elements.indexOf(id) !== -1) {
+        if (action.payload.indexOf(id) !== -1) {
           return;
         }
         allIds.push(id);
@@ -105,7 +109,7 @@ export const copySelectedElements = (elements, selections, action) => {
 export const zoom = (state = 1, action) => {
   switch (action.type) {
     case UPDATE_ZOOM:
-      return action.zoom;
+      return action.payload;
     default:
       return state;
   }

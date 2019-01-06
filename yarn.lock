@@ -842,6 +842,11 @@
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/@types/tapable/-/tapable-1.0.2.tgz#e13182e1b69871a422d7863e11a4a6f5b814a4bd"
 
+"@types/victor@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@types/victor/-/victor-1.1.0.tgz#c540809e2efb94ef60e293495cfad1614d14ec87"
+  integrity sha512-37o+SnbGRoWqb2+6GQ3NoFX8Ff5zCvm0XsXFulNvO89t2zKluqb4twVORheAnmQ+iEd0rKzAcBGC2//3XBoU1A==
+
 "@webassemblyjs/ast@1.7.6":
   version "1.7.6"
   resolved "https://registry.yarnpkg.com/@webassemblyjs/ast/-/ast-1.7.6.tgz#3ef8c45b3e5e943a153a05281317474fef63e21e"
