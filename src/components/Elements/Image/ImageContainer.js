@@ -42,7 +42,7 @@ export const ImageContainer = memo(props => {
         onMaskMouseDown={onFinish}
         onChange={onChange}
       />,
-      document.querySelector(".page")
+      document.querySelector(`.page[data-id="${props.page}"]`)
     )
   ) : (
     <Image {...props} />
