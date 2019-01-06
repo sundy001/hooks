@@ -25,7 +25,7 @@ export const Page = memo(
       >
         <div className="page__elements" style={{ transform: `scale(${zoom})` }}>
           <Suspense fallback={<div>Loading...</div>}>
-            {createElements(elements, dispatch, zoom)}
+            {createElements(elements, { dispatch, zoom })}
           </Suspense>
         </div>
         {controlBox}

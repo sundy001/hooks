@@ -17,10 +17,8 @@ const loadElement = name => {
   return loadedElements[name];
 };
 
-const createElement = ({ id, name, ...elementProps }, props) => {
-  const Element = loadElement(name);
-  return <Element key={id} id={id} {...props} {...elementProps} />;
-};
-
-export const createElements = (elements, ...props) =>
-  elements.map(elementProps => createElement(elementProps, props));
+export const createElements = (elements, props) =>
+  elements.map(({ id, name, ...elementProps }) => {
+    const Element = loadElement(name);
+    return <Element key={id} id={id} {...props} {...elementProps} />;
+  });
