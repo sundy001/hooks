@@ -1,0 +1,12 @@
+.element {
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow: hidden;
+}
+
+.element-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+}

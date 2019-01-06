@@ -3,6 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@types/jest": "^23.3.12",
+    "@types/node": "^10.12.18",
+    "@types/react": "^16.7.18",
+    "@types/react-dom": "^16.0.11",
     "classnames": "^2.2.6",
     "events": "^3.0.0",
     "http-server": "^0.11.1",
@@ -12,6 +16,7 @@
     "react-dom": "16.7.0-alpha.2",
     "react-scripts": "2.1.1",
     "reselect": "^4.0.0",
+    "typescript": "^3.2.2",
     "victor": "^1.1.0"
   },
   "scripts": {
