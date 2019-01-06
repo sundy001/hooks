@@ -1,13 +1,13 @@
 import { useRef } from "react";
 import { useRawDragAndDrop } from "./useRawDragAndDrop";
 
-export const useDragAndDrop: (
-  shouldDrag,
-  elements,
-  controlBoxFrame,
-  options?: { zoom?: number; onDrag?: any }
-) => any = (shouldDrag, elements, controlBoxFrame, { zoom, onDrag } = {}) => {
-  const beginningPositionRef = useRef(null);
+export const useDragAndDrop = (
+  shouldDrag: (event: MouseEvent) => boolean,
+  elements: Elements,
+  controlBoxFrame: Readonly<Frame>,
+  { zoom, onDrag }: { zoom?: number; onDrag?: any } = {}
+) => {
+  const beginningPositionRef = useRef<null | { x: number; y: number }>(null);
 
   return useRawDragAndDrop({
     zoom,
@@ -28,7 +28,17 @@ export const useDragAndDrop: (
         return;
       }
 
-      const event: any = { elements: [] };
+      // move control box
+      beginningPositionRef.current!.x += dx;
+      beginningPositionRef.current!.y += dy;
+
+      const event: {
+        controlBoxPosition: { x: number; y: number };
+        elements: { id: number; frame: Frame }[];
+      } = {
+        elements: [],
+        controlBoxPosition: { ...beginningPositionRef.current! }
+      };
 
       // move elements
       for (let i = 0; i < elements.length; i++) {
@@ -42,15 +52,24 @@ export const useDragAndDrop: (
         });
       }
 
-      // move control box
-      beginningPositionRef.current.x += dx;
-      beginningPositionRef.current.y += dy;
-
-      event.controlBoxPosition = { ...beginningPositionRef.current };
-
       if (onDrag) {
         onDrag(event);
       }
     }
   });
 };
+
+type Frame = {
+  width: number;
+  height: number;
+  x: number;
+  y: number;
+};
+
+type Elements = ReadonlyArray<
+  Readonly<{
+    id: number;
+    frame: Readonly<Frame>;
+    angle: number;
+  }>
+>;

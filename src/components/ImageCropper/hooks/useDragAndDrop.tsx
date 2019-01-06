@@ -13,7 +13,9 @@ export const useDragAndDrop = (
   return useRawDragAndDrop({
     zoom,
     shouldDrag(event) {
-      return event.target.classList.contains("image-container__image");
+      return (event.target as HTMLElement).classList.contains(
+        "image-container__image"
+      );
     },
     onDrag({ dx, dy }) {
       const imageFrameOffset = new Victor(dx, dy).rotate(-angle);

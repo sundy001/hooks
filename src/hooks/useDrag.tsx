@@ -26,7 +26,12 @@ export const useDrag = ({
   const callbackRef = useRef(callbacks);
   callbackRef.current = callbacks;
 
-  const stateRef = useRef({
+  const stateRef = useRef<{
+    target: HTMLElement | null;
+    isMouseDown: boolean;
+    isMouseMove: boolean;
+    shouldDragChecked: boolean | null;
+  }>({
     target: null,
     isMouseDown: false,
     isMouseMove: false,
@@ -62,7 +67,7 @@ export const useDrag = ({
 
     const state = stateRef.current;
     state.isMouseDown = true;
-    state.target = event.target;
+    state.target = event.target as HTMLElement;
 
     callCallbackIfExist(callbackRef.current.onMouseDown, event);
   }, []);

@@ -79,4 +79,4 @@ export const getDisplacement = (
   return targetVertex.clone().subtract(rotatedRawVertex);
 };
 
-type Frame = { x: number; y: number; width: number; height: number };
+type Frame = Readonly<{ x: number; y: number; width: number; height: number }>;

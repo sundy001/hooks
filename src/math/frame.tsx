@@ -1,6 +1,9 @@
 import Victor from "victor";
 
-export const sizeOfRectVertices = (topLeft: Victor, bottomRight: Victor) => {
+export const sizeOfRectVertices = (
+  topLeft: Readonly<Victor>,
+  bottomRight: Readonly<Victor>
+) => {
   const { x: width, y: height } = bottomRight.clone().subtract(topLeft);
   return { width, height };
 };
@@ -37,5 +40,5 @@ export const multiple = (
   height: height * scale
 });
 
-type Position = { x: number; y: number };
-type Frame = { x: number; y: number; width: number; height: number };
+type Position = Readonly<{ x: number; y: number }>;
+type Frame = Readonly<{ x: number; y: number; width: number; height: number }>;

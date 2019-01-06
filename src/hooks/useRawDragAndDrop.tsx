@@ -1,16 +1,20 @@
 import { useRef } from "react";
 import { useDrag } from "./useDrag";
 
-export const useRawDragAndDrop: (
-  options?: {
-    zoom?: number;
-    shouldDrag?: any;
-    onDragStart?: any;
-    onDragEnd?: any;
-    onDrag?: any;
-  }
-) => any = ({ zoom = 1, shouldDrag, onDragStart, onDragEnd, onDrag } = {}) => {
-  const previousPointRef = useRef(null);
+export const useRawDragAndDrop = ({
+  zoom = 1,
+  shouldDrag,
+  onDragStart,
+  onDragEnd,
+  onDrag
+}: {
+  zoom?: number;
+  shouldDrag?: (event: MouseEvent) => boolean;
+  onDragStart?: Callback;
+  onDragEnd?: Callback;
+  onDrag?: Callback<{ dx: number; dy: number }>;
+} = {}) => {
+  const previousPointRef = useRef<null | { x: number; y: number }>(null);
 
   const callCallbackIfExist = (callback, event, delta = {}) => {
     if (!callback) {
@@ -43,10 +47,10 @@ export const useRawDragAndDrop: (
       const previousPoint = previousPointRef.current;
       const pageX = event.original.pageX;
       const pageY = event.original.pageY;
-      const dx = (pageX - previousPoint.x) / zoom;
-      const dy = (pageY - previousPoint.y) / zoom;
-      previousPoint.x = pageX;
-      previousPoint.y = pageY;
+      const dx = (pageX - previousPoint!.x) / zoom;
+      const dy = (pageY - previousPoint!.y) / zoom;
+      previousPoint!.x = pageX;
+      previousPoint!.y = pageY;
 
       callCallbackIfExist(onDrag, event.original, { dx, dy });
     },
@@ -57,3 +61,9 @@ export const useRawDragAndDrop: (
 
   return { dragMouseDown, dragMouseMove, dragMouseUp };
 };
+
+type Callback<extra = {}> = (
+  event: {
+    original: MouseEvent;
+  } & extra
+) => void;

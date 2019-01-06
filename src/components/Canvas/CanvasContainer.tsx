@@ -52,7 +52,7 @@ const InternalConvasContainer: SFC<any> = ({
   });
 
   const { dragMouseDown, dragMouseMove, dragMouseUp } = useDragAndDrop(
-    event => Boolean(event.target.closest(".element")),
+    event => Boolean((event.target as HTMLElement).closest(".element")),
     selections,
     controlBox.frame,
     {
