@@ -18,6 +18,7 @@ import {
   hideSelectionBox
 } from "../../selectionBox";
 import { getScrollPosition } from "../../getScrollPosition";
+import { multiple } from "../../math/frame";
 
 export const CanvasContainer = memo(
   ({
@@ -26,6 +27,7 @@ export const CanvasContainer = memo(
     selections,
     controlBox,
     resizeKeepAspectRatio,
+    zoom,
     children
   }) => {
     // hooks
@@ -33,7 +35,7 @@ export const CanvasContainer = memo(
       dispatch,
       event =>
         event.target.classList.contains("canvas") ||
-        event.target.classList.contains("page"),
+        event.target.classList.contains("page__elements"),
       selections.map(({ id }) => id),
       {
         onDeselect() {
@@ -55,6 +57,7 @@ export const CanvasContainer = memo(
       selections,
       controlBox.frame,
       {
+        zoom,
         onDrag({ elements, controlBoxPosition }) {
           dispatch(updateElements(elements));
           dispatch(
@@ -83,6 +86,7 @@ export const CanvasContainer = memo(
       controlBox.frame,
       controlBox.angle,
       {
+        zoom,
         getOffset,
         onRotate({ elements, controlBoxAngle }) {
           dispatch(updateElements(elements));
@@ -101,6 +105,7 @@ export const CanvasContainer = memo(
       controlBox.angle,
       resizeKeepAspectRatio,
       {
+        zoom,
         getOffset,
         onResizeStart({ elements, position }) {
           for (let i = 0; i < elements.length; i++) {
@@ -111,6 +116,7 @@ export const CanvasContainer = memo(
           }
         },
         onResize({ elements, controlBoxFrame, position }) {
+          console.log(controlBoxFrame);
           dispatch(updateElements(elements));
           dispatch(
             updateControlBox({
@@ -144,9 +150,10 @@ export const CanvasContainer = memo(
     } = useSelectionBox(
       event =>
         event.target.classList.contains("canvas") ||
-        event.target.classList.contains("page"),
+        event.target.classList.contains("page__elements"),
       elements,
       {
+        zoom,
         getOffset(page) {
           const pageElement = document.querySelector(
             `.page[data-id="${page}"]`
@@ -173,7 +180,7 @@ export const CanvasContainer = memo(
     const controlBoxElement = (
       <ControlBox
         ref={controlBoxRef}
-        frame={controlBox.frame}
+        frame={multiple(controlBox.frame, zoom)}
         angle={controlBox.angle}
         resizeHandlerPosition={resizeHandlerPosition}
         onRotateMouseDown={rotateMouseDown}

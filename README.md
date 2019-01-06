@@ -1,10 +1,5 @@
 ## Roadmap
 
-- fix all the problems related page
-  - when resize too small, it crashs
-  - extract the hardcoded `.page` logic
-  - update `controlBox` reducer to aviod cross page selection
-- scale
 - introduce Typescript
 - implement background
 - group/ungroup
@@ -24,6 +19,7 @@
 - extract Page code
 - extract Element code
 - Support different mode of multiple page selection
+- find solution for DOM strcutre dependency(class name, e.g. .element .page)
 
 ## Known bugs
 

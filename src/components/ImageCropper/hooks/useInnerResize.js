@@ -14,7 +14,8 @@ export const useInnerResize = (
   frame,
   imageFrame,
   outerBoxPosition,
-  angle
+  angle,
+  zoom
 ) => {
   const resizeDownHandlers = {};
   const resizeMoveHandlers = [];
@@ -29,6 +30,7 @@ export const useInnerResize = (
       angle,
       false,
       {
+        zoom,
         getOffset,
         onMouseDown({ original }) {
           original.stopPropagation();

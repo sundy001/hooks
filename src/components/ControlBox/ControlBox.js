@@ -22,8 +22,8 @@ export const ControlBox = memo(
       {
         frame: { x, y, width, height },
         angle,
-        controls, // (rotation|resize)[]
-        resizeHandlerPosition, // all, edge, corner
+        controls = ["rotation", "resize"], // (rotation|resize)[]
+        resizeHandlerPosition = "all", // all, edge, corner
         onRotateMouseDown,
         onResizeMouseDown
       },
@@ -80,8 +80,3 @@ export const ControlBox = memo(
 );
 
 ControlBox.displayName = "ControlBox";
-
-ControlBox.defaultProps = {
-  resizeHandlerPosition: "all",
-  controls: ["rotation", "resize"]
-};

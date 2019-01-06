@@ -9,13 +9,14 @@ import {
   indexesOfEdge
 } from "../math/rect";
 import { transform, getDisplacement } from "../math/affineTransformation";
+import { multiple } from "../math/frame";
 
 export const useRawResize = (
   position,
   frame,
   angle,
   shouldKeepAsepectRatio,
-  { onMouseDown, onResizeStart, onResize, onResizeEnd, getOffset } = {}
+  { zoom = 1, getOffset, onResizeStart, onResize, onResizeEnd } = {}
 ) => {
   const stateRef = useRef({
     beginningWidth: null,
@@ -27,23 +28,23 @@ export const useRawResize = (
       return;
     }
 
-    const { beginningWidth, beginningHeight } = stateRef.current;
+    if (frame) {
+      const { beginningWidth, beginningHeight } = stateRef.current;
+      const wRatio = frame.width / beginningWidth;
+      const hRatio = frame.height / beginningHeight;
 
-    callback({
-      ...event,
-      frame,
-      beginningWidth,
-      beginningHeight
-    });
+      callback({
+        ...event,
+        frame,
+        wRatio,
+        hRatio
+      });
+    } else {
+      callback(event);
+    }
   };
 
   return useDrag({
-    onMouseDown(event) {
-      // TODO: check position and keepAsepectRatio compatability
-      if (onMouseDown) {
-        callCallbackIfExist(onMouseDown, event);
-      }
-    },
     onDragStart(event) {
       const state = stateRef.current;
       state.beginningWidth = frame.width;
@@ -80,11 +81,11 @@ export const useRawResize = (
           : Math.trunc(
               axisDistance(
                 vertical,
-                frame,
+                multiple(frame, zoom),
                 angle,
                 virtualPosition.x,
                 virtualPosition.y
-              )
+              ) / zoom
             );
 
       let newWidth;
@@ -95,7 +96,15 @@ export const useRawResize = (
         newWidth =
           horizontal === null
             ? frame.width
-            : Math.trunc(axisDistance(horizontal, frame, angle, pageX, pageY));
+            : Math.trunc(
+                axisDistance(
+                  horizontal,
+                  multiple(frame, zoom),
+                  angle,
+                  pageX,
+                  pageY
+                ) / zoom
+              );
       }
 
       const { x: newX, y: newY } = getNewPosition(
@@ -139,7 +148,7 @@ const getMousePositionKeepAspectRatio = (position, frame, angle, mX, mY) => {
   const mousePosition = new Victor(mX, mY);
   // axis.dot(mousePosition): length of mouse position project on diagonal axis
   // axis.dot(oppositeVertex): length of opposite vertex project on diagonal axis
-  // subtraction result is distance(scalar) between mouse and opposite vertex
+  // subtraction is distance(scalar) between mouse and opposite vertex
   const distance = axis.dot(mousePosition) - axis.dot(oppositeVertex);
 
   return axis.multiply(new Victor(distance, distance)).add(oppositeVertex);

@@ -3,3 +3,12 @@
   background: pink;
   margin: 0 auto;
 }
+
+.page__elements {
+  position: absolute;
+  transform-origin: top left;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}

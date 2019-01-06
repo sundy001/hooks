@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { useDrag } from "./useDrag";
 
 export const useRawDragAndDrop = ({
-  onMouseDown,
+  zoom = 1,
   shouldDrag,
   onDragStart,
   onDragEnd,
@@ -29,8 +29,6 @@ export const useRawDragAndDrop = ({
         x: event.original.pageX,
         y: event.original.pageY
       };
-
-      callCallbackIfExist(onMouseDown, event.original);
     },
     onMouseUp() {
       previousPointRef.current = null;
@@ -43,8 +41,8 @@ export const useRawDragAndDrop = ({
       const previousPoint = previousPointRef.current;
       const pageX = event.original.pageX;
       const pageY = event.original.pageY;
-      const dx = pageX - previousPoint.x;
-      const dy = pageY - previousPoint.y;
+      const dx = (pageX - previousPoint.x) / zoom;
+      const dy = (pageY - previousPoint.y) / zoom;
       previousPoint.x = pageX;
       previousPoint.y = pageY;
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer } from "react";
+import React, { useCallback, useEffect, useReducer } from "react";
 
 import { Canvas } from "../Canvas";
 import { SelectionBox } from "../SelectionBox";
@@ -10,6 +10,7 @@ import { getComponentsOfElementPanel } from "./selectors/getComponentsOfElementP
 import { selectElements } from "./selectors/selectElements";
 import { shouldResizeKeepAspectRatio } from "./selectors/shouldResizeKeepAspectRatio";
 import { getSelectedElements } from "./selectors/getSelectedElements";
+import { updateZoom } from "./actions";
 
 export const AppContainer = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -22,7 +23,7 @@ export const AppContainer = () => {
   const elements = selectElements(state);
 
   const selections = getSelectedElements(state);
-  const { controlBox, pages } = state;
+  const { controlBox, pages, zoom } = state;
 
   return (
     <Canvas
@@ -30,6 +31,7 @@ export const AppContainer = () => {
       dispatch={dispatch}
       controlBox={controlBox}
       elements={elements}
+      zoom={zoom}
       selections={selections}
       resizeKeepAspectRatio={shouldResizeKeepAspectRatio(state)}
     >
@@ -67,6 +69,7 @@ export const AppContainer = () => {
                 {...page}
                 id={pageId}
                 dispatch={dispatch}
+                zoom={zoom}
                 elements={pageElements}
                 controlBox={
                   showControlBox && controlBox.show ? controlBoxElement : null
@@ -89,13 +92,32 @@ export const AppContainer = () => {
             key="element-panel"
             style={{
               background: "yellow",
-              position: "absolute",
+              position: "fixed",
               top: 0,
               left: 0,
               right: 0
             }}
           >
             {getComponentsOfElementPanel(dispatch, state)}
+          </div>
+        );
+
+        canvasElements.push(
+          <div
+            key="scale"
+            style={{
+              background: "gray",
+              position: "fixed",
+              bottom: 0,
+              right: 0
+            }}
+          >
+            <div onClick={useCallback(() => dispatch(updateZoom(1)), [])}>
+              100%
+            </div>
+            <div onClick={useCallback(() => dispatch(updateZoom(2)), [])}>
+              200%
+            </div>
           </div>
         );
 

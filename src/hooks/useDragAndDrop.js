@@ -5,11 +5,12 @@ export const useDragAndDrop = (
   shouldDrag,
   elements,
   controlBoxFrame,
-  { onDrag } = {}
+  { zoom, onDrag } = {}
 ) => {
   const beginningPositionRef = useRef(null);
 
   return useRawDragAndDrop({
+    zoom,
     shouldDrag,
 
     onDragStart() {

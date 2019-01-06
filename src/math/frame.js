@@ -26,3 +26,10 @@ export const verticesOfRect = (fix, diagonal) => {
     vertices
   };
 };
+
+export const multiple = ({ x, y, width, height }, scale) => ({
+  x: x * scale,
+  y: y * scale,
+  width: width * scale,
+  height: height * scale
+});

@@ -17,10 +17,10 @@ const loadElement = name => {
   return loadedElements[name];
 };
 
-const createElement = ({ id, name, ...props }, dispatch) => {
+const createElement = ({ id, name, ...elementProps }, props) => {
   const Element = loadElement(name);
-  return <Element key={id} id={id} {...props} dispatch={dispatch} />;
+  return <Element key={id} id={id} {...props} {...elementProps} />;
 };
 
-export const createElements = (dispatch, elements) =>
-  elements.map(props => createElement(props, dispatch));
+export const createElements = (elements, ...props) =>
+  elements.map(elementProps => createElement(elementProps, props));

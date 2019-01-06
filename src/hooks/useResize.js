@@ -10,7 +10,7 @@ export const useResize = (
   controlBoxFrame,
   controlBoxAngle,
   shouldKeepAsepectRatio,
-  { onResizeStart, onResize, onResizeEnd, getOffset } = {}
+  { zoom, getOffset, onResizeStart, onResize, onResizeEnd } = {}
 ) => {
   const { saveValue, getValue, clearValue } = useSelectionBeginningValue(
     elements,
@@ -29,10 +29,8 @@ export const useResize = (
       controlBoxAngle,
       shouldKeepAsepectRatio,
       {
+        zoom,
         getOffset,
-        onMouseDown({ original }) {
-          original.stopPropagation();
-        },
         onResizeStart() {
           saveValue();
 
@@ -46,21 +44,18 @@ export const useResize = (
             onResizeStart(event);
           }
         },
-        onResize({ frame, beginningWidth, beginningHeight }) {
+        onResize({ frame, wRatio, hRatio }) {
           const beginningValue = getValue();
-          const hRatio = frame.width / beginningWidth;
-          const vRatio = frame.height / beginningHeight;
-
           const event = { position, elements: [] };
 
           for (let i = 0; i < elements.length; i++) {
             const { id } = elements[i];
-            const newWidth = beginningValue[id].width * hRatio;
-            const newHeight = beginningValue[id].height * vRatio;
+            const newWidth = beginningValue[id].width * wRatio;
+            const newHeight = beginningValue[id].height * hRatio;
 
             const { x: offsetX, y: offsetY } = beginningValue[id].offset;
             const { x: newX, y: newY } = getDisplacementInControlBox(
-              new Victor(offsetX * hRatio, offsetY * vRatio),
+              new Victor(offsetX * wRatio, offsetY * hRatio),
               { width: newWidth, height: newHeight },
               beginningValue[id].angle,
               frame,
@@ -79,7 +74,6 @@ export const useResize = (
               frame: newFrame
             });
           }
-
           event.controlBoxFrame = frame;
 
           if (onResize) {

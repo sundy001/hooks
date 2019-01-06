@@ -3,7 +3,7 @@ import { useDrag } from "./useDrag";
 
 export const useRawRotate = (
   { x, y, width, height },
-  { onMouseDown, onRotateStart, onRotate, onRotateEnd, getOffset } = {}
+  { zoom = 1, onRotateStart, onRotate, onRotateEnd, getOffset } = {}
 ) => {
   const stateRef = useRef({
     beginningX: null,
@@ -11,10 +11,6 @@ export const useRawRotate = (
   });
   const [rotateMouseDown, rotateMouseMove, rotateMouseUp] = useDrag({
     onMouseDown(event) {
-      if (onMouseDown) {
-        onMouseDown(event);
-      }
-
       const offset = getOffset ? getOffset(event) : { x: 0, y: 0 };
       const state = stateRef.current;
       state.beginningX = event.original.pageX - offset.x;
@@ -36,8 +32,8 @@ export const useRawRotate = (
       const newAngle = -angleOfThreePoints(
         beginningX,
         beginningY,
-        x + width / 2,
-        y + height / 2,
+        (x + width / 2) * zoom,
+        (y + height / 2) * zoom,
         pageX - offset.x,
         pageY - offset.y
       );

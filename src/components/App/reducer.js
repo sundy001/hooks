@@ -3,7 +3,8 @@ import {
   UPDATE_ELEMENT,
   UPDATE_ELEMENTS,
   COPY_ELEMENTS,
-  DELETE_ELEMENTS
+  DELETE_ELEMENTS,
+  UPDATE_ZOOM
 } from "./actions";
 import { reducer as selections } from "../../selections";
 import { elements as imageElements, raise } from "../elements/Image";
@@ -26,16 +27,22 @@ export const elements = (state, action) => {
         state,
         action.elements,
         (previouseState, newValue) => {
-          const nextState = { ...previouseState };
+          let nextState = null;
 
           if (newValue.frame) {
+            if (nextState === null) {
+              nextState = { ...previouseState };
+            }
             nextState.frame = newValue.frame;
           }
           if (newValue.angle) {
+            if (nextState === null) {
+              nextState = { ...previouseState };
+            }
             nextState.angle = newValue.angle;
           }
 
-          return nextState;
+          return nextState === null ? previouseState : nextState;
         }
       );
 
@@ -95,6 +102,15 @@ export const copySelectedElements = (elements, selections, action) => {
   }
 };
 
+export const zoom = (state = 1, action) => {
+  switch (action.type) {
+    case UPDATE_ZOOM:
+      return action.zoom;
+    default:
+      return state;
+  }
+};
+
 export const reducer = combineReducers({
   elements: [
     elements,
@@ -118,5 +134,6 @@ export const reducer = combineReducers({
   ],
   selectionBox,
   raise,
-  pages: s => s
+  pages: s => s,
+  zoom
 });

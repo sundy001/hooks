@@ -7,7 +7,7 @@ export const useRotate = (
   elements,
   controlBoxFrame,
   controlBoxAngle,
-  { onRotate, getOffset } = {}
+  { zoom, getOffset, onRotate } = {}
 ) => {
   const stateRef = useRef({
     beginningControlBoxAngle: null
@@ -18,10 +18,8 @@ export const useRotate = (
   );
 
   return useRawRotate(controlBoxFrame, {
+    zoom,
     getOffset,
-    onMouseDown({ original }) {
-      original.stopPropagation();
-    },
     onRotateStart() {
       stateRef.current.beginningControlBoxAngle = controlBoxAngle;
       saveValue();

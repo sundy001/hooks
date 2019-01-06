@@ -39,12 +39,9 @@ export const elements = (state, action) => {
   }
 };
 
+// TODO: move it somewhere image no loger need to rasie
 export const raise = (state = [], action) => {
   switch (action.type) {
-    case START_CROPPING_IMAGE:
-      return [action.element];
-    case STOP_CROPPING_IMAGE:
-      return [];
     default:
       return state;
   }

@@ -6,6 +6,7 @@ import { useInnerResize } from "./hooks/useInnerResize";
 import { ImageCropper } from "./ImageCropper";
 import { getInitialOuterBoxPosition } from "./getInitialOuterBoxPosition";
 import { getScrollPosition } from "../../getScrollPosition";
+import { multiple } from "../../math/frame";
 
 export const ImageCropperContainer = memo(
   ({
@@ -14,7 +15,8 @@ export const ImageCropperContainer = memo(
     imageFrame: initalImageFrame,
     angle,
     onMaskMouseDown,
-    onChange
+    onChange,
+    zoom = 1
   }) => {
     const [frame, setFrame] = useState(initialFrame);
     const [imageFrame, setImageFrame] = useState(initalImageFrame);
@@ -42,7 +44,8 @@ export const ImageCropperContainer = memo(
       callOnChangeIfExist,
       imageFrame,
       outerBoxPosition,
-      angle
+      angle,
+      zoom
     );
 
     const imageCropperRef = useRef();
@@ -68,7 +71,8 @@ export const ImageCropperContainer = memo(
       getOffset,
       outerBoxFrame,
       frame,
-      angle
+      angle,
+      zoom
     );
 
     const {
@@ -83,16 +87,17 @@ export const ImageCropperContainer = memo(
       frame,
       imageFrame,
       outerBoxPosition,
-      angle
+      angle,
+      zoom
     );
 
     return (
       <ImageCropper
         ref={imageCropperRef}
         imageUrl={imageUrl}
-        frame={frame}
-        imageFrame={imageFrame}
-        outerBoxFrame={outerBoxFrame}
+        frame={multiple(frame, zoom)}
+        imageFrame={multiple(imageFrame, zoom)}
+        outerBoxFrame={multiple(outerBoxFrame, zoom)}
         angle={angle}
         onMouseDown={dragMouseDown}
         onMouseMove={useCallback(event => {

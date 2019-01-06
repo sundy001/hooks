@@ -6,7 +6,7 @@ import { getOverlapCache, detectOverlapByCache } from "../overlapDetection";
 export const useSelectionBox = (
   shouldSelect,
   elements,
-  { onSelect, onSelectEnd, getOffset } = {}
+  { zoom, getOffset, onSelect, onSelectEnd } = {}
 ) => {
   const stateRef = useRef({
     shouldSelect: null,
@@ -41,8 +41,8 @@ export const useSelectionBox = (
           id,
           frame: {
             ...frame,
-            x: frame.x + offset.x,
-            y: frame.y + offset.y
+            x: frame.x * zoom + offset.x,
+            y: frame.y * zoom + offset.y
           },
           angle
         };

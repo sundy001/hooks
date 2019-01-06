@@ -13,7 +13,8 @@ export const useOuterResize = (
   getOffset,
   outerBoxFrame,
   frame,
-  angle
+  angle,
+  zoom
 ) => {
   const resizeDownHandlers = {};
   const resizeMoveHandlers = [];
@@ -28,6 +29,7 @@ export const useOuterResize = (
       angle,
       true,
       {
+        zoom,
         getOffset,
         onMouseDown({ original }) {
           original.stopPropagation();

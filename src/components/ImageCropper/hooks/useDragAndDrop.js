@@ -7,9 +7,14 @@ export const useDragAndDrop = (
   onDragMouseEnd,
   imageFrame,
   outerBoxPosition,
-  angle
+  angle,
+  zoom
 ) => {
   return useRawDragAndDrop({
+    zoom,
+    shouldDrag(event) {
+      return event.target.classList.contains("image-container__image");
+    },
     onMouseDown({ original }) {
       original.stopPropagation();
     },

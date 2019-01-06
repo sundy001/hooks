@@ -1,4 +1,5 @@
 import React, { memo, useCallback } from "react";
+import ReactDOM from "react-dom";
 import { Image } from "./Image";
 import { useResize } from "./hooks/useResize";
 import { useElementListener } from "../../../eventBus";
@@ -35,7 +36,14 @@ export const ImageContainer = memo(props => {
   }, []);
 
   return isCropping ? (
-    <ImageCropper {...props} onMaskMouseDown={onFinish} onChange={onChange} />
+    ReactDOM.createPortal(
+      <ImageCropper
+        {...props}
+        onMaskMouseDown={onFinish}
+        onChange={onChange}
+      />,
+      document.querySelector(".page")
+    )
   ) : (
     <Image {...props} />
   );
