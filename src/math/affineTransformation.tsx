@@ -3,7 +3,7 @@ import Victor from "victor";
 // transform the given vertex to actual cordination system
 // ref: https://gamedev.stackexchange.com/questions/16719/what-is-the-correct-order-to-multiply-scale-rotation-and-translation-matrices-f
 export const transform = (
-  vertex: Victor,
+  vertex: RVictor,
   { x, y, width, height }: Frame,
   angle: number
 ) => {
@@ -22,7 +22,7 @@ export const transform = (
 };
 
 export const getDisplacementInControlBox = (
-  elementOffset: Victor, // element position in control box coordinate system
+  elementOffset: RVictor, // element position in control box coordinate system
   { width, height }: Readonly<{ width: number; height: number }>, // size of element
   elementAngle: number,
   controlBoxFrame: Frame,
@@ -60,11 +60,11 @@ export const getDisplacementInControlBox = (
 };
 
 export const getDisplacement = (
-  rawVertex: Victor,
+  rawVertex: RVictor,
   width: number,
   height: number,
   angle: number,
-  targetVertex: Victor
+  targetVertex: RVictor
 ) => {
   const half = new Victor(width / 2, height / 2);
 
@@ -80,3 +80,4 @@ export const getDisplacement = (
 };
 
 type Frame = Readonly<{ x: number; y: number; width: number; height: number }>;
+type RVictor = Readonly<Victor>;

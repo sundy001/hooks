@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useReducer } from "react";
+import React, { useCallback, useEffect, useReducer, ReactElement } from "react";
 
 import { Canvas } from "../Canvas";
 import { SelectionBox } from "../SelectionBox";
@@ -36,7 +36,7 @@ export const AppContainer = () => {
       resizeKeepAspectRatio={shouldResizeKeepAspectRatio(state)}
     >
       {controlBoxElement => {
-        const canvasElements = [];
+        const canvasElements: ReactElement<any>[] = [];
 
         canvasElements.push(
           pages.allIds.map(pageId => {

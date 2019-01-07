@@ -1,7 +1,7 @@
-let scrollElement;
+let scrollElement: HTMLElement;
 scrollElement =
   ((scrollElement = document.documentElement) ||
-    (scrollElement = document.body.parentNode)) &&
+    (scrollElement = document.body.parentNode as HTMLElement)) &&
   typeof scrollElement.scrollLeft == "number"
     ? scrollElement
     : document.body;

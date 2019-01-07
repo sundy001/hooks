@@ -1,6 +1,6 @@
 import { useRef } from "react";
+import Victor from "victor";
 import { useDrag } from "../hooks/useDrag";
-import { verticesOfRect } from "../math/frame";
 import { getOverlapCache, detectOverlapByCache } from "../overlapDetection";
 
 export const useSelectionBox = (
@@ -97,3 +97,29 @@ export const useSelectionBox = (
 
   return { selectBoxMouseDown, selectBoxMouseMove, selectBoxMouseUp };
 };
+
+const verticesOfRect = (fix: Position, diagonal: Position) => {
+  const vertices: [Victor, Victor, Victor, Victor] = [] as any;
+  vertices[3] = new Victor(
+    Math.min(fix.x, diagonal.x),
+    Math.min(fix.y, diagonal.y)
+  );
+  vertices[1] = new Victor(
+    Math.max(fix.x, diagonal.x),
+    Math.max(fix.y, diagonal.y)
+  );
+
+  const size = vertices[1].clone().subtract(vertices[3]);
+  vertices[0] = vertices[3].clone().addX(size);
+  vertices[2] = vertices[3].clone().addY(size);
+
+  return {
+    size: {
+      width: size.x,
+      height: size.y
+    },
+    vertices
+  };
+};
+
+type Position = Readonly<{ x: number; y: number }>;

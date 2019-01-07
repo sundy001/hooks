@@ -262,7 +262,7 @@ export const minDistanceFromVertexToLine = (
   return p.distance(projection);
 };
 
-type Frame = {
+export type Frame = {
   width: number;
   height: number;
   x: number;

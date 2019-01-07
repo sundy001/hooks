@@ -1,13 +1,19 @@
 import { useCallback, useMemo } from "react";
 import Victor from "victor";
 import { useSelectionBeginningValue } from "./useSelectionBeginningValue";
-import { useRawResize } from "./useRawResize";
+import { useRawResize, Frame } from "./useRawResize";
 import { RECT_VERTICES } from "../math/rect";
 import { getDisplacementInControlBox } from "../math/affineTransformation";
 
 export const useResize = (
-  elements,
-  controlBoxFrame,
+  elements: ReadonlyArray<
+    Readonly<{
+      id: number;
+      frame: Readonly<Frame>;
+      angle: number;
+    }>
+  >,
+  controlBoxFrame: Readonly<Frame>,
   controlBoxAngle: number,
   shouldKeepAspectRatio: boolean,
   {

@@ -1,5 +1,4 @@
 import Victor from "victor";
-import { sizeOfRectVertices } from "../math/frame";
 import { transform } from "../math/affineTransformation";
 import { CORNER_INDEXES, vertexOfOriginRect } from "../math/rect";
 import {
@@ -84,7 +83,7 @@ export const controlBoxUpdatedBySelection = (controlBox, elements, action) => {
           const { min, max } = minMaxVerticesOfSelections(
             action.selections.map(id => elements.byId[id])
           );
-          const { width, height } = sizeOfRectVertices(min, max);
+          const { x: width, y: height } = max.clone().subtract(min);
 
           return {
             show: true,
