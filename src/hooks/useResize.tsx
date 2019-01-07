@@ -36,7 +36,7 @@ export const useResize: (
   for (let i = 0; i < RECT_VERTICES.length; i++) {
     const position = RECT_VERTICES[i];
     const [theResizeDown, theResizeMove, theResizeUp] = useRawResize(
-      position,
+      position as any,
       controlBoxFrame,
       controlBoxAngle,
       shouldKeepAspectRatio,

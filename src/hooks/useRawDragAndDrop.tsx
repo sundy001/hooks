@@ -16,12 +16,16 @@ export const useRawDragAndDrop = ({
 } = {}) => {
   const previousPointRef = useRef<null | { x: number; y: number }>(null);
 
-  const callCallbackIfExist = (callback, event, delta = {}) => {
+  const callCallbackIfExist = (
+    callback: Callback | Callback<{ dx: number; dy: number }> | undefined,
+    event: MouseEvent,
+    delta?: { dx: number; dy: number }
+  ) => {
     if (!callback) {
       return;
     }
 
-    callback({
+    (callback as any)({
       original: event,
       ...delta
     });
@@ -62,8 +66,4 @@ export const useRawDragAndDrop = ({
   return { dragMouseDown, dragMouseMove, dragMouseUp };
 };
 
-type Callback<extra = {}> = (
-  event: {
-    original: MouseEvent;
-  } & extra
-) => void;
+type Callback<E = {}> = (event: { original: MouseEvent } & E) => void;

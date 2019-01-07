@@ -3,9 +3,18 @@ import { useRawDragAndDrop } from "./useRawDragAndDrop";
 
 export const useDragAndDrop = (
   shouldDrag: (event: MouseEvent) => boolean,
-  elements: Elements,
+  elements: ReadonlyArray<
+    Readonly<{
+      id: number;
+      frame: Readonly<Frame>;
+      angle: number;
+    }>
+  >,
   controlBoxFrame: Readonly<Frame>,
-  { zoom, onDrag }: { zoom?: number; onDrag?: any } = {}
+  {
+    zoom,
+    onDrag
+  }: { zoom?: number; onDrag?: (event: OnDragEvent) => void } = {}
 ) => {
   const beginningPositionRef = useRef<null | { x: number; y: number }>(null);
 
@@ -32,10 +41,7 @@ export const useDragAndDrop = (
       beginningPositionRef.current!.x += dx;
       beginningPositionRef.current!.y += dy;
 
-      const event: {
-        controlBoxPosition: { x: number; y: number };
-        elements: { id: number; frame: Frame }[];
-      } = {
+      const event: OnDragEvent = {
         elements: [],
         controlBoxPosition: { ...beginningPositionRef.current! }
       };
@@ -66,10 +72,7 @@ type Frame = {
   y: number;
 };
 
-type Elements = ReadonlyArray<
-  Readonly<{
-    id: number;
-    frame: Readonly<Frame>;
-    angle: number;
-  }>
->;
+type OnDragEvent = {
+  controlBoxPosition: { x: number; y: number };
+  elements: { id: number; frame: Frame }[];
+};

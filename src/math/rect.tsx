@@ -26,7 +26,7 @@ export const EDGE_INDEXES: Readonly<number[]> = [0, 2, 4, 6];
 
 export const CORNER_INDEXES: Readonly<number[]> = [1, 3, 5, 7];
 
-export const resolvePosition = (position: string) => {
+export const resolvePosition = (position: Position) => {
   const token = position.split("-");
   let vertical: string | null = null;
   let horizontal: string | null = null;
@@ -44,7 +44,7 @@ export const resolvePosition = (position: string) => {
   return {
     vertical,
     horizontal
-  };
+  } as { vertical: null | Position; horizontal: null | Position };
 };
 
 export const indexesOfEdge = (index: number): [number, number] => [
@@ -82,3 +82,12 @@ export const vertexOfOriginRect = (
       throw new Error();
   }
 };
+
+export type Position =
+  | typeof TOP
+  | typeof RIGHT
+  | typeof BOTTOM_RIGHT
+  | typeof BOTTOM
+  | typeof BOTTOM_LEFT
+  | typeof LEFT
+  | typeof TOP_LEFT;

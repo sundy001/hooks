@@ -1,20 +1,26 @@
 import { useRef } from "react";
 import { useDrag } from "./useDrag";
 
-export const useRawRotate: (
-  frame?: any,
-  options?: {
+export const useRawRotate = (
+  { x, y, width, height }: Frame,
+  {
+    zoom = 1,
+    onRotateStart,
+    onRotate,
+    onRotateEnd,
+    getOffset
+  }: {
     zoom?: number;
-    onRotateStart?: any;
-    onRotate?: any;
-    onRotateEnd?: any;
-    getOffset?: any;
-  }
-) => any = (
-  { x, y, width, height },
-  { zoom = 1, onRotateStart, onRotate, onRotateEnd, getOffset } = {}
+    onRotateStart?: (event: { original: MouseEvent }) => void;
+    onRotate?: (event: { original: MouseEvent; angle: number }) => void;
+    onRotateEnd?: (event: { original: MouseEvent }) => void;
+    getOffset?: (event: { original: MouseEvent }) => { x: number; y: number };
+  } = {}
 ) => {
-  const stateRef = useRef({
+  const stateRef = useRef<{
+    beginningX: null | number;
+    beginningY: null | number;
+  }>({
     beginningX: null,
     beginningY: null
   });
@@ -37,10 +43,9 @@ export const useRawRotate: (
 
       const offset = getOffset ? getOffset(event) : { x: 0, y: 0 };
       const { pageX, pageY } = event.original;
-      const { beginningX, beginningY } = stateRef.current;
       const newAngle = -angleOfThreePoints(
-        beginningX,
-        beginningY,
+        stateRef.current.beginningX!,
+        stateRef.current.beginningY!,
         (x + width / 2) * zoom,
         (y + height / 2) * zoom,
         pageX - offset.x,
@@ -69,6 +74,20 @@ export const useRawRotate: (
 
 // (x1, y1) is the middle point
 // (x0, y0), (x2, y2) are the ends of the line
-const angleOfThreePoints = (x0, y0, x1, y1, x2, y2) => {
+const angleOfThreePoints = (
+  x0: number,
+  y0: number,
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number
+) => {
   return Math.atan2(y0 - y1, x0 - x1) - Math.atan2(y2 - y1, x2 - x1);
 };
+
+type Frame = Readonly<{
+  width: number;
+  height: number;
+  x: number;
+  y: number;
+}>;

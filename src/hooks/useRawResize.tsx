@@ -3,6 +3,7 @@ import { useRef } from "react";
 import { useDrag } from "./useDrag";
 import {
   RECT_VERTICES,
+  Position,
   indexOfOppositeVertex,
   vertexOfOriginRect,
   resolvePosition,
@@ -11,39 +12,53 @@ import {
 import { transform, getDisplacement } from "../math/affineTransformation";
 import { multiple } from "../math/frame";
 
-export const useRawResize: ((
-  position: any,
-  frame: any,
-  angle: any,
+export const useRawResize = (
+  position: Position,
+  frame: Readonly<Frame>,
+  angle: number,
   shouldKeepAspectRatio: boolean,
-  options?: {
+  {
+    zoom = 1,
+    getOffset,
+    onResizeStart,
+    onResize,
+    onResizeEnd
+  }: {
     zoom?: number;
-    getOffset?: any;
-    onResizeStart?: any;
-    onResize?: any;
-    onResizeEnd?: any;
-  }
-) => any[]) = (
-  position,
-  frame,
-  angle,
-  shouldKeepAspectRatio,
-  { zoom = 1, getOffset, onResizeStart, onResize, onResizeEnd } = {}
+    getOffset?: (event: { original: MouseEvent }) => { x: number; y: number };
+    onResizeStart?: (event: { original: MouseEvent }) => void;
+    onResize?: (
+      event: {
+        original: MouseEvent;
+        frame: Frame;
+        wRatio: number;
+        hRatio: number;
+      }
+    ) => void;
+    onResizeEnd?: (event: { original: MouseEvent }) => void;
+  } = {}
 ) => {
-  const stateRef = useRef({
+  const stateRef = useRef<{
+    beginningWidth: number | null;
+    beginningHeight: number | null;
+  }>({
     beginningWidth: null,
     beginningHeight: null
   });
 
-  const callCallbackIfExist = (callback, event, frame?) => {
+  const callCallbackIfExist = (
+    callback: any,
+    event: { original: MouseEvent },
+    frame?: Frame
+  ) => {
     if (!callback) {
       return;
     }
 
     if (frame) {
       const { beginningWidth, beginningHeight } = stateRef.current;
-      const wRatio = frame.width / beginningWidth;
-      const hRatio = frame.height / beginningHeight;
+      const wRatio = frame.width / beginningWidth!;
+      const hRatio = frame.height / beginningHeight!;
 
       callback({
         ...event,
@@ -75,7 +90,7 @@ export const useRawResize: ((
         vertical !== null && horizontal !== null && shouldKeepAspectRatio;
       const scaledFrame = multiple(frame, zoom);
 
-      let virtualPosition;
+      let virtualPosition: { x: number; y: number };
       if (keepAspectRatio) {
         virtualPosition = getMousePositionKeepAspectRatio(
           position,
@@ -101,10 +116,11 @@ export const useRawResize: ((
               ) / zoom
             );
 
-      let newWidth;
+      let newWidth: number;
       if (keepAspectRatio) {
-        const { beginningWidth, beginningHeight } = stateRef.current;
-        newWidth = (newHeight * beginningWidth) / beginningHeight;
+        newWidth =
+          (newHeight * stateRef.current.beginningWidth!) /
+          stateRef.current.beginningHeight!;
       } else {
         newWidth =
           horizontal === null
@@ -123,10 +139,12 @@ export const useRawResize: ((
         newHeight
       );
 
-      if (onResize) {
-        const frame = { x: newX, y: newY, width: newWidth, height: newHeight };
-        callCallbackIfExist(onResize, event, frame);
-      }
+      callCallbackIfExist(onResize, event, {
+        x: newX,
+        y: newY,
+        width: newWidth,
+        height: newHeight
+      });
     },
     onDragEnd(event) {
       if (onResizeEnd) {
@@ -140,7 +158,13 @@ export const useRawResize: ((
   });
 };
 
-const getMousePositionKeepAspectRatio = (position, frame, angle, mX, mY) => {
+const getMousePositionKeepAspectRatio = (
+  position: Position,
+  frame: Readonly<Frame>,
+  angle: number,
+  mX: number,
+  mY: number
+) => {
   const index = RECT_VERTICES.indexOf(position);
   const oppositeIndex = indexOfOppositeVertex(index);
   const [vertex, oppositeVertex] = [index, oppositeIndex].map(i =>
@@ -162,7 +186,13 @@ const getMousePositionKeepAspectRatio = (position, frame, angle, mX, mY) => {
   return axis.multiply(new Victor(distance, distance)).add(oppositeVertex);
 };
 
-const axisDistance = (token, frame, angle, mX, mY) => {
+const axisDistance = (
+  token: Position,
+  frame: Readonly<Frame>,
+  angle: number,
+  mX: number,
+  mY: number
+) => {
   const index = RECT_VERTICES.indexOf(token);
   const oppositeIndex = indexOfOppositeVertex(index);
   const edgeVertices = indexesOfEdge(oppositeIndex).map(i =>
@@ -178,7 +208,13 @@ const axisDistance = (token, frame, angle, mX, mY) => {
 
 // base of the fact that the opposite vertex of the resize handler does not change position
 // calculate the new position of element
-const getNewPosition = (position, frame, angle, hDistance, vDistance) => {
+const getNewPosition = (
+  position: Position,
+  frame: Readonly<Frame>,
+  angle: number,
+  hDistance: number,
+  vDistance: number
+) => {
   const positionIndex = RECT_VERTICES.indexOf(position);
   const oppositeIndex = indexOfOppositeVertex(positionIndex);
   const oppositeVertex = transform(
@@ -199,7 +235,11 @@ const getNewPosition = (position, frame, angle, hDistance, vDistance) => {
 // reference: https://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment
 // v, w are two ends of the line
 // p is the vertex
-export const minDistanceFromVertexToLine = (v, w, p) => {
+export const minDistanceFromVertexToLine = (
+  v: Victor,
+  w: Victor,
+  p: Victor
+) => {
   const l2 = v.distanceSq(w);
   if (l2 === 0) return p.distance(v);
 
@@ -220,4 +260,11 @@ export const minDistanceFromVertexToLine = (v, w, p) => {
       .multiply(new Victor(t, t))
   );
   return p.distance(projection);
+};
+
+type Frame = {
+  width: number;
+  height: number;
+  x: number;
+  y: number;
 };

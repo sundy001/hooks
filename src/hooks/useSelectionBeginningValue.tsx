@@ -2,13 +2,19 @@ import { useRef } from "react";
 import Victor from "victor";
 
 export const useSelectionBeginningValue = (
-  selectedElements,
-  controlBoxFrame
+  selectedElements: ReadonlyArray<
+    Readonly<{
+      id: number;
+      frame: Readonly<Frame>;
+      angle: number;
+    }>
+  >,
+  controlBoxFrame: Frame
 ) => {
-  const beginningValueRef = useRef(null);
+  const beginningValueRef = useRef<ElementsCache | null>(null);
 
   const saveValue = () => {
-    const beginningValue = {};
+    const beginningValue: ElementsCache = {};
 
     if (selectedElements.length > 1) {
       for (let i = 0; i < selectedElements.length; i++) {
@@ -36,8 +42,8 @@ export const useSelectionBeginningValue = (
     beginningValueRef.current = beginningValue;
   };
 
-  const getValue = () => {
-    return beginningValueRef.current;
+  const getValue = (): Readonly<ElementsCache> => {
+    return beginningValueRef.current!;
   };
 
   const clearValue = () => {
@@ -45,4 +51,20 @@ export const useSelectionBeginningValue = (
   };
 
   return { saveValue, getValue, clearValue };
+};
+
+type Frame = {
+  width: number;
+  height: number;
+  x: number;
+  y: number;
+};
+
+type ElementsCache = {
+  [id: string]: {
+    width: number;
+    height: number;
+    offset: Victor;
+    angle: number;
+  };
 };

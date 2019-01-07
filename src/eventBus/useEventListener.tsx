@@ -1,7 +1,12 @@
 import { useRef, useEffect } from "react";
 import { addListener, removeListener } from "./eventBus";
 
-export const useElementListener = (eventName, id, handler) => {
+// TODO: add better type for handler
+export const useElementListener = (
+  eventName: string,
+  id: number,
+  handler: (...args: any[]) => void
+) => {
   const handlerRef = useRef(handler);
   handlerRef.current = handler;
 
