@@ -1,13 +1,26 @@
-import { verticesOfElement } from "../element";
+import Victor from "victor";
 import { HORIZONTAL, VERTICAL, normalizeNormal } from "./vector";
+import { transform } from "../math/affineTransformation";
+import { CORNER_INDEXES, vertexOfOriginRect } from "../math/rect";
 
-export const isOverlapByAABB = (vertices1, vertices2) =>
+export const isOverlapByAABB = (
+  vertices1: VictorTuple,
+  vertices2: VictorTuple
+) =>
   vertices1[3].x < vertices2[1].x &&
   vertices1[1].x > vertices2[3].x &&
   vertices1[3].y < vertices2[1].y &&
   vertices1[1].y > vertices2[3].y;
 
-export const getOverlapCache = elements =>
+export const getOverlapCache = (
+  elements: ReadonlyArray<
+    Readonly<{
+      id: number;
+      frame: Readonly<Frame>;
+      angle: number;
+    }>
+  >
+) =>
   elements.map(element => {
     const vertices = verticesOfElement(element);
     const axes =
@@ -24,14 +37,17 @@ export const getOverlapCache = elements =>
       vertices,
       axes
     };
-  });
+  }) as OverlapCache;
 
-export const detectOverlapByCache = (comparedVertices, overlapCache) => {
-  const overlapedIds = [];
+export const detectOverlapByCache = (
+  comparedVertices: VictorTuple,
+  overlapCache: OverlapCache
+) => {
+  const overlapedIds: number[] = [];
 
   for (let i = 0; i < overlapCache.length; i++) {
     const row = overlapCache[i];
-    let isOverlap;
+    let isOverlap: boolean;
     const { id, vertices, angle, axes } = row;
     if (angle === 0) {
       isOverlap = isOverlapByAABB(comparedVertices, vertices);
@@ -62,7 +78,10 @@ export const detectOverlapByCache = (comparedVertices, overlapCache) => {
   return overlapedIds;
 };
 
-const getProjectionOfPolygron = (vertices, axis) => {
+const getProjectionOfPolygron = (
+  vertices: ReadonlyArray<RVictor>,
+  axis: RVictor
+) => {
   let min = axis.dot(vertices[0]);
   let max = min;
   for (let i = 0; i < vertices.length; i++) {
@@ -81,4 +100,40 @@ const getProjectionOfPolygron = (vertices, axis) => {
   };
 };
 
-const isProjectionOverlap = (p1, p2) => p2.max >= p1.min && p1.max >= p2.min;
+const isProjectionOverlap = (
+  p1: { min: number; max: number },
+  p2: { min: number; max: number }
+) => p2.max >= p1.min && p1.max >= p2.min;
+
+export const verticesOfElement = ({
+  frame,
+  angle
+}: {
+  frame: Frame;
+  angle: number;
+}) =>
+  CORNER_INDEXES.map(index =>
+    transform(
+      vertexOfOriginRect(index, frame.width, frame.height),
+      frame,
+      angle
+    )
+  ) as VictorTuple;
+
+type RVictor = Readonly<Victor>;
+
+type VictorTuple = [RVictor, RVictor, RVictor, RVictor];
+
+type Frame = Readonly<{
+  width: number;
+  height: number;
+  x: number;
+  y: number;
+}>;
+
+type OverlapCache = ReadonlyArray<{
+  id: number;
+  angle: number;
+  vertices: VictorTuple;
+  axes: ReadonlyArray<Victor>;
+}>;

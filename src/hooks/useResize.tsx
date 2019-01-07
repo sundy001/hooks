@@ -5,24 +5,24 @@ import { useRawResize } from "./useRawResize";
 import { RECT_VERTICES } from "../math/rect";
 import { getDisplacementInControlBox } from "../math/affineTransformation";
 
-export const useResize: (
-  elements: any,
-  controlBoxFrame: any,
+export const useResize = (
+  elements,
+  controlBoxFrame,
   controlBoxAngle: number,
   shouldKeepAspectRatio: boolean,
-  options?: {
+  {
+    zoom,
+    getOffset,
+    onResizeStart,
+    onResize,
+    onResizeEnd
+  }: {
     zoom?: number;
     getOffset?: any;
     onResizeStart?: any;
     onResize?: any;
     onResizeEnd?: any;
-  }
-) => any = (
-  elements,
-  controlBoxFrame,
-  controlBoxAngle,
-  shouldKeepAspectRatio,
-  { zoom, getOffset, onResizeStart, onResize, onResizeEnd } = {}
+  } = {}
 ) => {
   const { saveValue, getValue, clearValue } = useSelectionBeginningValue(
     elements,

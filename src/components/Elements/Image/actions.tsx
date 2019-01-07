@@ -4,13 +4,6 @@ export const START_CROPPING_IMAGE = "START_CROPPING_IMAGE";
 export const STOP_CROPPING_IMAGE = "STOP_CROPPING_IMAGE";
 export const UPDATE_CROPPING_IMAGE = "UPDATE_CROPPING_IMAGE";
 
-type Frame = Readonly<{
-  width: number;
-  height: number;
-  x: number;
-  y: number;
-}>;
-
 export const startCroppingImage = (element: number) =>
   createAction(START_CROPPING_IMAGE, element);
 
@@ -36,4 +29,11 @@ export type Action = ActionsUnion<{
   startCroppingImage: typeof startCroppingImage;
   stopCroppingImage: typeof stopCroppingImage;
   updateCroppingImage: typeof updateCroppingImage;
+}>;
+
+type Frame = Readonly<{
+  width: number;
+  height: number;
+  x: number;
+  y: number;
 }>;

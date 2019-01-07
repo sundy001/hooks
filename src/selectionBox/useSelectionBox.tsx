@@ -3,16 +3,23 @@ import { useDrag } from "../hooks/useDrag";
 import { verticesOfRect } from "../math/frame";
 import { getOverlapCache, detectOverlapByCache } from "../overlapDetection";
 
-export const useSelectionBox: (
-  shouldSelect: any,
-  elements: any,
-  options: { zoom?: number; getOffset?: any; onSelect?: any; onSelectEnd?: any }
-) => any = (
+export const useSelectionBox = (
   shouldSelect,
   elements,
-  { zoom, getOffset, onSelect, onSelectEnd } = {}
+  {
+    zoom = 1,
+    getOffset,
+    onSelect,
+    onSelectEnd
+  }: { zoom?: number; getOffset?: any; onSelect?: any; onSelectEnd?: any } = {}
 ) => {
-  const stateRef = useRef({
+  const stateRef = useRef<{
+    shouldSelect: boolean | null;
+    beginningX: number | null;
+    beginningY: number | null;
+    overlapCache: any;
+    selectedElements: number[] | null;
+  }>({
     shouldSelect: null,
     beginningX: null,
     beginningY: null,
@@ -35,7 +42,7 @@ export const useSelectionBox: (
     },
 
     shouldDrag() {
-      return stateRef.current.shouldSelect;
+      return stateRef.current.shouldSelect!;
     },
 
     onDragStart() {
@@ -65,7 +72,7 @@ export const useSelectionBox: (
       const { pageX, pageY } = original;
       const { beginningX, beginningY, overlapCache } = stateRef.current;
       const { vertices: selectionVertices, size } = verticesOfRect(
-        { x: beginningX, y: beginningY },
+        { x: beginningX!, y: beginningY! },
         { x: pageX, y: pageY }
       );
 

@@ -1,6 +1,7 @@
 import Victor from "victor";
 import { sizeOfRectVertices } from "../math/frame";
-import { verticesOfElement } from "../element";
+import { transform } from "../math/affineTransformation";
+import { CORNER_INDEXES, vertexOfOriginRect } from "../math/rect";
 import {
   UPDATE_CONTROL_BOX,
   SHOW_CONTROL_BOX,
@@ -120,3 +121,12 @@ const minMaxVerticesOfSelections = elements => {
 
   return { min: new Victor(minX, minY), max: new Victor(maxX, maxY) };
 };
+
+const verticesOfElement = ({ frame, angle }) =>
+  CORNER_INDEXES.map(index =>
+    transform(
+      vertexOfOriginRect(index, frame.width, frame.height),
+      frame,
+      angle
+    )
+  );

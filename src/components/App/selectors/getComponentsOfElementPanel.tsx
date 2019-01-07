@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactElement } from "react";
 import { elementsStatic } from "../elementsStatic";
 import { copyElements, deleteElements } from "../actions";
 import { setSelections, clearSelections } from "../../../selections";
@@ -7,7 +7,7 @@ export const getComponentsOfElementPanel = (
   dispatch,
   { selections, elements }
 ) => {
-  let components = [];
+  let components: ReactElement<any>[] = [];
   if (selections.length > 0) {
     components.push(
       <button
@@ -17,7 +17,7 @@ export const getComponentsOfElementPanel = (
 
           // TODO: need to think about how the get new Id
           const selectionLength = selections.length;
-          const newElementIds = [];
+          const newElementIds: number[] = [];
           let maxId = Math.max(...elements.allIds);
           for (let i = 0; i < selectionLength; i++) {
             newElementIds.push(++maxId);

@@ -1,6 +1,7 @@
 ## Roadmap
 
 - introduce Typescript
+- fix copy elements
 - implement background
 - group/ungroup
 - drag element from sidebar

@@ -1,6 +1,6 @@
 import Victor from "victor";
 
-export const normalizeNormal = (v1, v2) => {
+export const normalizeNormal = (v1: Victor, v2: Victor) => {
   const v = v2
     .clone()
     .subtract(v1)
