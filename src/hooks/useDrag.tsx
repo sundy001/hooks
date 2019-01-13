@@ -1,4 +1,4 @@
-import { useCallback, useRef } from "react";
+import { MouseEvent, useCallback, useRef } from "react";
 
 export const useDrag = ({
   onMouseDown,
@@ -38,13 +38,16 @@ export const useDrag = ({
     shouldDragChecked: null
   });
 
-  const callCallbackIfExist = (callback, event) => {
+  const callCallbackIfExist = (
+    callback: Callback | undefined,
+    event: MouseEvent
+  ) => {
     if (!callback) {
       return;
     }
 
     callback({
-      target: stateRef.current.target,
+      target: stateRef.current.target!,
       original: event
     });
   };

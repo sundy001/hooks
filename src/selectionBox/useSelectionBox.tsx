@@ -1,17 +1,29 @@
-import { useRef } from "react";
+import { MouseEvent, useRef } from "react";
 import Victor from "victor";
 import { useDrag } from "../hooks/useDrag";
 import { getOverlapCache, detectOverlapByCache } from "../overlapDetection";
 
 export const useSelectionBox = (
-  shouldSelect,
-  elements,
+  shouldSelect: (event: MouseEvent) => boolean,
+  elements: ReadonlyArray<
+    Readonly<{
+      id: number;
+      frame: Readonly<Frame>;
+      angle: number;
+      page: number;
+    }>
+  >,
   {
     zoom = 1,
     getOffset,
     onSelect,
     onSelectEnd
-  }: { zoom?: number; getOffset?: any; onSelect?: any; onSelectEnd?: any } = {}
+  }: {
+    zoom?: number;
+    getOffset?: (page: number) => { x: number; y: number };
+    onSelect?: (event: { selectedElements: number[]; frame: Frame }) => void;
+    onSelectEnd?: (selectedElements: number[]) => void;
+  } = {}
 ) => {
   const stateRef = useRef<{
     shouldSelect: boolean | null;
@@ -62,7 +74,7 @@ export const useSelectionBox = (
     },
     onDragEnd() {
       if (onSelectEnd) {
-        onSelectEnd(stateRef.current.selectedElements);
+        onSelectEnd(stateRef.current.selectedElements!);
       }
       stateRef.current.selectedElements = null;
       stateRef.current.overlapCache = null;
@@ -123,3 +135,10 @@ const verticesOfRect = (fix: Position, diagonal: Position) => {
 };
 
 type Position = Readonly<{ x: number; y: number }>;
+
+type Frame = {
+  width: number;
+  height: number;
+  x: number;
+  y: number;
+};

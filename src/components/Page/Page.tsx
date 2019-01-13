@@ -2,7 +2,16 @@ import React, { Suspense, memo, SFC } from "react";
 import "./Page.css";
 import { createElements } from "../App/createElements";
 
-const InternalPage: SFC<any> = ({
+const InternalPage: SFC<{
+  id: number;
+  width: number;
+  height: number;
+  backgroundColor: string;
+  elements: any[];
+  dispatch: (action: any) => any;
+  controlBox: Frame;
+  zoom: number;
+}> = ({
   id,
   width,
   height,
@@ -35,3 +44,10 @@ const InternalPage: SFC<any> = ({
 export const Page = memo(InternalPage);
 
 Page.displayName = "Page";
+
+type Frame = Readonly<{
+  width: number;
+  height: number;
+  x: number;
+  y: number;
+}>;

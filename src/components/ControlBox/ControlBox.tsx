@@ -1,5 +1,5 @@
 import "./ControlBox.scss";
-import React, { memo, useCallback, SFC } from "react";
+import React, { MouseEvent, forwardRef, memo, useCallback, SFC } from "react";
 import cx from "classnames";
 import { ResizeHandler } from "./ResizeHandler";
 import { RotationHandler } from "./RotationHandler";
@@ -16,12 +16,24 @@ const POSITION_VERTEX_INDEX_MAP = {
   corner: CORNER_INDEXES
 };
 
-const InternalControlBox: SFC<any> = (
+const InternalControlBox: SFC<{
+  frame: {
+    width: number;
+    height: number;
+    x: number;
+    y: number;
+  };
+  angle: number;
+  onResizeMouseDown: { [position: string]: (event: MouseEvent) => void };
+  onRotateMouseDown?: (event: MouseEvent) => void;
+  controls?: ("rotation" | "resize")[];
+  resizeHandlerPosition?: "all" | "edge" | "corner";
+}> = (
   {
     frame: { x, y, width, height },
     angle,
-    controls = ["rotation", "resize"], // (rotation|resize)[]
-    resizeHandlerPosition = "all", // all, edge, corner
+    controls = ["rotation", "resize"],
+    resizeHandlerPosition = "all" as "all",
     onRotateMouseDown,
     onResizeMouseDown
   },
@@ -51,7 +63,7 @@ const InternalControlBox: SFC<any> = (
         key="rotate-bottom"
         position="bottom"
         onMouseDown={useCallback(event => {
-          onRotateMouseDown(event);
+          onRotateMouseDown!(event);
         }, [])}
       />
     );
@@ -75,6 +87,6 @@ const InternalControlBox: SFC<any> = (
   );
 };
 
-export const ControlBox = memo(React.forwardRef(InternalControlBox));
+export const ControlBox = memo(forwardRef(InternalControlBox));
 
 ControlBox.displayName = "ControlBox";

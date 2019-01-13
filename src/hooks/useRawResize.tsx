@@ -1,5 +1,5 @@
+import { MouseEvent, useRef } from "react";
 import Victor from "victor";
-import { useRef } from "react";
 import { useDrag } from "./useDrag";
 import {
   RECT_VERTICES,

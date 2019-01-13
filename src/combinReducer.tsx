@@ -34,9 +34,7 @@ export const combineReducers: (
           if (typeof reducer === "function") {
             nextStateForKey = reducer(previousStateForKey, action);
           } else {
-            const states = reducer.getStates
-              ? reducer.getStates(state)
-              : undefined;
+            const states = reducer.getStates ? reducer.getStates(state) : [];
             nextStateForKey = reducer.reduce(
               previousStateForKey,
               ...states,

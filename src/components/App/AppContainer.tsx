@@ -27,7 +27,6 @@ export const AppContainer = () => {
 
   return (
     <Canvas
-      state={state}
       dispatch={dispatch}
       controlBox={controlBox}
       elements={elements}

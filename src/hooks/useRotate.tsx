@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { MouseEvent, useRef } from "react";
 import { useSelectionBeginningValue } from "./useSelectionBeginningValue";
 import { useRawRotate } from "./useRawRotate";
 import { getDisplacementInControlBox } from "../math/affineTransformation";

@@ -101,8 +101,8 @@ const getProjectionOfPolygron = (
 };
 
 const isProjectionOverlap = (
-  p1: { min: number; max: number },
-  p2: { min: number; max: number }
+  p1: Readonly<{ min: number; max: number }>,
+  p2: Readonly<{ min: number; max: number }>
 ) => p2.max >= p1.min && p1.max >= p2.min;
 
 export const verticesOfElement = ({

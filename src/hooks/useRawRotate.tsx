@@ -1,8 +1,8 @@
-import { useRef } from "react";
+import { MouseEvent, useRef } from "react";
 import { useDrag } from "./useDrag";
 
 export const useRawRotate = (
-  { x, y, width, height }: Frame,
+  { x, y, width, height }: Readonly<Frame>,
   {
     zoom = 1,
     onRotateStart,

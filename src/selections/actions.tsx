@@ -1,7 +1,7 @@
 export const SET_SELECTIONS = "SET_SELECTIONS";
 export const CLEAR_SELECTIONS = "CLEAR_SELECTIONS";
 
-export const setSelections = selections => ({
+export const setSelections = (selections: ReadonlyArray<number>) => ({
   type: SET_SELECTIONS,
   selections
 });

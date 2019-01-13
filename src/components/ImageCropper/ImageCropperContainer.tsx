@@ -1,5 +1,7 @@
 import React, { SFC, memo, useCallback, useRef, useState } from "react";
 
+import { Frame } from "./type";
+
 import { useDragAndDrop } from "./hooks/useDragAndDrop";
 import { useOuterResize } from "./hooks/useOuterResize";
 import { useInnerResize } from "./hooks/useInnerResize";
@@ -8,7 +10,15 @@ import { getInitialOuterBoxPosition } from "./getInitialOuterBoxPosition";
 import { getScrollPosition } from "../../getScrollPosition";
 import { multiple } from "../../math/frame";
 
-const InternalImageCropperContainer: SFC<any> = ({
+const InternalImageCropperContainer: SFC<{
+  imageUrl: string;
+  frame: Frame;
+  imageFrame: Frame;
+  angle: number;
+  onMaskMouseDown: () => void;
+  onChange: (event: { frame: Frame; imageFrame: Frame }) => void;
+  zoom: number;
+}> = ({
   imageUrl,
   frame: initialFrame,
   imageFrame: initalImageFrame,
@@ -49,7 +59,7 @@ const InternalImageCropperContainer: SFC<any> = ({
 
   const imageCropperRef = useRef<HTMLElement>(null);
   const getOffset = () => {
-    const offsetParent = imageCropperRef.current.offsetParent;
+    const offsetParent = imageCropperRef.current!.offsetParent as HTMLElement;
     const rect = offsetParent.getBoundingClientRect();
     const scrollPosition = getScrollPosition();
 

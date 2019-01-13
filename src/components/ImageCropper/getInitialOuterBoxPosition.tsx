@@ -1,11 +1,14 @@
 import Victor from "victor";
+
+import { Frame } from "./type";
+
 import { transform, getDisplacement } from "../../math/affineTransformation";
 
 const TOP_LEFT = new Victor(0, 0);
 
 export const getInitialOuterBoxPosition = (
-  frame,
-  imageFrame,
+  frame: Frame,
+  imageFrame: Frame,
   angle: number
 ) => () => {
   const { x, y, width, height } = imageFrame;

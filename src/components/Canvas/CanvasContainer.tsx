@@ -1,5 +1,12 @@
 import "./Canvas.scss";
-import React, { useCallback, useRef, memo, SFC } from "react";
+import React, {
+  ReactElement,
+  ReactNode,
+  useCallback,
+  useRef,
+  memo,
+  SFC
+} from "react";
 
 import { ControlBox } from "../ControlBox";
 
@@ -20,7 +27,19 @@ import {
 import { getScrollPosition } from "../../getScrollPosition";
 import { multiple } from "../../math/frame";
 
-const InternalConvasContainer: SFC<any> = ({
+const InternalConvasContainer: SFC<{
+  dispatch: (action: any) => any;
+  elements: ReadonlyArray<Element>;
+  selections: ReadonlyArray<Element>;
+  controlBox: {
+    frame: Frame;
+    angle: number;
+    show: boolean;
+  };
+  resizeKeepAspectRatio: boolean;
+  zoom: number;
+  children: (controlBox: ReactElement<any>) => ReactNode;
+}> = ({
   dispatch,
   elements,
   selections,
@@ -33,8 +52,8 @@ const InternalConvasContainer: SFC<any> = ({
   const { selectMouseDown, selectMouseMove, selectMouseUp } = useSelect(
     dispatch,
     event =>
-      event.target.classList.contains("canvas") ||
-      event.target.classList.contains("page__elements"),
+      (event.target as HTMLElement).classList.contains("canvas") ||
+      (event.target as HTMLElement).classList.contains("page__elements"),
     selections.map(({ id }) => id),
     {
       onDeselect() {
@@ -70,8 +89,8 @@ const InternalConvasContainer: SFC<any> = ({
 
   const controlBoxRef = useRef<HTMLElement>(null);
   const getOffset = () => {
-    const offsetParent = controlBoxRef.current.offsetParent;
-    const rect = offsetParent.getBoundingClientRect();
+    const offsetParent = controlBoxRef.current!.offsetParent;
+    const rect = offsetParent!.getBoundingClientRect();
     const scrollPosition = getScrollPosition();
 
     return {
@@ -147,13 +166,15 @@ const InternalConvasContainer: SFC<any> = ({
     selectBoxMouseUp
   } = useSelectionBox(
     event =>
-      event.target.classList.contains("canvas") ||
-      event.target.classList.contains("page__elements"),
+      (event.target as HTMLElement).classList.contains("canvas") ||
+      (event.target as HTMLElement).classList.contains("page__elements"),
     elements,
     {
       zoom,
       getOffset(page) {
-        const pageElement = document.querySelector(`.page[data-id="${page}"]`);
+        const pageElement = document.querySelector(
+          `.page[data-id="${page}"]`
+        ) as HTMLElement;
         const rect = pageElement.getBoundingClientRect();
         const scrollPosition = getScrollPosition();
 
@@ -219,3 +240,17 @@ const InternalConvasContainer: SFC<any> = ({
 export const CanvasContainer = memo(InternalConvasContainer);
 
 CanvasContainer.displayName = "CanvasContainer";
+
+type Frame = {
+  width: number;
+  height: number;
+  x: number;
+  y: number;
+};
+
+type Element = Readonly<{
+  id: number;
+  frame: Readonly<Frame>;
+  angle: number;
+  page: number;
+}>;

@@ -9,7 +9,7 @@ export const useSelectionBeginningValue = (
       angle: number;
     }>
   >,
-  controlBoxFrame: Frame
+  controlBoxFrame: Readonly<Frame>
 ) => {
   const beginningValueRef = useRef<ElementsCache | null>(null);
 

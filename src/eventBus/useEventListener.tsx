@@ -11,7 +11,7 @@ export const useElementListener = (
   handlerRef.current = handler;
 
   useEffect(() => {
-    const listener = ({ id: eventElementId, ...event }) => {
+    const listener = ({ id: eventElementId, ...event }: { id: number }) => {
       if (eventElementId !== id) {
         return;
       }

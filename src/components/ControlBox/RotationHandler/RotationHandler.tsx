@@ -1,8 +1,10 @@
-import React from "react";
+import React, { SFC, HTMLAttributes } from "react";
 import "./RotationHandler.scss";
 import cx from "classnames";
 
-export const RotationHandler = ({ position, ...props }) => (
+export const RotationHandler: SFC<
+  { position: string } & HTMLAttributes<HTMLDivElement>
+> = ({ position, ...props }) => (
   <div {...props} className={cx("rotation-handler", position)} />
 );
 

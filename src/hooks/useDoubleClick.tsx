@@ -3,8 +3,14 @@ import { useDrag } from "./useDrag";
 
 const DOUBLE_CLICK_INTERVAL = 500;
 
-export const useDoubleClick = onDoubleClick => {
-  const stateRef = useRef({
+export const useDoubleClick = (onDoubleClick: (id: number) => void) => {
+  const stateRef = useRef<{
+    clickPosition: { x: number; y: number } | null;
+    consecutiveClickCount: number;
+    doubleClickTimer: number | null;
+    mouseDowned: boolean;
+    dragged: boolean | null;
+  }>({
     clickPosition: null,
     consecutiveClickCount: 0,
     doubleClickTimer: null,
@@ -26,7 +32,7 @@ export const useDoubleClick = onDoubleClick => {
       clearTimeout(state.doubleClickTimer);
     }
 
-    state.doubleClickTimer = setTimeout(() => {
+    state.doubleClickTimer = window.setTimeout(() => {
       clearDoubleClickData();
     }, DOUBLE_CLICK_INTERVAL);
   };

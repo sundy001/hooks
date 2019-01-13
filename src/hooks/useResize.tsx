@@ -1,7 +1,7 @@
-import { useCallback, useMemo } from "react";
+import { MouseEvent, useCallback, useMemo } from "react";
 import Victor from "victor";
 import { useSelectionBeginningValue } from "./useSelectionBeginningValue";
-import { useRawResize, Frame } from "./useRawResize";
+import { useRawResize } from "./useRawResize";
 import { RECT_VERTICES } from "../math/rect";
 import { getDisplacementInControlBox } from "../math/affineTransformation";
 
@@ -24,10 +24,10 @@ export const useResize = (
     onResizeEnd
   }: {
     zoom?: number;
-    getOffset?: any;
-    onResizeStart?: any;
-    onResize?: any;
-    onResizeEnd?: any;
+    getOffset?: (event: { original: MouseEvent }) => { x: number; y: number };
+    onResizeStart?: (event: UseResizeEvent) => void;
+    onResize?: (event: OnResizeEvent) => void;
+    onResizeEnd?: (event: UseResizeEvent) => void;
   } = {}
 ) => {
   const { saveValue, getValue, clearValue } = useSelectionBeginningValue(
@@ -35,9 +35,11 @@ export const useResize = (
     controlBoxFrame
   );
 
-  const resizeMoveHandlers = [];
-  const resizeUpHandlers = [];
-  const resizeDownHandlers = {};
+  const resizeMoveHandlers: ((event: MouseEvent) => void)[] = [];
+  const resizeUpHandlers: ((event: MouseEvent) => void)[] = [];
+  const resizeDownHandlers: {
+    [position: string]: (event: MouseEvent) => void;
+  } = {};
 
   for (let i = 0; i < RECT_VERTICES.length; i++) {
     const position = RECT_VERTICES[i];
@@ -53,7 +55,10 @@ export const useResize = (
           saveValue();
 
           if (onResizeStart) {
-            const event = { position, elements: [] };
+            const event: UseResizeEvent = {
+              position,
+              elements: []
+            };
             for (let i = 0; i < elements.length; i++) {
               event.elements.push({
                 id: elements[i].id
@@ -64,7 +69,11 @@ export const useResize = (
         },
         onResize({ frame, wRatio, hRatio }) {
           const beginningValue = getValue();
-          const event: any = { position, elements: [] };
+          const event: OnResizeEvent = {
+            position,
+            elements: [],
+            controlBoxFrame: frame
+          };
 
           for (let i = 0; i < elements.length; i++) {
             const { id } = elements[i];
@@ -92,7 +101,6 @@ export const useResize = (
               frame: newFrame
             });
           }
-          event.controlBoxFrame = frame;
 
           if (onResize) {
             onResize(event);
@@ -102,7 +110,10 @@ export const useResize = (
           clearValue();
 
           if (onResizeEnd) {
-            const event = { position, elements: [] };
+            const event: UseResizeEvent = {
+              position,
+              elements: []
+            };
             for (let i = 0; i < elements.length; i++) {
               event.elements.push({
                 id: elements[i].id
@@ -138,4 +149,17 @@ export const useResize = (
     resizeMouseMove,
     resizeMouseUp
   };
+};
+
+type UseResizeEvent = { position: string; elements: { id: number }[] };
+type OnResizeEvent = {
+  position: string;
+  elements: { id: number; frame: Frame }[];
+  controlBoxFrame: Frame;
+};
+type Frame = {
+  width: number;
+  height: number;
+  x: number;
+  y: number;
 };

@@ -1,14 +1,18 @@
-import { useRef } from "react";
+import { MouseEvent, useRef } from "react";
 import { useDrag } from "../hooks/useDrag";
 import { setSelections, clearSelections } from "./actions";
 
-export const useSelect: (
-  dispatch,
-  shouldDeselect,
-  selections,
-  options: { onDeselect? }
-) => any = (dispatch, shouldDeselect, selections, { onDeselect }) => {
-  const stateRef = useRef({
+export const useSelect = (
+  dispatch: (action: any) => any,
+  shouldDeselect: (event: MouseEvent) => boolean,
+  selections: ReadonlyArray<number>,
+  { onDeselect }: { onDeselect?: () => void } = {}
+) => {
+  const stateRef = useRef<{
+    mouseDowned: boolean;
+    shouldDeselect: boolean | null;
+    dragged: boolean | null;
+  }>({
     mouseDowned: true,
     shouldDeselect: null,
     dragged: null

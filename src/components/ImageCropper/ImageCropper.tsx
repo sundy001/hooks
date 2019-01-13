@@ -1,9 +1,24 @@
-import React, { SFC } from "react";
+import React, { MouseEvent, SFC } from "react";
+
+import { Frame } from "./type";
+
 import { ControlBox } from "../ControlBox";
 import "./ImageCropper.scss";
 import { getFrameStyle } from "../../getFrameStyle";
 
-const InternalImageCropper: SFC<any> = (
+const InternalImageCropper: SFC<{
+  imageUrl: string;
+  frame: Frame;
+  imageFrame: Frame;
+  outerBoxFrame: Frame;
+  angle: number;
+  onMouseDown: (event: MouseEvent) => void;
+  onMouseMove: (event: MouseEvent) => void;
+  onMouseUp: (event: MouseEvent) => void;
+  onMaskMouseDown: (event: MouseEvent) => void;
+  onInnerResizeMouseDown: { [position: string]: (event: MouseEvent) => void };
+  onOuterResizeMouseDown: { [position: string]: (event: MouseEvent) => void };
+}> = (
   {
     imageUrl,
     frame,
@@ -54,7 +69,6 @@ const InternalImageCropper: SFC<any> = (
       src={imageUrl}
     />
     <ControlBox
-      show={true}
       frame={frame}
       angle={angle}
       resizeHandlerPosition="corner"
@@ -62,7 +76,6 @@ const InternalImageCropper: SFC<any> = (
       onResizeMouseDown={onInnerResizeMouseDown}
     />
     <ControlBox
-      show={true}
       frame={outerBoxFrame}
       angle={angle}
       resizeHandlerPosition="corner"

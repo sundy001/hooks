@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { MouseEvent, useRef } from "react";
 import { useDrag } from "./useDrag";
 
 export const useRawDragAndDrop = ({
