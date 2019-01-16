@@ -6,3 +6,4 @@ export {
 } from "./actions";
 export { reducer } from "./reducer";
 export { useSelect } from "./useSelect";
+export * from "./type";

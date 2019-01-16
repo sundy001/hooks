@@ -1,9 +1,18 @@
-import * as actions from "./actions";
-import { updateEntity } from "../../../updateEntity";
+import {
+  Action,
+  START_CROPPING_IMAGE,
+  STOP_CROPPING_IMAGE,
+  UPDATE_CROPPING_IMAGE
+} from "./actions";
+import { Reducer, EntityStore, updateEntity } from "../../../reducer";
+import { ImageEntity } from "./type";
 
-export const elements = (state, action: actions.Action) => {
+export const elements: Reducer<EntityStore<ImageEntity>, Action> = (
+  state,
+  action
+) => {
   switch (action.type) {
-    case actions.START_CROPPING_IMAGE:
+    case START_CROPPING_IMAGE:
       return updateEntity(
         state,
         () => ({
@@ -12,7 +21,7 @@ export const elements = (state, action: actions.Action) => {
         action.payload
       );
 
-    case actions.STOP_CROPPING_IMAGE:
+    case STOP_CROPPING_IMAGE:
       return updateEntity(
         state,
         () => ({
@@ -21,7 +30,7 @@ export const elements = (state, action: actions.Action) => {
         action.payload
       );
 
-    case actions.UPDATE_CROPPING_IMAGE:
+    case UPDATE_CROPPING_IMAGE:
       return updateEntity(
         state,
         () => ({
@@ -30,14 +39,6 @@ export const elements = (state, action: actions.Action) => {
         }),
         action.payload.element
       );
-    default:
-      return state;
-  }
-};
-
-// TODO: move it somewhere image no loger need to rasie
-export const raise = (state = [], action) => {
-  switch (action.type) {
     default:
       return state;
   }

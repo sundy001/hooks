@@ -2,17 +2,16 @@ import { MouseEvent, useRef } from "react";
 import Victor from "victor";
 import { useDrag } from "../hooks/useDrag";
 import { getOverlapCache, detectOverlapByCache } from "../overlapDetection";
+import { DeepReadonlyArray } from "../utilType";
 
 export const useSelectionBox = (
   shouldSelect: (event: MouseEvent) => boolean,
-  elements: ReadonlyArray<
-    Readonly<{
-      id: number;
-      frame: Readonly<Frame>;
-      angle: number;
-      page: number;
-    }>
-  >,
+  elements: DeepReadonlyArray<{
+    id: number;
+    frame: Frame;
+    angle: number;
+    page: number;
+  }>,
   {
     zoom = 1,
     getOffset,

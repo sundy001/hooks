@@ -1,13 +1,14 @@
-import React, { ReactElement } from "react";
+import React, { ReactNode } from "react";
 import { elementsStatic } from "../elementsStatic";
 import { copyElements, deleteElements } from "../actions";
 import { setSelections, clearSelections } from "../../../selections";
+import { State } from "../type";
 
 export const getComponentsOfElementPanel = (
-  dispatch,
-  { selections, elements }
+  dispatch: (action: any) => void,
+  { selections, elements }: State
 ) => {
-  let components: ReactElement<any>[] = [];
+  let components: ReactNode[] = [];
   if (selections.length > 0) {
     components.push(
       <button

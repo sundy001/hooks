@@ -1,21 +1,26 @@
-import React, { memo, useCallback, SFC } from "react";
+import React, { memo, useCallback, FC } from "react";
 import ReactDOM from "react-dom";
 import { Image } from "./Image";
 import { useResize } from "./hooks/useResize";
-import { useElementListener } from "../../../eventBus";
-import { ImageCropper } from "../../ImageCropper";
+
 import {
   startCroppingImage,
   stopCroppingImage,
   updateCroppingImage
 } from "./actions";
+import { ImageEntity } from "./type";
+import { ImageCropper } from "../../ImageCropper";
 import {
   showControlBox,
   hideControlBox,
   updateControlBoxByElement
 } from "../../../controlBox";
+import { useElementListener } from "../../../eventBus";
+import { Dispatch } from "../../../reducer";
 
-const InternalImageContainer: SFC<any> = props => {
+const InternalImageContainer: FC<
+  ImageEntity & { dispatch: Dispatch; zoom: number }
+> = props => {
   const { id, dispatch, imageFrame, isCropping } = props;
 
   useResize(id, dispatch, props.frame, imageFrame);
@@ -42,7 +47,7 @@ const InternalImageContainer: SFC<any> = props => {
         onMaskMouseDown={onFinish}
         onChange={onChange}
       />,
-      document.querySelector(`.page[data-id="${props.page}"]`)
+      document.querySelector(`.page[data-id="${props.page}"]`) as HTMLElement
     )
   ) : (
     <Image {...props} />

@@ -1,8 +1,8 @@
 import { getFrameStyle } from "../../../getFrameStyle";
-import React, { memo, SFC } from "react";
+import React, { memo, FC } from "react";
 import "./Test.css";
 
-const InternalTest: SFC<any> = ({ id, frame, angle }) => {
+const InternalTest: FC<any> = ({ id, frame, angle }) => {
   return (
     <div
       data-id={id}

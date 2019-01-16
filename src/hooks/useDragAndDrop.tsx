@@ -1,15 +1,14 @@
 import { MouseEvent, useRef } from "react";
 import { useRawDragAndDrop } from "./useRawDragAndDrop";
+import { DeepReadonlyArray } from "../utilType";
 
 export const useDragAndDrop = (
   shouldDrag: (event: MouseEvent) => boolean,
-  elements: ReadonlyArray<
-    Readonly<{
-      id: number;
-      frame: Readonly<Frame>;
-      angle: number;
-    }>
-  >,
+  elements: DeepReadonlyArray<{
+    id: number;
+    frame: Frame;
+    angle: number;
+  }>,
   controlBoxFrame: Readonly<Frame>,
   {
     zoom,

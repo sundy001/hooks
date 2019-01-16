@@ -1,4 +1,10 @@
-export const selectElements = ({ elements: { allIds, byId }, raise }) => {
+import { State, ElementEntity } from "../type";
+import { DeepReadonlyArray } from "../../../utilType";
+
+export const selectElements = ({
+  elements: { allIds, byId },
+  raise
+}: State): DeepReadonlyArray<ElementEntity> => {
   const elements = [];
   const raisedElements = [];
 

@@ -1,14 +1,13 @@
 import { useRef } from "react";
 import Victor from "victor";
+import { DeepReadonlyArray, DeepReadonly } from "../utilType";
 
 export const useSelectionBeginningValue = (
-  selectedElements: ReadonlyArray<
-    Readonly<{
-      id: number;
-      frame: Readonly<Frame>;
-      angle: number;
-    }>
-  >,
+  selectedElements: DeepReadonlyArray<{
+    id: number;
+    frame: Frame;
+    angle: number;
+  }>,
   controlBoxFrame: Readonly<Frame>
 ) => {
   const beginningValueRef = useRef<ElementsCache | null>(null);
@@ -42,7 +41,7 @@ export const useSelectionBeginningValue = (
     beginningValueRef.current = beginningValue;
   };
 
-  const getValue = (): Readonly<ElementsCache> => {
+  const getValue = (): DeepReadonly<ElementsCache> => {
     return beginningValueRef.current!;
   };
 

@@ -4,64 +4,63 @@ import {
   UPDATE_ELEMENTS,
   COPY_ELEMENTS,
   DELETE_ELEMENTS,
-  UPDATE_ZOOM
+  UPDATE_ZOOM,
+  Action
 } from "./actions";
 import { reducer as selections } from "../../selections";
-import { elements as imageElements, raise } from "../elements/Image";
+import { elements as imageElements } from "../elements/Image";
 import { reducer as selectionBox } from "../../selectionBox";
 import {
   reducer as controlBox,
   controlBoxUpdatedBySelection
 } from "../../controlBox";
-import { updateEntity, updateEntities } from "../../updateEntity";
+import { updateEntity, updateEntities, Reducer } from "../../reducer";
 import cloneDeep from "lodash/cloneDeep";
+import { State, ElementEntity } from "./type";
 
-export const elements = (state, action) => {
+export const elements: Reducer<State["elements"], Action> = (state, action) => {
   switch (action.type) {
     case UPDATE_ELEMENT:
-      const { id, props } = action.payload;
+      const { id, props } = action;
       return updateEntity(state, () => props, id);
 
     case UPDATE_ELEMENTS:
-      return updateEntities(
-        state,
-        action.payload,
-        (previouseState, newValue) => {
-          let nextState = null;
+      return updateEntities(state, action, (previouseState, newValue) => {
+        let nextState = null;
 
-          if (newValue.frame) {
-            if (nextState === null) {
-              nextState = { ...previouseState };
-            }
-            nextState.frame = newValue.frame;
+        if (newValue.frame) {
+          if (nextState === null) {
+            nextState = { ...previouseState };
           }
-          if (newValue.angle) {
-            if (nextState === null) {
-              nextState = { ...previouseState };
-            }
-            nextState.angle = newValue.angle;
-          }
-
-          return nextState === null ? previouseState : nextState;
+          nextState.frame = newValue.frame;
         }
-      );
+        if (newValue.angle) {
+          if (nextState === null) {
+            nextState = { ...previouseState };
+          }
+          nextState.angle = newValue.angle;
+        }
+
+        return nextState === null ? previouseState : nextState;
+      });
 
     case DELETE_ELEMENTS:
-      if (action.payload.length === 0) {
+      if (action.elements.length === 0) {
         return state;
       }
 
-      const byId = {};
-      const allIds = [];
-      Object.keys(state.byId).forEach(id => {
-        if (action.payload.indexOf(id) !== -1) {
+      const byId: { [id: number]: ElementEntity } = {};
+      const allIds: number[] = [];
+      Object.keys(state.byId).forEach(stringId => {
+        const id = Number(stringId);
+        if (action.elements.indexOf(id) !== -1) {
           return;
         }
         byId[id] = state.byId[id];
       });
 
       state.allIds.forEach(id => {
-        if (action.payload.indexOf(id) !== -1) {
+        if (action.elements.indexOf(id) !== -1) {
           return;
         }
         allIds.push(id);
@@ -76,7 +75,11 @@ export const elements = (state, action) => {
   }
 };
 
-export const copySelectedElements = (elements, selections, action) => {
+export const copySelectedElements = (
+  elements: State["elements"],
+  selections: State["selections"],
+  action: Action
+): State["elements"] => {
   switch (action.type) {
     case COPY_ELEMENTS:
       if (selections.length === 0) {
@@ -88,7 +91,7 @@ export const copySelectedElements = (elements, selections, action) => {
       const byId = { ...elements.byId };
       const allIds = [...elements.allIds];
       selections.forEach(id => {
-        const newElement = cloneDeep(elements.byId[id]);
+        const newElement = cloneDeep(elements.byId[id]) as ElementEntity;
         newElement.id = ++lastId;
         newElement.frame.x += 20;
         newElement.frame.y += 20;
@@ -106,10 +109,21 @@ export const copySelectedElements = (elements, selections, action) => {
   }
 };
 
-export const zoom = (state = 1, action) => {
+export const zoom: Reducer<State["zoom"], Action> = (state = 1, action) => {
   switch (action.type) {
     case UPDATE_ZOOM:
-      return action.payload;
+      return action.zoom;
+    default:
+      return state;
+  }
+};
+
+// TODO: move it somewhere image no loger need to rasie
+export const raise: Reducer<ReadonlyArray<number>, Action> = (
+  state = [],
+  action
+) => {
+  switch (action.type) {
     default:
       return state;
   }

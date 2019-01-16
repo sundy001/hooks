@@ -2,8 +2,14 @@ import { useRef } from "react";
 import { resolvePosition, TOP, LEFT } from "../../../../math/rect";
 import { useElementListener } from "../../../../eventBus";
 import { updateElement } from "../../../App/actions";
+import { Frame } from "../type";
 
-export const useResize = (id, dispatch, frame, imageFrame) => {
+export const useResize = (
+  id: number,
+  dispatch: (action: any) => void,
+  frame: Frame,
+  imageFrame: Frame
+) => {
   const stateRef = useRef<any>({
     beginningFrame: null,
     beginningImageFrame: null,

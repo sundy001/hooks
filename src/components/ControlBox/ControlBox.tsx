@@ -1,5 +1,5 @@
 import "./ControlBox.scss";
-import React, { MouseEvent, forwardRef, memo, useCallback, SFC } from "react";
+import React, { MouseEvent, forwardRef, memo, useCallback, FC } from "react";
 import cx from "classnames";
 import { ResizeHandler } from "./ResizeHandler";
 import { RotationHandler } from "./RotationHandler";
@@ -16,7 +16,7 @@ const POSITION_VERTEX_INDEX_MAP = {
   corner: CORNER_INDEXES
 };
 
-const InternalControlBox: SFC<{
+const InternalControlBox: FC<{
   frame: {
     width: number;
     height: number;

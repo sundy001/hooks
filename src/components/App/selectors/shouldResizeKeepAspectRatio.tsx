@@ -1,6 +1,10 @@
 import { elementsStatic } from "../elementsStatic";
+import { State } from "../type";
 
-export const shouldResizeKeepAspectRatio = ({ selections, elements }) => {
+export const shouldResizeKeepAspectRatio = ({
+  selections,
+  elements
+}: State) => {
   if (selections.length === 0) {
     return false;
   }
@@ -10,10 +14,6 @@ export const shouldResizeKeepAspectRatio = ({ selections, elements }) => {
   } else {
     const id = selections[0];
     const elementStatic = elementsStatic[elements.byId[id].name];
-    if (elementStatic && elementStatic.shouldKeepAspectRatio) {
-      return elementStatic.shouldKeepAspectRatio;
-    } else {
-      return false;
-    }
+    return elementStatic && Boolean(elementStatic.shouldKeepAspectRatio);
   }
 };

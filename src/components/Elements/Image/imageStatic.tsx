@@ -4,7 +4,7 @@ import { FinishCropButton } from "./panel/FinishCropButton";
 
 export const elementStatic = {
   shouldKeepAspectRatio: true,
-  getComponentsOfPanel(dispatch, element, originalComponents) {
+  getComponentsOfPanel(dispatch: any, element: any, originalComponents: any) {
     if (element.isCropping) {
       return [
         <FinishCropButton

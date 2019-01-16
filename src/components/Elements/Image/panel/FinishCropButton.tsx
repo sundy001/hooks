@@ -1,7 +1,10 @@
-import React, { memo, useCallback, SFC } from "react";
+import React, { memo, useCallback, FC } from "react";
 import { stopCroppingImage } from "../actions";
 
-const InternalFinishCropButton: SFC<any> = ({ dispatch, id }) => (
+const InternalFinishCropButton: FC<{
+  dispatch: (action: any) => void;
+  id: number;
+}> = ({ dispatch, id }) => (
   <button
     onClick={useCallback(() => {
       dispatch(stopCroppingImage(id));

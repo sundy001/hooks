@@ -1,10 +1,4 @@
-export type Action<T extends String> = {
-  type: T;
-};
-
-export type ActionWithPayload<T extends String, P> = {
-  payload: P;
-} & Action<T>;
+import { Action, ActionWithPayload } from "./type";
 
 export function createAction<T extends string>(type: T): Action<T>;
 export function createAction<T extends string, P>(

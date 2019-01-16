@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useReducer, ReactElement } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useReducer,
+  ReactElement,
+  ReactNode
+} from "react";
 
 import { Canvas } from "../Canvas";
 import { SelectionBox } from "../SelectionBox";
@@ -11,9 +17,13 @@ import { selectElements } from "./selectors/selectElements";
 import { shouldResizeKeepAspectRatio } from "./selectors/shouldResizeKeepAspectRatio";
 import { getSelectedElements } from "./selectors/getSelectedElements";
 import { updateZoom } from "./actions";
+import { State } from "./type";
 
 export const AppContainer = () => {
-  const [state, dispatch] = useReducer(reducer, initialState) as any;
+  const [state, dispatch] = useReducer<State, any>(
+    reducer,
+    initialState as any
+  );
   useEffect(() => {
     dispatch({ type: undefined });
   }, []);
@@ -35,7 +45,7 @@ export const AppContainer = () => {
       resizeKeepAspectRatio={shouldResizeKeepAspectRatio(state)}
     >
       {controlBoxElement => {
-        const canvasElements: ReactElement<any>[] = [];
+        const canvasElements: ReactNode[] = [];
 
         canvasElements.push(
           pages.allIds.map(pageId => {
@@ -46,7 +56,7 @@ export const AppContainer = () => {
               ({ page }) => page === pageId
             );
 
-            let controlBoxPageId = null;
+            let controlBoxPageId: number | null = null;
             const showControlBox =
               pageSelections.length === 0 || !controlBox.show
                 ? false

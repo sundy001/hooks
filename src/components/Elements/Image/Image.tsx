@@ -1,8 +1,15 @@
-import React from "react";
-import { getFrameStyle } from "../../../getFrameStyle";
+import React, { FC } from "react";
+import { ImageEntity } from "./type";
 import "./Image.css";
+import { getFrameStyle } from "../../../getFrameStyle";
 
-export const Image = ({ id, imageUrl, imageFrame, frame, angle }) => (
+export const Image: FC<ImageEntity> = ({
+  id,
+  imageUrl,
+  imageFrame,
+  frame,
+  angle
+}) => (
   <div
     data-id={id}
     tabIndex={0}

@@ -1,4 +1,4 @@
-import React, { SFC, memo, useCallback, useRef, useState } from "react";
+import React, { FC, memo, useCallback, useRef, useState } from "react";
 
 import { Frame } from "./type";
 
@@ -10,7 +10,7 @@ import { getInitialOuterBoxPosition } from "./getInitialOuterBoxPosition";
 import { getScrollPosition } from "../../getScrollPosition";
 import { multiple } from "../../math/frame";
 
-const InternalImageCropperContainer: SFC<{
+const InternalImageCropperContainer: FC<{
   imageUrl: string;
   frame: Frame;
   imageFrame: Frame;

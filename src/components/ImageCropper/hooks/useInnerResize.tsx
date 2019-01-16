@@ -1,25 +1,28 @@
-import { useCallback, useMemo } from "react";
+import { MouseEvent, useCallback, useMemo } from "react";
 import Victor from "victor";
 import { useRawResize } from "../../../hooks/useRawResize";
 import { RECT_VERTICES, CORNER_INDEXES } from "../../../math/rect";
 import { transform } from "../../../math/affineTransformation";
+import { Frame } from "../type";
 
 const TOP_LEFT = new Victor(0, 0);
 
 export const useInnerResize = (
-  setFrame,
-  setImageFrame,
-  onInnerResizeEnd,
-  getOffset,
-  frame,
-  imageFrame,
-  outerBoxPosition,
-  angle,
-  zoom
+  setFrame: (frame: Frame) => void,
+  setImageFrame: (frame: Frame) => void,
+  onInnerResizeEnd: () => void,
+  getOffset: (event: { original: MouseEvent }) => { x: number; y: number },
+  frame: Frame,
+  imageFrame: Frame,
+  outerBoxPosition: Victor,
+  angle: number,
+  zoom: number
 ) => {
-  const resizeDownHandlers = {};
-  const resizeMoveHandlers = [];
-  const resizeUpHandlers = [];
+  const resizeDownHandlers: {
+    [position: string]: (event: MouseEvent) => void;
+  } = {};
+  const resizeMoveHandlers: ((event: MouseEvent) => void)[] = ([] = []);
+  const resizeUpHandlers: ((event: MouseEvent) => void)[] = ([] = []);
 
   const positions = CORNER_INDEXES.map(index => RECT_VERTICES[index]);
   for (let i = 0; i < positions.length; i++) {

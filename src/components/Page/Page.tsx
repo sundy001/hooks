@@ -1,15 +1,15 @@
-import React, { Suspense, memo, SFC } from "react";
+import React, { ReactElement, Suspense, memo, FC } from "react";
 import "./Page.css";
 import { createElements } from "../App/createElements";
 
-const InternalPage: SFC<{
+const InternalPage: FC<{
   id: number;
   width: number;
   height: number;
   backgroundColor: string;
   elements: any[];
   dispatch: (action: any) => any;
-  controlBox: Frame;
+  controlBox: ReactElement<any> | null;
   zoom: number;
 }> = ({
   id,

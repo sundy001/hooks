@@ -8,8 +8,12 @@ import {
   UPDATE_CONTROL_BOX_BY_ELEMENT
 } from "./actions";
 import { SET_SELECTIONS, CLEAR_SELECTIONS } from "../selections";
+import { Action } from "./actions";
+import { Frame, State } from "./type";
+import { EntityStore, Reducer } from "../reducer";
+import { DeepReadonly } from "../utilType";
 
-export const reducer = (
+export const reducer: Reducer<State, Action> = (
   state = {
     show: false,
     angle: 0,
@@ -26,8 +30,14 @@ export const reducer = (
     case UPDATE_CONTROL_BOX:
       return {
         ...state,
-        angle: action.angle !== undefined ? action.angle : state.angle,
-        frame: action.frame !== undefined ? action.frame : state.frame
+        angle:
+          action.payload.angle !== undefined
+            ? action.payload.angle
+            : state.angle,
+        frame:
+          action.payload.frame !== undefined
+            ? action.payload.frame
+            : state.frame
       };
 
     case SHOW_CONTROL_BOX:
@@ -46,10 +56,14 @@ export const reducer = (
   }
 };
 
-export const controlBoxUpdatedBySelection = (controlBox, elements, action) => {
+export const controlBoxUpdatedBySelection = (
+  controlBox: State,
+  elements: EntityStore<Element>,
+  action: Action
+): State => {
   switch (action.type) {
     case UPDATE_CONTROL_BOX_BY_ELEMENT:
-      const { frame, angle } = elements.byId[action.element];
+      const { frame, angle } = elements.byId[action.payload];
       return {
         show: controlBox.show,
         frame: { ...frame },
@@ -57,12 +71,12 @@ export const controlBoxUpdatedBySelection = (controlBox, elements, action) => {
       };
 
     case SET_SELECTIONS:
-      switch (action.selections.length) {
+      switch (action.payload.length) {
         case 0:
           return { ...controlBox, show: false };
 
         case 1:
-          const { frame, angle } = elements.byId[action.selections[0]];
+          const { frame, angle } = elements.byId[action.payload[0]];
           return {
             show: true,
             frame: { ...frame },
@@ -81,7 +95,7 @@ export const controlBoxUpdatedBySelection = (controlBox, elements, action) => {
           // }
 
           const { min, max } = minMaxVerticesOfSelections(
-            action.selections.map(id => elements.byId[id])
+            action.payload.map(id => elements.byId[id])
           );
           const { x: width, y: height } = max.clone().subtract(min);
 
@@ -96,7 +110,7 @@ export const controlBoxUpdatedBySelection = (controlBox, elements, action) => {
   }
 };
 
-const minMaxVerticesOfSelections = elements => {
+const minMaxVerticesOfSelections = (elements: ReadonlyArray<Element>) => {
   let minX = Number.MAX_VALUE;
   let minY = Number.MAX_VALUE;
   let maxX = Number.MIN_VALUE;
@@ -121,7 +135,10 @@ const minMaxVerticesOfSelections = elements => {
   return { min: new Victor(minX, minY), max: new Victor(maxX, maxY) };
 };
 
-const verticesOfElement = ({ frame, angle }) =>
+const verticesOfElement = ({
+  frame,
+  angle
+}: DeepReadonly<{ frame: Frame; angle: number }>) =>
   CORNER_INDEXES.map(index =>
     transform(
       vertexOfOriginRect(index, frame.width, frame.height),
@@ -129,3 +146,8 @@ const verticesOfElement = ({ frame, angle }) =>
       angle
     )
   );
+
+type Element = DeepReadonly<{
+  frame: Frame;
+  angle: number;
+}>;

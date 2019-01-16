@@ -5,7 +5,7 @@ import React, {
   useCallback,
   useRef,
   memo,
-  SFC
+  FC
 } from "react";
 
 import { ControlBox } from "../ControlBox";
@@ -26,8 +26,9 @@ import {
 } from "../../selectionBox";
 import { getScrollPosition } from "../../getScrollPosition";
 import { multiple } from "../../math/frame";
+import { DeepReadonly } from "../../utilType";
 
-const InternalConvasContainer: SFC<{
+const InternalConvasContainer: FC<{
   dispatch: (action: any) => any;
   elements: ReadonlyArray<Element>;
   selections: ReadonlyArray<Element>;
@@ -248,9 +249,9 @@ type Frame = {
   y: number;
 };
 
-type Element = Readonly<{
+type Element = DeepReadonly<{
   id: number;
-  frame: Readonly<Frame>;
+  frame: Frame;
   angle: number;
   page: number;
 }>;

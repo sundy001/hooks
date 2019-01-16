@@ -9,7 +9,7 @@ export const BOTTOM_LEFT = "bottom-left";
 export const LEFT = "left";
 export const TOP_LEFT = "top-left";
 
-export const RECT_VERTICES: Readonly<string[]> = [
+export const RECT_VERTICES: ReadonlyArray<string> = [
   TOP,
   TOP_RIGHT,
   RIGHT,
@@ -20,11 +20,11 @@ export const RECT_VERTICES: Readonly<string[]> = [
   TOP_LEFT
 ];
 
-export const ALL_INDEXES: Readonly<number[]> = [0, 1, 2, 3, 4, 5, 6, 7];
+export const ALL_INDEXES: ReadonlyArray<number> = [0, 1, 2, 3, 4, 5, 6, 7];
 
-export const EDGE_INDEXES: Readonly<number[]> = [0, 2, 4, 6];
+export const EDGE_INDEXES: ReadonlyArray<number> = [0, 2, 4, 6];
 
-export const CORNER_INDEXES: Readonly<number[]> = [1, 3, 5, 7];
+export const CORNER_INDEXES: ReadonlyArray<number> = [1, 3, 5, 7];
 
 export const resolvePosition = (position: Position) => {
   const token = position.split("-");

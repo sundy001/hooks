@@ -1,4 +1,4 @@
-import React, { MouseEvent, SFC } from "react";
+import React, { MouseEvent, FC } from "react";
 
 import { Frame } from "./type";
 
@@ -6,7 +6,7 @@ import { ControlBox } from "../ControlBox";
 import "./ImageCropper.scss";
 import { getFrameStyle } from "../../getFrameStyle";
 
-const InternalImageCropper: SFC<{
+const InternalImageCropper: FC<{
   imageUrl: string;
   frame: Frame;
   imageFrame: Frame;

@@ -1,7 +1,7 @@
-import React, { memo, SFC } from "react";
+import React, { memo, FC } from "react";
 import "./SelectionBox.scss";
 
-const InternalSelectionBox: SFC<any> = ({ frame: { x, y, width, height } }) =>
+const InternalSelectionBox: FC<any> = ({ frame: { x, y, width, height } }) =>
   width === 0 || height === 0 ? null : (
     <div
       className="selection-box"

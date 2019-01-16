@@ -6,6 +6,6 @@ export {
   stopCroppingImage,
   updateCroppingImage
 } from "./actions";
-export { elements, raise } from "./reducers";
+export { elements } from "./reducers";
 export { ImageContainer as default } from "./ImageContainer";
 export { elementStatic } from "./imageStatic";

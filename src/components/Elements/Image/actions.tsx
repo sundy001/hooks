@@ -1,3 +1,4 @@
+import { Frame } from "./type";
 import { createAction } from "../../../reducer";
 
 export const START_CROPPING_IMAGE = "START_CROPPING_IMAGE";
@@ -12,8 +13,8 @@ export const stopCroppingImage = (element: number) =>
 
 export const updateCroppingImage = (
   element: number,
-  frame: Frame,
-  imageFrame: Frame
+  frame: Readonly<Frame>,
+  imageFrame: Readonly<Frame>
 ) =>
   createAction(UPDATE_CROPPING_IMAGE, {
     element,
@@ -21,19 +22,8 @@ export const updateCroppingImage = (
     imageFrame
   });
 
-type ActionCreatorsMapObject = {
-  [actionCreator: string]: (...args: any[]) => any;
-};
-type ActionsUnion<A extends ActionCreatorsMapObject> = ReturnType<A[keyof A]>;
-export type Action = ActionsUnion<{
-  startCroppingImage: typeof startCroppingImage;
-  stopCroppingImage: typeof stopCroppingImage;
-  updateCroppingImage: typeof updateCroppingImage;
-}>;
-
-type Frame = Readonly<{
-  width: number;
-  height: number;
-  x: number;
-  y: number;
-}>;
+export type Action = ReturnType<
+  | typeof startCroppingImage
+  | typeof stopCroppingImage
+  | typeof updateCroppingImage
+>;

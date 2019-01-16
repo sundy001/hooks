@@ -1,14 +1,15 @@
 import Victor from "victor";
 import { useRawDragAndDrop } from "../../../hooks/useRawDragAndDrop";
+import { Frame } from "../type";
 
 export const useDragAndDrop = (
-  setImageFrame,
-  setOuterPosition,
-  onDragMouseEnd,
-  imageFrame,
-  outerBoxPosition,
-  angle,
-  zoom
+  setImageFrame: (frame: Frame) => void,
+  setOuterPosition: (position: Victor) => void,
+  onDragMouseEnd: () => void,
+  imageFrame: Frame,
+  outerBoxPosition: Readonly<{ x: number; y: number }>,
+  angle: number,
+  zoom: number
 ) => {
   return useRawDragAndDrop({
     zoom,
@@ -26,10 +27,9 @@ export const useDragAndDrop = (
         y: imageFrame.y + imageFrameOffset.y
       });
 
-      setOuterPosition({
-        x: outerBoxPosition.x + dx,
-        y: outerBoxPosition.y + dy
-      });
+      setOuterPosition(
+        new Victor(outerBoxPosition.x + dx, outerBoxPosition.y + dy)
+      );
     },
     onDragEnd() {
       onDragMouseEnd();

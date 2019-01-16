@@ -2,15 +2,14 @@ import { MouseEvent, useRef } from "react";
 import { useSelectionBeginningValue } from "./useSelectionBeginningValue";
 import { useRawRotate } from "./useRawRotate";
 import { getDisplacementInControlBox } from "../math/affineTransformation";
+import { DeepReadonly, DeepReadonlyArray } from "../utilType";
 
 export const useRotate = (
-  elements: ReadonlyArray<
-    Readonly<{
-      id: number;
-      frame: Readonly<Frame>;
-      angle: number;
-    }>
-  >,
+  elements: DeepReadonlyArray<{
+    id: number;
+    frame: Frame;
+    angle: number;
+  }>,
   controlBoxFrame: Readonly<Frame>,
   controlBoxAngle: number,
   {
