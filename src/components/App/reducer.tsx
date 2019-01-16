@@ -25,24 +25,28 @@ export const elements: Reducer<State["elements"], Action> = (state, action) => {
       return updateEntity(state, () => props, id);
 
     case UPDATE_ELEMENTS:
-      return updateEntities(state, action, (previouseState, newValue) => {
-        let nextState = null;
+      return updateEntities(
+        state,
+        action.elements,
+        (previouseState, newValue) => {
+          let nextState = null;
 
-        if (newValue.frame) {
-          if (nextState === null) {
-            nextState = { ...previouseState };
+          if (newValue.frame) {
+            if (nextState === null) {
+              nextState = { ...previouseState };
+            }
+            nextState.frame = newValue.frame;
           }
-          nextState.frame = newValue.frame;
-        }
-        if (newValue.angle) {
-          if (nextState === null) {
-            nextState = { ...previouseState };
+          if (newValue.angle) {
+            if (nextState === null) {
+              nextState = { ...previouseState };
+            }
+            nextState.angle = newValue.angle;
           }
-          nextState.angle = newValue.angle;
-        }
 
-        return nextState === null ? previouseState : nextState;
-      });
+          return nextState === null ? previouseState : nextState;
+        }
+      );
 
     case DELETE_ELEMENTS:
       if (action.elements.length === 0) {

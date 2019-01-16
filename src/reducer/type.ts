@@ -8,10 +8,6 @@ export type ActionWithPayload<T extends String, P> = {
   payload: P;
 } & Action<T>;
 
-type ActionCreatorsMapObject = {
-  [actionCreator: string]: (...args: any[]) => any;
-};
-
 export type Reducer<State, Action> = (state: State, action: Action) => State;
 
 export type EntityStore<Entity> = DeepReadonly<{
