@@ -1,11 +1,11 @@
-type Reducer = (state: any, action: any) => any;
+import { Reducer } from "./reducer";
 
 export const combineReducers: (
   reducers: {
     [key: string]:
-      | Reducer
+      | Reducer<any, any>
       | ReadonlyArray<
-          | Reducer
+          | Reducer<any, any>
           | {
               getStates: (state: any) => any[];
               reduce: (...props: any[]) => any;

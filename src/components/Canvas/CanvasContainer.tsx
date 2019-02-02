@@ -10,7 +10,7 @@ import React, {
 
 import { ControlBox } from "../ControlBox";
 
-import { updateElements } from "../App/actions";
+import { updateElements } from "../App";
 
 import { emit } from "../../eventBus";
 import { useResize } from "../../hooks/useResize";
@@ -29,7 +29,7 @@ import { multiple } from "../../math/frame";
 import { DeepReadonly } from "../../utilType";
 
 const InternalConvasContainer: FC<{
-  dispatch: (action: any) => any;
+  dispatch: (action: any) => void;
   elements: ReadonlyArray<Element>;
   selections: ReadonlyArray<Element>;
   controlBox: {
@@ -39,7 +39,7 @@ const InternalConvasContainer: FC<{
   };
   resizeKeepAspectRatio: boolean;
   zoom: number;
-  children: (controlBox: ReactElement<any>) => ReactNode;
+  children: (controlBox: ReactElement<object>) => ReactNode;
 }> = ({
   dispatch,
   elements,

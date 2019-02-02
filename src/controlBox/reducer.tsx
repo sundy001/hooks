@@ -30,14 +30,8 @@ export const reducer: Reducer<State, Action> = (
     case UPDATE_CONTROL_BOX:
       return {
         ...state,
-        angle:
-          action.payload.angle !== undefined
-            ? action.payload.angle
-            : state.angle,
-        frame:
-          action.payload.frame !== undefined
-            ? action.payload.frame
-            : state.frame
+        angle: action.angle !== undefined ? action.angle : state.angle,
+        frame: action.frame !== undefined ? action.frame : state.frame
       };
 
     case SHOW_CONTROL_BOX:
@@ -63,7 +57,7 @@ export const controlBoxUpdatedBySelection = (
 ): State => {
   switch (action.type) {
     case UPDATE_CONTROL_BOX_BY_ELEMENT:
-      const { frame, angle } = elements.byId[action.payload];
+      const { frame, angle } = elements.byId[action.element];
       return {
         show: controlBox.show,
         frame: { ...frame },
@@ -71,12 +65,12 @@ export const controlBoxUpdatedBySelection = (
       };
 
     case SET_SELECTIONS:
-      switch (action.payload.length) {
+      switch (action.selections.length) {
         case 0:
           return { ...controlBox, show: false };
 
         case 1:
-          const { frame, angle } = elements.byId[action.payload[0]];
+          const { frame, angle } = elements.byId[action.selections[0]];
           return {
             show: true,
             frame: { ...frame },
@@ -95,7 +89,7 @@ export const controlBoxUpdatedBySelection = (
           // }
 
           const { min, max } = minMaxVerticesOfSelections(
-            action.payload.map(id => elements.byId[id])
+            action.selections.map(id => elements.byId[id])
           );
           const { x: width, y: height } = max.clone().subtract(min);
 

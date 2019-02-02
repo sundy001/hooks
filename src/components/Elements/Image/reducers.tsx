@@ -18,7 +18,7 @@ export const elements: Reducer<EntityStore<ImageEntity>, Action> = (
         () => ({
           isCropping: true
         }),
-        action.payload
+        action.element
       );
 
     case STOP_CROPPING_IMAGE:
@@ -27,17 +27,17 @@ export const elements: Reducer<EntityStore<ImageEntity>, Action> = (
         () => ({
           isCropping: false
         }),
-        action.payload
+        action.element
       );
 
     case UPDATE_CROPPING_IMAGE:
       return updateEntity(
         state,
         () => ({
-          frame: action.payload.frame,
-          imageFrame: action.payload.imageFrame
+          frame: action.frame,
+          imageFrame: action.imageFrame
         }),
-        action.payload.element
+        action.element
       );
     default:
       return state;

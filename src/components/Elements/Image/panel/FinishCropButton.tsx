@@ -1,8 +1,8 @@
 import React, { memo, useCallback, FC } from "react";
-import { stopCroppingImage } from "../actions";
+import { stopCroppingImage, Action } from "../actions";
 
 const InternalFinishCropButton: FC<{
-  dispatch: (action: any) => void;
+  dispatch: (action: Action) => void;
   id: number;
 }> = ({ dispatch, id }) => (
   <button

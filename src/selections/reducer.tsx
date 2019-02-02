@@ -5,7 +5,7 @@ import { State } from "./type";
 export const reducer: Reducer<State, Action> = (state = [], action) => {
   switch (action.type) {
     case SET_SELECTIONS:
-      return action.payload;
+      return action.selections;
     case CLEAR_SELECTIONS:
       return [];
     default:

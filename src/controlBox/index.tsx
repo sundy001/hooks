@@ -1,4 +1,5 @@
 import { State as _State } from "./type";
+import { Action as _Action } from "./actions";
 
 export {
   UPDATE_CONTROL_BOX,
@@ -13,3 +14,4 @@ export {
 export { reducer, controlBoxUpdatedBySelection } from "./reducer";
 
 export type State = _State;
+export type Action = _Action;

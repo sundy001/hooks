@@ -1,12 +1,11 @@
 import React, { FC, memo, useCallback } from "react";
-import { startCroppingImage } from "../actions";
-import { Dispatch } from "../../../../reducer";
+import { startCroppingImage, Action } from "../actions";
 import { hideControlBox } from "../../../../controlBox";
 
-const InternalCropButton: FC<{ dispatch: Dispatch; id: number }> = ({
-  dispatch,
-  id
-}) => (
+const InternalCropButton: FC<{
+  dispatch: (action: Action | ReturnType<typeof hideControlBox>) => void;
+  id: number;
+}> = ({ dispatch, id }) => (
   <button
     onClick={useCallback(() => {
       dispatch(startCroppingImage(id));

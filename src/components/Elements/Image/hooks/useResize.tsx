@@ -1,16 +1,21 @@
 import { useRef } from "react";
 import { resolvePosition, TOP, LEFT } from "../../../../math/rect";
 import { useElementListener } from "../../../../eventBus";
-import { updateElement } from "../../../App/actions";
+import { updateElement } from "../../../App";
 import { Frame } from "../type";
 
 export const useResize = (
   id: number,
-  dispatch: (action: any) => void,
+  dispatch: (action: ReturnType<typeof updateElement>) => void,
   frame: Frame,
   imageFrame: Frame
 ) => {
-  const stateRef = useRef<any>({
+  const stateRef = useRef<{
+    beginningFrame: Frame | null;
+    beginningImageFrame: Frame | null;
+    wRatio: number | null;
+    hRatio: number | null;
+  }>({
     beginningFrame: null,
     beginningImageFrame: null,
     wRatio: null,
@@ -38,22 +43,23 @@ export const useResize = (
     if (horizontal !== null && vertical !== null) {
       newFrame = {
         width:
-          beginningImageFrame.width +
-          (frame.width - beginningFrame.width) / wRatio,
+          beginningImageFrame!.width +
+          (frame.width - beginningFrame!.width) / wRatio!,
         height:
-          beginningImageFrame.height +
-          (frame.height - beginningFrame.height) / hRatio,
-        x: beginningImageFrame.x * (frame.width / beginningFrame.width),
-        y: beginningImageFrame.y * (frame.height / beginningFrame.height)
+          beginningImageFrame!.height +
+          (frame.height - beginningFrame!.height) / hRatio!,
+        x: beginningImageFrame!.x * (frame.width / beginningFrame!.width),
+        y: beginningImageFrame!.y * (frame.height / beginningFrame!.height)
       };
     } else {
       newFrame = { ...imageFrame };
       if (horizontal === LEFT) {
-        newFrame.x = beginningImageFrame.x + frame.width - beginningFrame.width;
+        newFrame.x =
+          beginningImageFrame!.x + frame.width - beginningFrame!.width;
       }
       if (vertical === TOP) {
         newFrame.y =
-          beginningImageFrame.y + frame.height - beginningFrame.height;
+          beginningImageFrame!.y + frame.height - beginningFrame!.height;
       }
     }
 

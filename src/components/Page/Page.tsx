@@ -1,15 +1,16 @@
 import React, { ReactElement, Suspense, memo, FC } from "react";
 import "./Page.css";
 import { createElements } from "../App/createElements";
+import { ElementEntity } from "../App/type";
 
 const InternalPage: FC<{
   id: number;
   width: number;
   height: number;
   backgroundColor: string;
-  elements: any[];
-  dispatch: (action: any) => any;
-  controlBox: ReactElement<any> | null;
+  elements: ElementEntity[];
+  dispatch: (action: any) => void;
+  controlBox: ReactElement<object> | null;
   zoom: number;
 }> = ({
   id,
@@ -44,10 +45,3 @@ const InternalPage: FC<{
 export const Page = memo(InternalPage);
 
 Page.displayName = "Page";
-
-type Frame = Readonly<{
-  width: number;
-  height: number;
-  x: number;
-  y: number;
-}>;

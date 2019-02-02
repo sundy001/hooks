@@ -1,9 +1,9 @@
 import React, {
+  ReactNode,
+  Reducer,
   useCallback,
   useEffect,
-  useReducer,
-  ReactElement,
-  ReactNode
+  useReducer
 } from "react";
 
 import { Canvas } from "../Canvas";
@@ -16,16 +16,16 @@ import { getComponentsOfElementPanel } from "./selectors/getComponentsOfElementP
 import { selectElements } from "./selectors/selectElements";
 import { shouldResizeKeepAspectRatio } from "./selectors/shouldResizeKeepAspectRatio";
 import { getSelectedElements } from "./selectors/getSelectedElements";
-import { updateZoom } from "./actions";
+import { updateZoom, Action } from "./actions";
 import { State } from "./type";
 
 export const AppContainer = () => {
-  const [state, dispatch] = useReducer<State, any>(
+  const [state, dispatch] = useReducer<Reducer<State, Action>>(
     reducer,
     initialState as any
   );
   useEffect(() => {
-    dispatch({ type: undefined });
+    dispatch({ type: undefined } as any);
   }, []);
   // TODO: find a way remove detection
   if (!state.selections) return null;
@@ -89,11 +89,7 @@ export const AppContainer = () => {
         );
 
         canvasElements.push(
-          <SelectionBox
-            key="selection-box"
-            frame={state.selectionBox}
-            elements={elements}
-          />
+          <SelectionBox key="selection-box" frame={state.selectionBox} />
         );
 
         canvasElements.push(

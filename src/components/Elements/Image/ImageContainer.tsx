@@ -6,7 +6,8 @@ import { useResize } from "./hooks/useResize";
 import {
   startCroppingImage,
   stopCroppingImage,
-  updateCroppingImage
+  updateCroppingImage,
+  Action
 } from "./actions";
 import { ImageEntity } from "./type";
 import { ImageCropper } from "../../ImageCropper";
@@ -16,10 +17,13 @@ import {
   updateControlBoxByElement
 } from "../../../controlBox";
 import { useElementListener } from "../../../eventBus";
-import { Dispatch } from "../../../reducer";
+import { updateElement } from "../../App";
 
 const InternalImageContainer: FC<
-  ImageEntity & { dispatch: Dispatch; zoom: number }
+  ImageEntity & {
+    dispatch: (action: ImageContainerAction) => void;
+    zoom: number;
+  }
 > = props => {
   const { id, dispatch, imageFrame, isCropping } = props;
 
@@ -57,3 +61,10 @@ const InternalImageContainer: FC<
 export const ImageContainer = memo(InternalImageContainer);
 
 ImageContainer.displayName = "ImageContainer";
+
+type ImageContainerAction =
+  | Action
+  | ReturnType<typeof hideControlBox>
+  | ReturnType<typeof updateControlBoxByElement>
+  | ReturnType<typeof showControlBox>
+  | ReturnType<typeof updateElement>;

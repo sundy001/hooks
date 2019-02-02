@@ -2,7 +2,11 @@ import { getFrameStyle } from "../../../getFrameStyle";
 import React, { memo, FC } from "react";
 import "./Test.css";
 
-const InternalTest: FC<any> = ({ id, frame, angle }) => {
+const InternalTest: FC<{ id: number; frame: Frame; angle: number }> = ({
+  id,
+  frame,
+  angle
+}) => {
   return (
     <div
       data-id={id}
@@ -17,5 +21,12 @@ const InternalTest: FC<any> = ({ id, frame, angle }) => {
 };
 
 export const Test = memo(InternalTest);
+
+export type Frame = Readonly<{
+  width: number;
+  height: number;
+  x: number;
+  y: number;
+}>;
 
 Test.displayName = "Test";

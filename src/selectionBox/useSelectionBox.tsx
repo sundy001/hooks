@@ -28,7 +28,7 @@ export const useSelectionBox = (
     shouldSelect: boolean | null;
     beginningX: number | null;
     beginningY: number | null;
-    overlapCache: any;
+    overlapCache: ReturnType<typeof getOverlapCache> | null;
     selectedElements: number[] | null;
   }>({
     shouldSelect: null,
@@ -89,7 +89,7 @@ export const useSelectionBox = (
 
       const selectedElements = detectOverlapByCache(
         selectionVertices,
-        overlapCache
+        overlapCache!
       );
       stateRef.current.selectedElements = selectedElements;
 

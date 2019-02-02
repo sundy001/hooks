@@ -123,10 +123,7 @@ export const zoom: Reducer<State["zoom"], Action> = (state = 1, action) => {
 };
 
 // TODO: move it somewhere image no loger need to rasie
-export const raise: Reducer<ReadonlyArray<number>, Action> = (
-  state = [],
-  action
-) => {
+export const raise: Reducer<State["raise"], Action> = (state = [], action) => {
   switch (action.type) {
     default:
       return state;

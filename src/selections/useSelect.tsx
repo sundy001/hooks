@@ -3,7 +3,7 @@ import { useDrag } from "../hooks/useDrag";
 import { setSelections, clearSelections } from "./actions";
 
 export const useSelect = (
-  dispatch: (action: any) => any,
+  dispatch: (action: unknown) => void,
   shouldDeselect: (event: MouseEvent) => boolean,
   selections: ReadonlyArray<number>,
   { onDeselect }: { onDeselect?: () => void } = {}

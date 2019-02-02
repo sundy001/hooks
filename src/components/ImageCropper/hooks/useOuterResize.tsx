@@ -27,7 +27,7 @@ export const useOuterResize = (
   for (let i = 0; i < positions.length; i++) {
     const position = positions[i];
     const [theResizeDown, theResizeMove, theResizeUp] = useRawResize(
-      position as any,
+      position,
       outerBoxFrame,
       angle,
       true,

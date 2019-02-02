@@ -13,7 +13,7 @@ export const reducer: Reducer<State, Action> = (
 ) => {
   switch (action.type) {
     case UPDATE_SELECTION_BOX:
-      return action.payload;
+      return action.frame;
     case HIDE_SELECTION_BOX:
       return { x: 0, y: 0, width: 0, height: 0 };
     default:

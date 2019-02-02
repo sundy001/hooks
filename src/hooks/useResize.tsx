@@ -4,7 +4,7 @@ import { useSelectionBeginningValue } from "./useSelectionBeginningValue";
 import { useRawResize } from "./useRawResize";
 import { RECT_VERTICES } from "../math/rect";
 import { getDisplacementInControlBox } from "../math/affineTransformation";
-import { DeepReadonlyArray, DeepReadonly } from "../utilType";
+import { DeepReadonlyArray } from "../utilType";
 
 export const useResize = (
   elements: DeepReadonlyArray<{
@@ -43,7 +43,7 @@ export const useResize = (
   for (let i = 0; i < RECT_VERTICES.length; i++) {
     const position = RECT_VERTICES[i];
     const [theResizeDown, theResizeMove, theResizeUp] = useRawResize(
-      position as any,
+      position,
       controlBoxFrame,
       controlBoxAngle,
       shouldKeepAspectRatio,

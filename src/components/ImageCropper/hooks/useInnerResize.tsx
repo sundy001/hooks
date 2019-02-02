@@ -28,7 +28,7 @@ export const useInnerResize = (
   for (let i = 0; i < positions.length; i++) {
     const position = positions[i];
     const [theResizeDown, theResizeMove, theResizeUp] = useRawResize(
-      position as any,
+      position,
       frame,
       angle,
       false,

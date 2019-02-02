@@ -9,7 +9,7 @@ export const BOTTOM_LEFT = "bottom-left";
 export const LEFT = "left";
 export const TOP_LEFT = "top-left";
 
-export const RECT_VERTICES: ReadonlyArray<string> = [
+export const RECT_VERTICES: ReadonlyArray<Position> = [
   TOP,
   TOP_RIGHT,
   RIGHT,
@@ -85,6 +85,7 @@ export const vertexOfOriginRect = (
 
 export type Position =
   | typeof TOP
+  | typeof TOP_RIGHT
   | typeof RIGHT
   | typeof BOTTOM_RIGHT
   | typeof BOTTOM

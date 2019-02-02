@@ -21,7 +21,7 @@ const loadElement = (name: string) => {
 
 export const createElements = (
   elements: DeepReadonlyArray<ElementEntity>,
-  props: { [name: string]: any }
+  props: { [name: string]: unknown }
 ) =>
   elements.map(({ id, name, ...elementProps }) => {
     const Element = loadElement(name);

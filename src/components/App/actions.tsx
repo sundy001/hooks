@@ -9,7 +9,7 @@ export const UPDATE_ZOOM = "UPDATE_ZOOM";
 // external features
 export const COPY_ELEMENTS = "COPY_ELEMENTS";
 
-export const updateElement = (id: number, props: any) => ({
+export const updateElement = (id: number, props: object) => ({
   type: UPDATE_ELEMENT as typeof UPDATE_ELEMENT,
   id,
   props
