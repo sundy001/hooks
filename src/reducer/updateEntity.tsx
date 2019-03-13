@@ -69,7 +69,7 @@ export const getUpdatedEntity = <T, _>(
 
 export const updateEntities = <T extends { id: number }, _>(
   entityStore: EntityStore<T>,
-  entities: any,
+  entities: ReadonlyArray<any>,
   updater: (
     previous: DeepReadonly<T>,
     entity: DeepReadonly<T>
