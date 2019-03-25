@@ -1,7 +1,7 @@
 import React, { ReactNode } from "react";
 import cloneDeep from "lodash/cloneDeep";
 import { elementsStatic } from "../elementsStatic";
-import { deleteElements, addElements } from "../actions";
+import { deleteElements, addElements } from "../../../element";
 import { setSelections, clearSelections } from "../../../selections";
 import { State, ElementEntity } from "../type";
 

@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { resolvePosition, TOP, LEFT } from "../../../../math/rect";
 import { useElementListener } from "../../../../eventBus";
-import { updateElements } from "../../../App";
+import { updateElements } from "../../../../element";
 import { Frame } from "../type";
 
 export const useResize = (

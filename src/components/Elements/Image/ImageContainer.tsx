@@ -17,7 +17,7 @@ import {
   updateControlBoxByElement
 } from "../../../controlBox";
 import { useElementListener } from "../../../eventBus";
-import { updateElements } from "../../App";
+import { updateElements } from "../../../element";
 
 const InternalImageContainer: FC<
   ImageEntity & {

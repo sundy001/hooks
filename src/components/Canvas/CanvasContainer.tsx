@@ -10,8 +10,7 @@ import React, {
 
 import { ControlBox } from "../ControlBox";
 
-import { updateElements } from "../App";
-
+import { updateElements } from "../../element";
 import { emit } from "../../eventBus";
 import { useResize } from "../../hooks/useResize";
 import { useRotate } from "../../hooks/useRotate";

@@ -2,9 +2,10 @@ import { EntityStore } from "../../reducer";
 import { State as SelectionsState } from "../../selections";
 import { State as ControlBoxState } from "../../controlBox";
 import { State as SelectionBoxState } from "../../selectionBox";
+import { State as ElementsState } from "../../element";
 
 export type State = {
-  elements: EntityStore<ElementEntity>;
+  elements: ElementsState<ElementEntity>;
   pages: EntityStore<Page>;
   raise: ReadonlyArray<number>;
   zoom: number;
