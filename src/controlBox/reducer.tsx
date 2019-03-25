@@ -1,15 +1,15 @@
 import Victor from "victor";
-import { transform } from "../math/affineTransformation";
-import { CORNER_INDEXES, vertexOfOriginRect } from "../math/rect";
 import {
   UPDATE_CONTROL_BOX,
   SHOW_CONTROL_BOX,
   HIDE_CONTROL_BOX,
   UPDATE_CONTROL_BOX_BY_ELEMENT
 } from "./actions";
-import { SET_SELECTIONS, CLEAR_SELECTIONS } from "../selections";
 import { Action } from "./actions";
 import { Frame, State } from "./type";
+import { transform } from "../math/affineTransformation";
+import { CORNER_INDEXES, vertexOfOriginRect } from "../math/rect";
+import { SET_SELECTIONS, CLEAR_SELECTIONS } from "../selections";
 import { EntityStore, Reducer } from "../reducer";
 import { DeepReadonly } from "../utilType";
 

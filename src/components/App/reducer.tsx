@@ -1,11 +1,10 @@
 import { combineReducers } from "../../combinReducer";
 import {
-  UPDATE_ELEMENT,
   UPDATE_ELEMENTS,
-  COPY_ELEMENTS,
   DELETE_ELEMENTS,
   UPDATE_ZOOM,
-  Action
+  Action,
+  ADD_ELEMENTS
 } from "./actions";
 import { reducer as selections } from "../../selections";
 import { elements as imageElements } from "../elements/Image";
@@ -14,102 +13,74 @@ import {
   reducer as controlBox,
   controlBoxUpdatedBySelection
 } from "../../controlBox";
-import { updateEntity, updateEntities, Reducer } from "../../reducer";
-import cloneDeep from "lodash/cloneDeep";
+import { updateEntities, Reducer } from "../../reducer";
 import { State, ElementEntity } from "./type";
 
 export const elements: Reducer<State["elements"], Action> = (state, action) => {
   switch (action.type) {
-    case UPDATE_ELEMENT:
-      const { id, props } = action;
-      return updateEntity(state, () => props, id);
+    case ADD_ELEMENTS:
+      if (action.elements.length === 0) {
+        return state;
+      } else {
+        const byId = { ...state.byId };
+        const allIds = [...state.allIds];
+
+        for (let i = 0; i < action.elements.length; i++) {
+          const id = action.elements[i].id;
+          byId[id] = action.elements[i];
+          allIds.push(id);
+        }
+
+        return {
+          byId,
+          allIds
+        };
+      }
 
     case UPDATE_ELEMENTS:
       return updateEntities(
         state,
         action.elements,
-        (previouseState, newValue) => {
-          let nextState = null;
-
-          if (newValue.frame) {
-            if (nextState === null) {
-              nextState = { ...previouseState };
-            }
-            nextState.frame = newValue.frame;
-          }
-          if (newValue.angle) {
-            if (nextState === null) {
-              nextState = { ...previouseState };
-            }
-            nextState.angle = newValue.angle;
+        (previouseState, nextState) => {
+          const keys = Object.keys(nextState);
+          if (keys.length === 0) {
+            return previouseState;
           }
 
-          return nextState === null ? previouseState : nextState;
+          return {
+            ...previouseState,
+            ...nextState
+          };
         }
       );
 
     case DELETE_ELEMENTS:
       if (action.elements.length === 0) {
         return state;
+      } else {
+        const byId: { [id: number]: ElementEntity } = {};
+        Object.keys(state.byId).forEach(stringId => {
+          const id = Number(stringId);
+          if (action.elements.indexOf(id) === -1) {
+            byId[id] = state.byId[id];
+          }
+        });
+
+        const allIds: number[] = [];
+        state.allIds.forEach(id => {
+          if (action.elements.indexOf(id) === -1) {
+            allIds.push(id);
+          }
+        });
+
+        return {
+          byId,
+          allIds
+        };
       }
 
-      const byId: { [id: number]: ElementEntity } = {};
-      const allIds: number[] = [];
-      Object.keys(state.byId).forEach(stringId => {
-        const id = Number(stringId);
-        if (action.elements.indexOf(id) !== -1) {
-          return;
-        }
-        byId[id] = state.byId[id];
-      });
-
-      state.allIds.forEach(id => {
-        if (action.elements.indexOf(id) !== -1) {
-          return;
-        }
-        allIds.push(id);
-      });
-
-      return {
-        byId,
-        allIds
-      };
     default:
       return state;
-  }
-};
-
-export const copySelectedElements = (
-  elements: State["elements"],
-  selections: State["selections"],
-  action: Action
-): State["elements"] => {
-  switch (action.type) {
-    case COPY_ELEMENTS:
-      if (selections.length === 0) {
-        return elements;
-      }
-
-      let lastId = Math.max(...elements.allIds);
-
-      const byId = { ...elements.byId };
-      const allIds = [...elements.allIds];
-      selections.forEach(id => {
-        const newElement = cloneDeep(elements.byId[id]) as ElementEntity;
-        newElement.id = ++lastId;
-        newElement.frame.x += 20;
-        newElement.frame.y += 20;
-
-        byId[newElement.id] = newElement;
-        allIds.push(newElement.id);
-      });
-
-      return {
-        byId,
-        allIds
-      };
-    default:
-      return elements;
   }
 };
 
@@ -131,16 +102,7 @@ export const raise: Reducer<State["raise"], Action> = (state = [], action) => {
 };
 
 export const reducer = combineReducers({
-  elements: [
-    elements,
-    imageElements,
-    {
-      getStates({ selections }) {
-        return [selections];
-      },
-      reduce: copySelectedElements
-    }
-  ],
+  elements: [elements, imageElements],
   selections,
   controlBox: [
     controlBox,

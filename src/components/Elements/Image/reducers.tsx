@@ -4,7 +4,7 @@ import {
   STOP_CROPPING_IMAGE,
   UPDATE_CROPPING_IMAGE
 } from "./actions";
-import { Reducer, EntityStore, updateEntity } from "../../../reducer";
+import { Reducer, EntityStore, updateEntities } from "../../../reducer";
 import { ImageEntity } from "./type";
 
 export const elements: Reducer<EntityStore<ImageEntity>, Action> = (
@@ -13,32 +13,23 @@ export const elements: Reducer<EntityStore<ImageEntity>, Action> = (
 ) => {
   switch (action.type) {
     case START_CROPPING_IMAGE:
-      return updateEntity(
-        state,
-        () => ({
-          isCropping: true
-        }),
-        action.element
-      );
+      return updateEntities(state, [{ id: action.element }], previousState => ({
+        ...previousState,
+        isCropping: true
+      }));
 
     case STOP_CROPPING_IMAGE:
-      return updateEntity(
-        state,
-        () => ({
-          isCropping: false
-        }),
-        action.element
-      );
+      return updateEntities(state, [{ id: action.element }], previousState => ({
+        ...previousState,
+        isCropping: false
+      }));
 
     case UPDATE_CROPPING_IMAGE:
-      return updateEntity(
-        state,
-        () => ({
-          frame: action.frame,
-          imageFrame: action.imageFrame
-        }),
-        action.element
-      );
+      return updateEntities(state, [{ id: action.element }], previousState => ({
+        ...previousState,
+        frame: action.frame,
+        imageFrame: action.imageFrame
+      }));
     default:
       return state;
   }

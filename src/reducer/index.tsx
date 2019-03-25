@@ -1,2 +1,2 @@
-export { updateEntity, updateEntities } from "./updateEntity";
+export { updateEntities } from "./updateEntities";
 export * from "./type";

@@ -1,12 +1,12 @@
 import { useRef } from "react";
 import { resolvePosition, TOP, LEFT } from "../../../../math/rect";
 import { useElementListener } from "../../../../eventBus";
-import { updateElement } from "../../../App";
+import { updateElements } from "../../../App";
 import { Frame } from "../type";
 
 export const useResize = (
   id: number,
-  dispatch: (action: ReturnType<typeof updateElement>) => void,
+  dispatch: (action: ReturnType<typeof updateElements>) => void,
   frame: Frame,
   imageFrame: Frame
 ) => {
@@ -63,7 +63,7 @@ export const useResize = (
       }
     }
 
-    dispatch(updateElement(id, { imageFrame: newFrame }));
+    dispatch(updateElements([{ id, imageFrame: newFrame }]));
   });
 
   useElementListener("resizeEnd", id, () => {

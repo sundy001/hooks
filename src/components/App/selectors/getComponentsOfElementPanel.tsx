@@ -1,8 +1,9 @@
 import React, { ReactNode } from "react";
+import cloneDeep from "lodash/cloneDeep";
 import { elementsStatic } from "../elementsStatic";
-import { copyElements, deleteElements } from "../actions";
+import { deleteElements, addElements } from "../actions";
 import { setSelections, clearSelections } from "../../../selections";
-import { State } from "../type";
+import { State, ElementEntity } from "../type";
 
 export const getComponentsOfElementPanel = (
   dispatch: (action: any) => void,
@@ -14,16 +15,18 @@ export const getComponentsOfElementPanel = (
       <button
         key="copy"
         onClick={() => {
-          dispatch(copyElements());
+          let lastId = Math.max(...elements.allIds);
+          const newElements: ElementEntity[] = [];
+          selections.forEach(id => {
+            const newElement = cloneDeep(elements.byId[id]) as ElementEntity;
+            newElement.id = ++lastId;
+            newElement.frame.x += 20;
+            newElement.frame.y += 20;
+            newElements.push(newElement);
+          });
 
-          // TODO: need to think about how the get new Id
-          const selectionLength = selections.length;
-          const newElementIds: number[] = [];
-          let maxId = Math.max(...elements.allIds);
-          for (let i = 0; i < selectionLength; i++) {
-            newElementIds.push(++maxId);
-          }
-          dispatch(setSelections(newElementIds));
+          dispatch(addElements(newElements));
+          dispatch(setSelections(newElements.map(({ id }) => id)));
         }}
       >
         Copy

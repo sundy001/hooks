@@ -17,7 +17,7 @@ import {
   updateControlBoxByElement
 } from "../../../controlBox";
 import { useElementListener } from "../../../eventBus";
-import { updateElement } from "../../App";
+import { updateElements } from "../../App";
 
 const InternalImageContainer: FC<
   ImageEntity & {
@@ -67,4 +67,4 @@ type ImageContainerAction =
   | ReturnType<typeof hideControlBox>
   | ReturnType<typeof updateControlBoxByElement>
   | ReturnType<typeof showControlBox>
-  | ReturnType<typeof updateElement>;
+  | ReturnType<typeof updateElements>;
